@@ -1,0 +1,14 @@
+stm32f407_template\heap_5.o: ..\FreeRTOS\portable\MemMang\heap_5.c
+stm32f407_template\heap_5.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+stm32f407_template\heap_5.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\FreeRTOS.h
+stm32f407_template\heap_5.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+stm32f407_template\heap_5.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+stm32f407_template\heap_5.o: ../Core/Inc/FreeRTOSConfig.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\projdefs.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\portable.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\deprecated_definitions.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\portable\ARM_CM4F\portmacro.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\mpu_wrappers.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\task.h
+stm32f407_template\heap_5.o: ..\FreeRTOS\include\list.h

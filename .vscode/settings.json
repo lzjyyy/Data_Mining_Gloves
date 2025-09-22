@@ -1,0 +1,13 @@
+{
+  "files.associations": {
+    "*.arxml": "xml",
+    "main.h": "c",
+    "stm32f4xx_hal.h": "c",
+    "w5500_port.h": "c",
+    "freertos.h": "c",
+    "freertosconfig.h": "c",
+    "cmsis_os.h": "c",
+    "modbus.h": "c"
+  },
+  "C_Cpp.errorSquiggles": "disabled"
+}

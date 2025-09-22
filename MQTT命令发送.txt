@@ -1,0 +1,42 @@
+夹爪控制：
+Topic: robot/gripper/cmd
+// 开启
+{
+  "mode": 0,
+  "left":  {"position": 0, "speed": 1000, "torque": 1000}, 
+  "right": {"position": 0, "speed": 1000, "torque": 1000}
+}
+
+// 关闭
+{
+  "mode": 0,
+  "left":  {"position": 9000, "speed": 1000, "torque": 1000}, 
+  "right": {"position": 9000, "speed": 1000, "torque": 1000}
+}
+
+GPIO控制：
+Topic: robot/gpio/cmd
+//顶升保持 
+{
+  "gpio": { "type": 0, "state": 0 } 
+}
+
+//顶升上升 
+{
+  "gpio": { "type": 0, "state": 1 } 
+}
+
+//顶升下降 
+{
+  "gpio": { "type": 0, "state": 2 } 
+}
+
+//灯带开启 
+{
+  "gpio": { "type": 1, "state": 1 } 
+}
+
+//灯带关闭
+{
+  "gpio": { "type": 1, "state": 0 } 
+}

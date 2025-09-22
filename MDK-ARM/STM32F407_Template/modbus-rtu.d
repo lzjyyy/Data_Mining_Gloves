@@ -1,0 +1,11 @@
+stm32f407_template\modbus-rtu.o: ..\Core\Src\modbus-rtu.c
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\errno.h
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\assert.h
+stm32f407_template\modbus-rtu.o: ../Core/Inc/modbus-rtu.h
+stm32f407_template\modbus-rtu.o: ../Core/Inc/modbus.h
+stm32f407_template\modbus-rtu.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+stm32f407_template\modbus-rtu.o: ../Core/Inc/modbus-version.h
+stm32f407_template\modbus-rtu.o: ../Core/Inc/modbus-rtu.h
