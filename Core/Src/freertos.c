@@ -98,8 +98,8 @@ typedef enum {
 #define MODBUS_FUN_READ_REGISTER  3
 #define MODBUS_FUN_WRITE_REGISTER 6
 #define MODBUS_FUN_WRITE_REGISTERS 16
-#define STATUS_QUERY_PERIOD_MS 100     // 查询状�?�周�??????????
-#define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状�?�查询时�??????????
+#define STATUS_QUERY_PERIOD_MS 100     // 查询状�?�周�????????????
+#define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状�?�查询时�????????????
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -803,7 +803,7 @@ void StartMqttTask(void const* argument) {
   }
 
   for (;;) {
-    // 1. �??????????�?????????? W5500 初始化状�??????????
+    // 1. �????????????�???????????? W5500 初始化状�????????????
     if (get_w5500_init_status() != 1) {
       printf("W5500 not initialized, trying...\r\n");
       rc = W5500_DriverInit();
@@ -818,7 +818,7 @@ void StartMqttTask(void const* argument) {
       W5500_RaiseSpiSpeed();
     }
 
-    // 2. �??查PHY链路，手动模式不起作�??
+    // 2. �????查PHY链路，手动模式不起作�????
     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
       printf("PHY Link Down, retry in 500ms...\r\n");
       osDelay(500);
@@ -941,7 +941,7 @@ void messageArrived(MessageData* data)
 
     if (type_item && state_item) {
       gpioCmd.type = type_item->valueint;   // GPIO_Cmd_Type_t
-      gpioCmd.state = state_item->valueint;  // Lifting_Mode_t �?? Warning_Mode_t
+      gpioCmd.state = state_item->valueint;  // Lifting_Mode_t �???? Warning_Mode_t
 
       printf("GPIO cmd type=%d, state=%d\r\n", gpioCmd.type, gpioCmd.state);
 
@@ -986,7 +986,7 @@ void MX_Modbus_Init(void)
   R_ModbusH.EN_Port = NULL;
   R_ModbusH.u16regs = ModbusDATA;
   R_ModbusH.u16regsize = sizeof(ModbusDATA) / sizeof(ModbusDATA[0]);
-  R_ModbusH.xTypeHW = USART_HW;
+  R_ModbusH.xTypeHW = USART_HW_DMA;
   //Initialize Modbus library
   ModbusInit(&R_ModbusH);
   //Start capturing traffic on serial Port
@@ -1093,8 +1093,8 @@ void LeftGripperTask(void* argument)
   }
   GripperCmd_t cmd;
   GripperStatus_t status;
-  uint32_t lastStatusTick = 0;   // 上次写命令时�??????????
-  uint32_t blockUntil = 0;  // 写命令后屏蔽查询的时�??????????
+  uint32_t lastStatusTick = 0;   // 上次写命令时�????????????
+  uint32_t blockUntil = 0;  // 写命令后屏蔽查询的时�????????????
 
   for (;;)
   {
@@ -1106,7 +1106,7 @@ void LeftGripperTask(void* argument)
       if (osMessageQueueGet(leftGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&L_ModbusH, cmd.left.position, cmd.left.speed, cmd.left.torque, LEFT_GRIPPER);
-        // 写命令后屏蔽状�?�查�??????????
+        // 写命令后屏蔽状�?�查�????????????
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
     }
@@ -1119,7 +1119,7 @@ void LeftGripperTask(void* argument)
         is_left_get_status = true;
         gripper_get_status(&L_ModbusH, &status, LEFT_GRIPPER);
         is_left_get_status = false;
-        // 发布�?????????? MQTT
+        // 发布�???????????? MQTT
         // mqtt_publish_gripper_status(&status, LEFT_GRIPPER);
         status.side = LEFT_GRIPPER;
         osMessageQueuePut(statusQueueHandle, &status, 0, 0);
@@ -1157,7 +1157,7 @@ void RightGripperTask(void* argument)
       if (osMessageQueueGet(rightGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&R_ModbusH, cmd.right.position, cmd.right.speed, cmd.right.torque, RIGHT_GRIPPER);
-        // 写命令后屏蔽状�?�查�??????????
+        // 写命令后屏蔽状�?�查�????????????
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
     }
@@ -1229,17 +1229,17 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
       status->position = pos;
     }
 
-    // printf("L read REACHED\r\n");
-    // result = get_reached(h, &reached, LEFT_GRIPPER);
-    // if (result != true) {
-    //   printf("L read left REG_POS_REACHED failed!\r\n");
-    //   status->reached = 0xFFFF;
-    // }
-    // else
-    // {
-    //   printf("L read left REG_POS_REACHED:0x%x\r\n", reached);
-    //   status->reached = reached;
-    // }
+    printf("L read REACHED\r\n");
+    result = get_reached(h, &reached, LEFT_GRIPPER);
+    if (result != true) {
+      printf("L read left REG_POS_REACHED failed!\r\n");
+      status->reached = 0xFFFF;
+    }
+    else
+    {
+      printf("L read left REG_POS_REACHED:0x%x\r\n", reached);
+      status->reached = reached;
+    }
 
     printf("L read WARNING\r\n");
     result = get_warning_info(h, &warning, LEFT_GRIPPER);
@@ -1250,7 +1250,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     else
     {
       printf("L read left REG_WARNING_INFO:0x%x\r\n", warning);
-      status->warning = reached;
+      status->warning = warning;
     }
   }
   else {
@@ -1266,17 +1266,17 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
       status->position = pos;
     }
 
-    // printf("R read REACHED\r\n");
-    // result = get_reached(h, &reached, RIGHT_GRIPPER);
-    // if (result != true) {
-    //   printf("R read right REG_POS_REACHED failed!\r\n");
-    //   status->reached = 0xFFFF;
-    // }
-    // else
-    // {
-    //   printf("R read right REG_POS_REACHED:0x%x\r\n", reached);
-    //   status->reached = reached;
-    // }
+    printf("R read REACHED\r\n");
+    result = get_reached(h, &reached, RIGHT_GRIPPER);
+    if (result != true) {
+      printf("R read right REG_POS_REACHED failed!\r\n");
+      status->reached = 0xFFFF;
+    }
+    else
+    {
+      printf("R read right REG_POS_REACHED:0x%x\r\n", reached);
+      status->reached = reached;
+    }
 
     printf("R read WARNING\r\n");
     result = get_warning_info(h, &warning, RIGHT_GRIPPER);
@@ -1287,7 +1287,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     else
     {
       printf("R read right REG_WARNING_INFO:0x%x\r\n", warning);
-      status->warning = reached;
+      status->warning = warning;
     }
   }
 }
