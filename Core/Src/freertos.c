@@ -98,8 +98,8 @@ typedef enum {
 #define MODBUS_FUN_READ_REGISTER  3
 #define MODBUS_FUN_WRITE_REGISTER 6
 #define MODBUS_FUN_WRITE_REGISTERS 16
-#define STATUS_QUERY_PERIOD_MS 100     // 查询状�?�周�????????????
-#define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状�?�查询时�????????????
+#define STATUS_QUERY_PERIOD_MS 100     // 查询状态周期
+#define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状态查询时间
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -148,10 +148,10 @@ osSemaphoreId_t semQueueRightHandle;
 osSemaphoreId_t semStatusRightHandle;
 
 // grippers timers
+osTimerId_t timer50msLeft;
 osTimerId_t timer100msLeft;
-osTimerId_t timer200msLeft;
+osTimerId_t timer50msRight;
 osTimerId_t timer100msRight;
-osTimerId_t timer200msRight;
 
 /* Mutex */
 osMutexId canMutex;
@@ -257,10 +257,10 @@ static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t si
 static void mqtt_publish_gpio_status(void);
 
 // left and right grippers timer callback functions
+static void Timer50msLeft_Callback(void* argument);
 static void Timer100msLeft_Callback(void* argument);
-static void Timer200msLeft_Callback(void* argument);
+static void Timer50msRight_Callback(void* argument);
 static void Timer100msRight_Callback(void* argument);
-static void Timer200msRight_Callback(void* argument);
 
 /* USER CODE END FunctionPrototypes */
 
@@ -304,11 +304,11 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   // left gripper timers
+  timer50msLeft = osTimerNew(Timer50msLeft_Callback, osTimerPeriodic, NULL, NULL);
   timer100msLeft = osTimerNew(Timer100msLeft_Callback, osTimerPeriodic, NULL, NULL);
-  timer200msLeft = osTimerNew(Timer200msLeft_Callback, osTimerPeriodic, NULL, NULL);
 
+  timer50msRight = osTimerNew(Timer50msRight_Callback, osTimerPeriodic, NULL, NULL);
   timer100msRight = osTimerNew(Timer100msRight_Callback, osTimerPeriodic, NULL, NULL);
-  timer200msRight = osTimerNew(Timer200msRight_Callback, osTimerPeriodic, NULL, NULL);
   // right gripper timers
 
   /* USER CODE END RTOS_TIMERS */
@@ -325,11 +325,11 @@ void MX_FREERTOS_Init(void) {
   gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
   // start timers
+  osTimerStart(timer50msLeft, 50);
   osTimerStart(timer100msLeft, 100);
-  osTimerStart(timer200msLeft, 200);
 
+  osTimerStart(timer50msRight, 50);
   osTimerStart(timer100msRight, 100);
-  osTimerStart(timer200msRight, 200);
 
   /* USER CODE END RTOS_QUEUES */
 
@@ -1293,22 +1293,23 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
 }
 
 // left gripper timers callback
-void Timer100msLeft_Callback(void* argument)
+static void Timer50msLeft_Callback(void* argument)
 {
   osSemaphoreRelease(semQueueLeftHandle);
 }
 
-void Timer200msLeft_Callback(void* argument)
+static void Timer100msLeft_Callback(void* argument)
 {
   osSemaphoreRelease(semStatusLeftHandle);
 }
 
 // right gripper timers callback
-void Timer100msRight_Callback(void* argument)
+static void Timer50msRight_Callback(void* argument)
 {
   osSemaphoreRelease(semQueueRightHandle);
 }
-void Timer200msRight_Callback(void* argument)
+
+static void Timer100msRight_Callback(void* argument)
 {
   osSemaphoreRelease(semStatusRightHandle);
 }

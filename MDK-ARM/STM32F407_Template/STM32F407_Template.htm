@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F407_Template\STM32F407_Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F407_Template\STM32F407_Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Sep 22 18:41:29 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Sep 23 10:39:06 2025
 <BR><P>
 <H3>Maximum Stack Usage =        656 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -116,10 +116,10 @@ Function Pointers
  <LI><a href="#[41]">TIM8_CC_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[40]">TIM8_TRG_COM_TIM14_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[3f]">TIM8_UP_TIM13_IRQHandler</a> from startup_stm32f407xx.o(.text) referenced from startup_stm32f407xx.o(RESET)
- <LI><a href="#[71]">Timer100msLeft_Callback</a> from freertos.o(i.Timer100msLeft_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
- <LI><a href="#[73]">Timer100msRight_Callback</a> from freertos.o(i.Timer100msRight_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
- <LI><a href="#[72]">Timer200msLeft_Callback</a> from freertos.o(i.Timer200msLeft_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
- <LI><a href="#[74]">Timer200msRight_Callback</a> from freertos.o(i.Timer200msRight_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
+ <LI><a href="#[72]">Timer100msLeft_Callback</a> from freertos.o(i.Timer100msLeft_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
+ <LI><a href="#[74]">Timer100msRight_Callback</a> from freertos.o(i.Timer100msRight_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
+ <LI><a href="#[71]">Timer50msLeft_Callback</a> from freertos.o(i.Timer50msLeft_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
+ <LI><a href="#[73]">Timer50msRight_Callback</a> from freertos.o(i.Timer50msRight_Callback) referenced from freertos.o(i.MX_FREERTOS_Init)
  <LI><a href="#[8c]">TimerCallback</a> from cmsis_os2.o(i.TimerCallback) referenced from cmsis_os2.o(i.osTimerNew)
  <LI><a href="#[47]">UART4_IRQHandler</a> from stm32f4xx_it.o(i.UART4_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
  <LI><a href="#[48]">UART5_IRQHandler</a> from stm32f4xx_it.o(i.UART5_IRQHandler) referenced from startup_stm32f407xx.o(RESET)
@@ -2825,10 +2825,10 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGiveFromISR
 <LI><a href="#[16b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xQueueGenericSend
 </UL>
-<BR>[Called By]<UL><LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer200msRight_Callback
-<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer200msLeft_Callback
-<LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer100msRight_Callback
-<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer100msLeft_Callback
+<BR>[Called By]<UL><LI><a href="#[73]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer50msRight_Callback
+<LI><a href="#[71]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer50msLeft_Callback
+<LI><a href="#[74]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer100msRight_Callback
+<LI><a href="#[72]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Timer100msLeft_Callback
 </UL>
 
 <P><STRONG><a name="[16a]"></a>osThreadGetId</STRONG> (Thumb, 4 bytes, Stack size 0 bytes, cmsis_os2.o(i.osThreadGetId))
@@ -4007,29 +4007,29 @@ Local Symbols
 <BR>[Called By]<UL><LI><a href="#[1ed]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;parse_string
 </UL>
 
-<P><STRONG><a name="[71]"></a>Timer100msLeft_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer100msLeft_Callback))
+<P><STRONG><a name="[72]"></a>Timer100msLeft_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer100msLeft_Callback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer100msLeft_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[73]"></a>Timer100msRight_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer100msRight_Callback))
+<P><STRONG><a name="[74]"></a>Timer100msRight_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer100msRight_Callback))
 <BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer100msRight_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[72]"></a>Timer200msLeft_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer200msLeft_Callback))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer200msLeft_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[71]"></a>Timer50msLeft_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer50msLeft_Callback))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer50msLeft_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[74]"></a>Timer200msRight_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer200msRight_Callback))
-<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer200msRight_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[73]"></a>Timer50msRight_Callback</STRONG> (Thumb, 8 bytes, Stack size 0 bytes, freertos.o(i.Timer50msRight_Callback))
+<BR><BR>[Stack]<UL><LI>Max Depth = 128<LI>Call Chain = Timer50msRight_Callback &rArr; osSemaphoreRelease &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[193]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osSemaphoreRelease
 </UL>
