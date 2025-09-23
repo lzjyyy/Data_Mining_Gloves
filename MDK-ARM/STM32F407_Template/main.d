@@ -52,6 +52,7 @@ stm32f407_template\main.o: ../Core/Inc/adc.h
 stm32f407_template\main.o: ../Core/Inc/can.h
 stm32f407_template\main.o: ../Core/Inc/dma.h
 stm32f407_template\main.o: ../Core/Inc/spi.h
+stm32f407_template\main.o: ../Core/Inc/tim.h
 stm32f407_template\main.o: ../Core/Inc/usart.h
 stm32f407_template\main.o: ../Core/Inc/gpio.h
 stm32f407_template\main.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h

@@ -117,6 +117,10 @@ void Error_Handler(void);
 #define Dbg_Usart_Tx_GPIO_Port GPIOD
 #define Dbg_Usart_Rx_Pin GPIO_PIN_6
 #define Dbg_Usart_Rx_GPIO_Port GPIOD
+#define CAN2_RX_Pin_Pin GPIO_PIN_5
+#define CAN2_RX_Pin_GPIO_Port GPIOB
+#define CAN2_TX_Pin_Pin GPIO_PIN_6
+#define CAN2_TX_Pin_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
   uint8_t get_w5500_init_status(void);
 /* USER CODE END Private defines */

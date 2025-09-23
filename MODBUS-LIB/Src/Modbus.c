@@ -1127,7 +1127,7 @@ void StartTaskModbusMaster(void* argument)
 			modH->i8lastError = ERR_TIME_OUT;
 			modH->u16errCnt++;
 			xTaskNotify((TaskHandle_t)telegram.u32CurrentTask, modH->i8lastError, eSetValueWithOverwrite);
-			printf("request timeout\r\n");
+			// printf("request timeout\r\n");
 			continue;
 		}
 
@@ -1140,12 +1140,12 @@ void StartTaskModbusMaster(void* argument)
 		}
 
 #else
-		printf("Modbus recvbuf print: ");
-		for (int i = 0; i < modH->xBufferRX.u8available; i++)
-		{
-			printf("0x%x ", modH->xBufferRX.uxBuffer[i]);
-		}
-		printf("\r\n");
+		// printf("Modbus recvbuf print: ");
+		// for (int i = 0; i < modH->xBufferRX.u8available; i++)
+		// {
+		// 	printf("0x%x ", modH->xBufferRX.uxBuffer[i]);
+		// }
+		// printf("\r\n");
 		getRxBuffer(modH);
 #endif
 		if (modH->u8BufferSize < 6) {
@@ -1247,12 +1247,12 @@ void get_FC3(modbusHandler_t* modH)
 	uint8_t u8byte, i;
 	u8byte = 3;
 
-	printf("Recv bytes:");
-	for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
-	{
-		printf("0x%x ", modH->u8Buffer[i]);
-	}
-	printf("\r\n");
+	// printf("Recv bytes:");
+	// for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
+	// {
+	// 	printf("0x%x ", modH->u8Buffer[i]);
+	// }
+	// printf("\r\n");
 
 	modH->recvRawData.u8RawDataCnt = modH->u8Buffer[2] / 2;
 	for (i = 0; i < modH->u8Buffer[2] / 2; i++)
@@ -1283,12 +1283,12 @@ void get_FC6(modbusHandler_t* modH)
 	uint8_t u8byte, i;
 	u8byte = 3;
 
-	printf("Recv bytes:");
-	for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
-	{
-		printf("0x%x ", modH->u8Buffer[i]);
-	}
-	printf("\r\n");
+	// printf("Recv bytes:");
+	// for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
+	// {
+	// 	printf("0x%x ", modH->u8Buffer[i]);
+	// }
+	// printf("\r\n");
 }
 
 /**
@@ -1302,12 +1302,12 @@ void get_FC16(modbusHandler_t* modH)
 	uint8_t u8byte, i;
 	u8byte = 3;
 
-	printf("Recv bytes:");
-	for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
-	{
-		printf("0x%x ", modH->u8Buffer[i]);
-	}
-	printf("\r\n");
+	// printf("Recv bytes:");
+	// for (int i = 0; i < (modH->u8Buffer[2] + 5); i++)
+	// {
+	// 	printf("0x%x ", modH->u8Buffer[i]);
+	// }
+	// printf("\r\n");
 }
 
 

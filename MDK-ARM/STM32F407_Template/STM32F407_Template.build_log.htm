@@ -22,69 +22,12 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 D:\robot\keil_ws\stm32-f407_-template_v2\MDK-ARM\STM32F407_Template.uvprojx
-Project File Date:  09/22/2025
+Project File Date:  09/23/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling freertos.c...
-../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-../Core/Src/freertos.c(356): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
-../Core/Src/freertos.c(1017): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1024): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1031): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1054): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1068): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1074): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1214): warning:  #177-D: variable "notifyVal"  was declared but never referenced
-    uint32_t notifyVal;
-../Core/Src/freertos.c(1324): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1335): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1361): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1369): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1400): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1408): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1435): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1443): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1475): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1484): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1511): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1520): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(115): warning:  #177-D: variable "recv_msg"  was declared but never referenced
-  static const char recv_msg[] = "RS232 received msg:\r\n";
-../Core/Src/freertos.c(116): warning:  #177-D: variable "end_msg"  was declared but never referenced
-  static const char end_msg[] = "\r\n";
-../Core/Src/freertos.c(178): warning:  #177-D: variable "telegram"  was declared but never referenced
-  static modbus_t telegram[2];
-../Core/Src/freertos.c: 26 warnings, 0 errors
-linking...
-Program Size: Code=50272 RO-data=1236 RW-data=360 ZI-data=22904  
-FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 26 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -106,7 +49,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

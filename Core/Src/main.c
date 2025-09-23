@@ -15,14 +15,15 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
+  /* USER CODE END Header */
+  /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
 #include "adc.h"
 #include "can.h"
 #include "dma.h"
 #include "spi.h"
+#include "tim.h"
 #include "usart.h"
 #include "gpio.h"
 
@@ -105,15 +106,21 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
   MX_ADC1_Init();
-  MX_CAN1_Init();
   MX_DMA_Init();
+
+  MX_CAN1_Init();
+  MX_CAN2_Init();
+
   MX_USART1_UART_Init();
-	MX_USART2_UART_Init();
-	MX_USART3_UART_Init();
-	MX_UART4_Init();
-	MX_UART5_Init();
+  MX_USART2_UART_Init();
+  MX_USART3_UART_Init();
+  MX_UART4_Init();
+  MX_UART5_Init();
+
   MX_SPI2_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   Lift_Hold();
   RS485_Init();
@@ -150,10 +157,10 @@ int main(void)
   while (1)
   {
   }
-    /* USER CODE END WHILE */
+  /* USER CODE END WHILE */
 
-    /* USER CODE BEGIN 3 */
-  /* USER CODE END 3 */
+  /* USER CODE BEGIN 3 */
+/* USER CODE END 3 */
 }
 
 /**
@@ -162,8 +169,8 @@ int main(void)
   */
 void SystemClock_Config(void)
 {
-  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
 
   /** Configure the main internal regulator output voltage
   */
@@ -186,8 +193,8 @@ void SystemClock_Config(void)
   }
   /** Initializes the CPU, AHB and APB buses clocks
   */
-  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
-                              |RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
+    | RCC_CLOCKTYPE_PCLK1 | RCC_CLOCKTYPE_PCLK2;
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV4;
@@ -211,7 +218,7 @@ void SystemClock_Config(void)
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 {
   /* USER CODE BEGIN Callback 0 */
 
@@ -247,12 +254,12 @@ void Error_Handler(void)
   * @param  line: assert_param error line source number
   * @retval None
   */
-void assert_failed(uint8_t *file, uint32_t line)
+void assert_failed(uint8_t* file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
   /* User can add his own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
-  /* USER CODE END 6 */
+     /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */
 
