@@ -227,7 +227,10 @@ int keepalive(MQTTClient* c)
             TimerCountdownMS(&timer, 1000);
             int len = MQTTSerialize_pingreq(c->buf, c->buf_size);
             if (len > 0 && (rc = sendPacket(c, len, &timer)) == MQTT_SUCCESS) // send the ping packet
+            {
+                TimerCountdownMS(&c->last_received, 3000);
                 c->ping_outstanding = 1;
+            }
         }
     }
 
@@ -325,6 +328,7 @@ int cycle(MQTTClient* c, Timer* timer)
     }
 
     if (keepalive(c) != MQTT_SUCCESS) {
+        printf("keepalive failed\r\n");
         //check only keepalive FAILURE status so that previous FAILURE status can be considered as FAULT
         rc = FAILURE;
     }
