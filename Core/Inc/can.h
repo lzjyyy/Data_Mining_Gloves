@@ -16,8 +16,8 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
-/* Define to prevent recursive inclusion -------------------------------------*/
+  /* USER CODE END Header */
+  /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __CAN_H__
 #define __CAN_H__
 
@@ -25,26 +25,31 @@
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+  /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 
 /* USER CODE BEGIN Includes */
 
 /* USER CODE END Includes */
 
-extern CAN_HandleTypeDef hcan1;
-extern CAN_HandleTypeDef hcan2;
+  extern CAN_HandleTypeDef hcan1;
+  extern CAN_HandleTypeDef hcan2;
 
-/* USER CODE BEGIN Private defines */
+  /* USER CODE BEGIN Private defines */
+  // 临时结构体，用于保存中断接收的数据
+  typedef struct {
+    uint32_t StdId;
+    uint8_t DLC;
+    uint8_t Data[8];
+  } CAN_TempRxMsg;
+  /* USER CODE END Private defines */
 
-/* USER CODE END Private defines */
+  void MX_CAN1_Init(void);
+  void MX_CAN2_Init(void);
 
-void MX_CAN1_Init(void);
-void MX_CAN2_Init(void);
-
-/* USER CODE BEGIN Prototypes */
-
-/* USER CODE END Prototypes */
+  /* USER CODE BEGIN Prototypes */
+  void print_can1_recv_msg(void);
+  /* USER CODE END Prototypes */
 
 #ifdef __cplusplus
 }

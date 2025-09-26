@@ -7,7 +7,11 @@
     "freertos.h": "c",
     "freertosconfig.h": "c",
     "cmsis_os.h": "c",
-    "modbus.h": "c"
+    "modbus.h": "c",
+    "kinco.h": "c",
+    "kinco_ctrl.h": "c",
+    "servo.h": "c",
+    "can1.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

@@ -19,12 +19,21 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "can.h"
+#include "canfestival.h"
+
+extern CO_Data Kinco_Ctrl_Data;
 
 /* USER CODE BEGIN 0 */
 static CAN_RxHeaderTypeDef CAN1_Test_RxHeader;
 static CAN_RxHeaderTypeDef CAN2_Test_RxHeader;
 extern uint8_t CAN1_Test_RxData[8];
 extern uint8_t CAN2_Test_RxData[8];
+
+#define CAN_RX_BUFFER_SIZE 16
+
+volatile CAN_TempRxMsg can1_temp_rx;
+volatile uint8_t can1_rx_ready = 0;
+
 /* USER CODE END 0 */
 
 CAN_HandleTypeDef hcan1;
@@ -120,20 +129,20 @@ void MX_CAN2_Init(void)
 
 }
 
-static uint32_t HAL_RCC_CAN1_CLK_ENABLED=0;
+static uint32_t HAL_RCC_CAN1_CLK_ENABLED = 0;
 
 void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(canHandle->Instance==CAN1)
+  GPIO_InitTypeDef GPIO_InitStruct = { 0 };
+  if (canHandle->Instance == CAN1)
   {
-  /* USER CODE BEGIN CAN1_MspInit 0 */
+    /* USER CODE BEGIN CAN1_MspInit 0 */
 
-  /* USER CODE END CAN1_MspInit 0 */
-    /* CAN1 clock enable */
+    /* USER CODE END CAN1_MspInit 0 */
+      /* CAN1 clock enable */
     HAL_RCC_CAN1_CLK_ENABLED++;
-    if(HAL_RCC_CAN1_CLK_ENABLED==1){
+    if (HAL_RCC_CAN1_CLK_ENABLED == 1) {
       __HAL_RCC_CAN1_CLK_ENABLE();
     }
 
@@ -142,7 +151,7 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     PD0     ------> CAN1_RX
     PD1     ------> CAN1_TX
     */
-    GPIO_InitStruct.Pin = CAN1_RX_Pin_Pin|CAN1_TX_Pin_Pin;
+    GPIO_InitStruct.Pin = CAN1_RX_Pin_Pin | CAN1_TX_Pin_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -152,19 +161,19 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     /* CAN1 interrupt Init */
     HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-  /* USER CODE BEGIN CAN1_MspInit 1 */
+    /* USER CODE BEGIN CAN1_MspInit 1 */
 
-  /* USER CODE END CAN1_MspInit 1 */
+    /* USER CODE END CAN1_MspInit 1 */
   }
-  else if(canHandle->Instance==CAN2)
+  else if (canHandle->Instance == CAN2)
   {
-  /* USER CODE BEGIN CAN2_MspInit 0 */
+    /* USER CODE BEGIN CAN2_MspInit 0 */
 
-  /* USER CODE END CAN2_MspInit 0 */
-    /* CAN2 clock enable */
+    /* USER CODE END CAN2_MspInit 0 */
+      /* CAN2 clock enable */
     __HAL_RCC_CAN2_CLK_ENABLE();
     HAL_RCC_CAN1_CLK_ENABLED++;
-    if(HAL_RCC_CAN1_CLK_ENABLED==1){
+    if (HAL_RCC_CAN1_CLK_ENABLED == 1) {
       __HAL_RCC_CAN1_CLK_ENABLE();
     }
 
@@ -173,7 +182,7 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     PB5     ------> CAN2_RX
     PB6     ------> CAN2_TX
     */
-    GPIO_InitStruct.Pin = CAN2_RX_Pin_Pin|CAN2_TX_Pin_Pin;
+    GPIO_InitStruct.Pin = CAN2_RX_Pin_Pin | CAN2_TX_Pin_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
@@ -183,23 +192,23 @@ void HAL_CAN_MspInit(CAN_HandleTypeDef* canHandle)
     /* CAN2 interrupt Init */
     HAL_NVIC_SetPriority(CAN2_RX0_IRQn, 5, 0);
     HAL_NVIC_EnableIRQ(CAN2_RX0_IRQn);
-  /* USER CODE BEGIN CAN2_MspInit 1 */
+    /* USER CODE BEGIN CAN2_MspInit 1 */
 
-  /* USER CODE END CAN2_MspInit 1 */
+    /* USER CODE END CAN2_MspInit 1 */
   }
 }
 
 void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
 {
 
-  if(canHandle->Instance==CAN1)
+  if (canHandle->Instance == CAN1)
   {
-  /* USER CODE BEGIN CAN1_MspDeInit 0 */
+    /* USER CODE BEGIN CAN1_MspDeInit 0 */
 
-  /* USER CODE END CAN1_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* USER CODE END CAN1_MspDeInit 0 */
+      /* Peripheral clock disable */
     HAL_RCC_CAN1_CLK_ENABLED--;
-    if(HAL_RCC_CAN1_CLK_ENABLED==0){
+    if (HAL_RCC_CAN1_CLK_ENABLED == 0) {
       __HAL_RCC_CAN1_CLK_DISABLE();
     }
 
@@ -207,23 +216,23 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
     PD0     ------> CAN1_RX
     PD1     ------> CAN1_TX
     */
-    HAL_GPIO_DeInit(GPIOD, CAN1_RX_Pin_Pin|CAN1_TX_Pin_Pin);
+    HAL_GPIO_DeInit(GPIOD, CAN1_RX_Pin_Pin | CAN1_TX_Pin_Pin);
 
     /* CAN1 interrupt Deinit */
     HAL_NVIC_DisableIRQ(CAN1_RX0_IRQn);
-  /* USER CODE BEGIN CAN1_MspDeInit 1 */
+    /* USER CODE BEGIN CAN1_MspDeInit 1 */
 
-  /* USER CODE END CAN1_MspDeInit 1 */
+    /* USER CODE END CAN1_MspDeInit 1 */
   }
-  else if(canHandle->Instance==CAN2)
+  else if (canHandle->Instance == CAN2)
   {
-  /* USER CODE BEGIN CAN2_MspDeInit 0 */
+    /* USER CODE BEGIN CAN2_MspDeInit 0 */
 
-  /* USER CODE END CAN2_MspDeInit 0 */
-    /* Peripheral clock disable */
+    /* USER CODE END CAN2_MspDeInit 0 */
+      /* Peripheral clock disable */
     __HAL_RCC_CAN2_CLK_DISABLE();
     HAL_RCC_CAN1_CLK_ENABLED--;
-    if(HAL_RCC_CAN1_CLK_ENABLED==0){
+    if (HAL_RCC_CAN1_CLK_ENABLED == 0) {
       __HAL_RCC_CAN1_CLK_DISABLE();
     }
 
@@ -231,13 +240,13 @@ void HAL_CAN_MspDeInit(CAN_HandleTypeDef* canHandle)
     PB5     ------> CAN2_RX
     PB6     ------> CAN2_TX
     */
-    HAL_GPIO_DeInit(GPIOB, CAN2_RX_Pin_Pin|CAN2_TX_Pin_Pin);
+    HAL_GPIO_DeInit(GPIOB, CAN2_RX_Pin_Pin | CAN2_TX_Pin_Pin);
 
     /* CAN2 interrupt Deinit */
     HAL_NVIC_DisableIRQ(CAN2_RX0_IRQn);
-  /* USER CODE BEGIN CAN2_MspDeInit 1 */
+    /* USER CODE BEGIN CAN2_MspDeInit 1 */
 
-  /* USER CODE END CAN2_MspDeInit 1 */
+    /* USER CODE END CAN2_MspDeInit 1 */
   }
 }
 
@@ -246,15 +255,33 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
 {
   if (hcan->Instance == CAN1)
   {
-    if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN1_Test_RxHeader, CAN1_Test_RxData) == HAL_OK)
+    CAN_RxHeaderTypeDef RxHeader = { 0 };
+    uint8_t RxData[8] = { 0 };
+    Message rxm = { 0 };
+
+    // 读取 FIFO0 中消息
+    if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
     {
-      printf("CAN1 RX: ID=0x%03X DLC=%d Data=", CAN1_Test_RxHeader.StdId, CAN1_Test_RxHeader.DLC);
-      for (int i = 0; i < CAN1_Test_RxHeader.DLC; i++)
-      {
-        printf("%02X ", CAN1_Test_RxData[i]);
-      }
-      printf("\r\n");
+      // 接收错误处理
+      return;
     }
+
+    // 丢弃扩展帧
+    if (RxHeader.IDE == CAN_ID_EXT)
+      return;
+
+    rxm.cob_id = RxHeader.StdId;
+    rxm.rtr = (RxHeader.RTR == CAN_RTR_REMOTE) ? 1 : 0;
+    rxm.len = RxHeader.DLC;
+    memcpy(rxm.data, RxData, RxHeader.DLC);
+    // 保存到临时变量，主循环打印
+    can1_temp_rx.StdId = RxHeader.StdId;
+    can1_temp_rx.DLC = RxHeader.DLC;
+    memcpy(can1_temp_rx.Data, RxData, RxHeader.DLC);
+    can1_rx_ready = 1;
+
+    // 调用 CANopen 分发函数
+    canDispatch(&Kinco_Ctrl_Data, &rxm);
   }
   else if (hcan->Instance == CAN2)
   {
@@ -269,4 +296,17 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
     }
   }
 }
+
+void print_can1_recv_msg(void)
+{
+  if (can1_rx_ready)
+  {
+    printf("CAN1 RX: ID=0x%03X DLC=%d Data=", can1_temp_rx.StdId, can1_temp_rx.DLC);
+    for (int i = 0; i < can1_temp_rx.DLC; i++)
+      printf("%02X ", can1_temp_rx.Data[i]);
+    printf("\r\n");
+    can1_rx_ready = 0;
+  }
+}
+
 /* USER CODE END 1 */

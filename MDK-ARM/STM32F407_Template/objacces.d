@@ -20,3 +20,4 @@ stm32f407_template\objacces.o: ..\CANOpen\inc\sync.h
 stm32f407_template\objacces.o: ..\CANOpen\inc\nmtSlave.h
 stm32f407_template\objacces.o: ..\CANOpen\inc\nmtMaster.h
 stm32f407_template\objacces.o: ..\CANOpen\inc\emcy.h
+stm32f407_template\objacces.o: ..\CANOpen\hardware\Kinco_Ctrl.h

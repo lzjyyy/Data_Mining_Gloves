@@ -1,10 +1,10 @@
 Dependencies for Project 'STM32F407_Template', Target 'STM32F407_Template': (DO NOT MODIFY !)
 CompilerVersion: 5060960::V5.06 update 7 (build 960)::.\ARM_Compiler_5.06u7
-F (startup_stm32f407xx.s)(0x68D270C7)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1" -I ..\Core\Inc-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include--pd "__UVISION_VERSION SETA 541" --pd "STM32F407xx SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f407xx.lst --xref -o stm32f407_template\startup_stm32f407xx.o --depend stm32f407_template\startup_stm32f407xx.d)
+F (startup_stm32f407xx.s)(0x68D34DF3)(--cpu Cortex-M4.fp.sp -g --apcs=interwork --pd "__MICROLIB SETA 1" -I ..\Core\Inc-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include--pd "__UVISION_VERSION SETA 541" --pd "STM32F407xx SETA 1" --pd "_RTE_ SETA 1"--list startup_stm32f407xx.lst --xref -o stm32f407_template\startup_stm32f407xx.o --depend stm32f407_template\startup_stm32f407xx.d)
 F (..\Core\Src\rs485.c)(0x68C8D158)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\rs485.o --omf_browse stm32f407_template\rs485.crf --depend stm32f407_template\rs485.d)
 I (../Core/Inc/rs485.h)(0x68C8CE84)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -49,11 +49,11 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\ctype.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\float.h)(0x5E8E3CC2)
 I (../Core/Inc/cJSON.h)(0x68BE49ED)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
-F (..\Core\Src\tim.c)(0x68D270C2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\tim.o --omf_browse stm32f407_template\tim.crf --depend stm32f407_template\tim.d)
-I (../Core/Inc/tim.h)(0x68D270C2)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (..\Core\Src\tim.c)(0x68D350FA)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\tim.o --omf_browse stm32f407_template\tim.crf --depend stm32f407_template\tim.d)
+I (../Core/Inc/tim.h)(0x68D34DED)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -88,10 +88,10 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/main.c)(0x68D27171)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\main.o --omf_browse stm32f407_template\main.crf --depend stm32f407_template\main.d)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (../Core/Src/main.c)(0x68D391A0)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\main.o --omf_browse stm32f407_template\main.crf --depend stm32f407_template\main.d)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -128,7 +128,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -137,13 +137,13 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x68900E7C
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h)(0x68900E7C)
-I (../Core/Inc/adc.h)(0x68D270C1)
-I (../Core/Inc/can.h)(0x68D270C1)
-I (../Core/Inc/dma.h)(0x68D270C1)
-I (../Core/Inc/spi.h)(0x68D270C1)
-I (../Core/Inc/tim.h)(0x68D270C2)
-I (../Core/Inc/usart.h)(0x68D270C2)
-I (../Core/Inc/gpio.h)(0x68D270BD)
+I (../Core/Inc/adc.h)(0x68D34DEC)
+I (../Core/Inc/can.h)(0x68D4A471)
+I (../Core/Inc/dma.h)(0x68D34DEC)
+I (../Core/Inc/spi.h)(0x68D34DED)
+I (../Core/Inc/tim.h)(0x68D34DED)
+I (../Core/Inc/usart.h)(0x68D34DED)
+I (../Core/Inc/gpio.h)(0x68D34DE7)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
 I (../Core/Inc/rs485.h)(0x68C8CE84)
@@ -157,11 +157,11 @@ I (..\MODBUS-LIB\Config\ModbusConfig.h)(0x68CCF3E3)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\inttypes.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x68900E7C)
-F (../Core/Src/gpio.c)(0x68D270BD)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\gpio.o --omf_browse stm32f407_template\gpio.crf --depend stm32f407_template\gpio.d)
-I (../Core/Inc/gpio.h)(0x68D270BD)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (../Core/Src/gpio.c)(0x68D34DE7)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\gpio.o --omf_browse stm32f407_template\gpio.crf --depend stm32f407_template\gpio.d)
+I (../Core/Inc/gpio.h)(0x68D34DE7)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -196,11 +196,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/freertos.c)(0x68D27D35)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\freertos.o --omf_browse stm32f407_template\freertos.crf --depend stm32f407_template\freertos.d)
+F (../Core/Src/freertos.c)(0x68D5F110)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\freertos.o --omf_browse stm32f407_template\freertos.crf --depend stm32f407_template\freertos.d)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -208,9 +208,9 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x68900E7C)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -247,9 +247,9 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h)(0x68900E
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
-I (../Core/Inc/gpio.h)(0x68D270BD)
-I (../Core/Inc/usart.h)(0x68D270C2)
-I (../Core/Inc/adc.h)(0x68D270C1)
+I (../Core/Inc/gpio.h)(0x68D34DE7)
+I (../Core/Inc/usart.h)(0x68D34DED)
+I (../Core/Inc/adc.h)(0x68D34DEC)
 I (../Core/Inc/rs485.h)(0x68C8CE84)
 I (..\Ethernet\w5500_port.h)(0x68D0B018)
 I (..\Ethernet\wizchip_conf.h)(0x68B02BAE)
@@ -265,7 +265,7 @@ I (..\MQTT\MQTTFormat.h)(0x65A93EE8)
 I (..\MQTT\StackTrace.h)(0x65A93EE8)
 I (..\MQTT\mqtt_timer.h)(0x68B15D22)
 I (..\MQTT\mqtt_network.h)(0x68B1614F)
-I (../Core/Inc/can.h)(0x68D270C1)
+I (../Core/Inc/can.h)(0x68D4A471)
 I (../Core/Inc/cJSON.h)(0x68BE49ED)
 I (../Core/Inc/gripper.h)(0x68CD4DB5)
 I (..\MODBUS-LIB\Inc\Modbus.h)(0x68CE6F95)
@@ -273,7 +273,28 @@ I (..\MODBUS-LIB\Config\ModbusConfig.h)(0x68CCF3E3)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\inttypes.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x68900E7C)
-F (../Core/Src/adc.c)(0x68D270C1)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\adc.o --omf_browse stm32f407_template\adc.crf --depend stm32f407_template\adc.d)
+I (..\CANOpen\hardware\Kinco_Ctrl.h)(0x68D5F38D)
+I (..\CANOpen\inc\data.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
+I (..\CANOpen\inc\def.h)(0x5AF53B62)
+I (..\CANOpen\hardware\config.h)(0x68D25E40)
+I (..\CANOpen\inc\can.h)(0x5AF53B62)
+I (..\CANOpen\inc\objdictdef.h)(0x5AF53B62)
+I (..\CANOpen\inc\objacces.h)(0x5AF53B62)
+I (..\CANOpen\inc\sdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\timer.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\timerscfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\pdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\states.h)(0x5AF53B62)
+I (..\CANOpen\inc\lifegrd.h)(0x5AF53B62)
+I (..\CANOpen\inc\sync.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
+I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
+I (..\CANOpen\hardware\timer5.h)(0x68D353EF)
+I (../Core/Inc/servo.h)(0x68D4EAB0)
+F (../Core/Src/adc.c)(0x68D34DEC)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\adc.o --omf_browse stm32f407_template\adc.crf --depend stm32f407_template\adc.d)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
 I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
@@ -284,7 +305,7 @@ I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
 I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
@@ -309,53 +330,14 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
-I (../Core/Inc/adc.h)(0x68D270C1)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/adc.h)(0x68D34DEC)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/can.c)(0x68D270C1)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\can.o --omf_browse stm32f407_template\can.crf --depend stm32f407_template\can.d)
-I (../Core/Inc/can.h)(0x68D270C1)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (../Core/Src/can.c)(0x68D4A45A)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\can.o --omf_browse stm32f407_template\can.crf --depend stm32f407_template\can.d)
+I (../Core/Inc/can.h)(0x68D4A471)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
-I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (..\Core\Src\dma.c)(0x68D270C1)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\dma.o --omf_browse stm32f407_template\dma.crf --depend stm32f407_template\dma.d)
-I (../Core/Inc/dma.h)(0x68D270C1)
-I (../Core/Inc/main.h)(0x68D270C3)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -390,51 +372,31 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/spi.c)(0x68D270C1)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\spi.o --omf_browse stm32f407_template\spi.crf --depend stm32f407_template\spi.d)
-I (../Core/Inc/spi.h)(0x68D270C1)
-I (../Core/Inc/main.h)(0x68D270C3)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
-I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
-I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
-I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
-I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
-I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/usart.c)(0x68D270C2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\usart.o --omf_browse stm32f407_template\usart.crf --depend stm32f407_template\usart.d)
+I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
-I (../Core/Inc/usart.h)(0x68D270C2)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
+I (..\CANOpen\inc\data.h)(0x5AF53B62)
+I (..\CANOpen\inc\def.h)(0x5AF53B62)
+I (..\CANOpen\hardware\config.h)(0x68D25E40)
+I (..\CANOpen\inc\can.h)(0x5AF53B62)
+I (..\CANOpen\inc\objdictdef.h)(0x5AF53B62)
+I (..\CANOpen\inc\objacces.h)(0x5AF53B62)
+I (..\CANOpen\inc\sdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\timer.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\timerscfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\pdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\states.h)(0x5AF53B62)
+I (..\CANOpen\inc\lifegrd.h)(0x5AF53B62)
+I (..\CANOpen\inc\sync.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
+I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
+F (..\Core\Src\dma.c)(0x68D34DEC)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\dma.o --omf_browse stm32f407_template\dma.crf --depend stm32f407_template\dma.d)
+I (../Core/Inc/dma.h)(0x68D34DEC)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -469,10 +431,11 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/stm32f4xx_it.c)(0x68D270C2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_it.o --omf_browse stm32f407_template\stm32f4xx_it.crf --depend stm32f407_template\stm32f4xx_it.d)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (../Core/Src/spi.c)(0x68D34DED)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\spi.o --omf_browse stm32f407_template\spi.crf --depend stm32f407_template\spi.d)
+I (../Core/Inc/spi.h)(0x68D34DED)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -507,11 +470,12 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-I (../Core/Inc/stm32f4xx_it.h)(0x68D270C2)
-F (../Core/Src/stm32f4xx_hal_msp.c)(0x68D270C3)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_msp.o --omf_browse stm32f407_template\stm32f4xx_hal_msp.crf --depend stm32f407_template\stm32f4xx_hal_msp.d)
-I (../Core/Inc/main.h)(0x68D270C3)
+F (../Core/Src/usart.c)(0x68D34DED)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\usart.o --omf_browse stm32f407_template\usart.crf --depend stm32f407_template\usart.d)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
+I (../Core/Inc/usart.h)(0x68D34DED)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -546,9 +510,10 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
-F (../Core/Src/stm32f4xx_hal_timebase_tim.c)(0x68D270C3)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_timebase_tim.o --omf_browse stm32f407_template\stm32f4xx_hal_timebase_tim.crf --depend stm32f407_template\stm32f4xx_hal_timebase_tim.d)
+F (../Core/Src/stm32f4xx_it.c)(0x68D34DEE)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_it.o --omf_browse stm32f407_template\stm32f4xx_it.crf --depend stm32f407_template\stm32f4xx_it.d)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -582,9 +547,147 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
+I (../Core/Inc/stm32f4xx_it.h)(0x68D34DEE)
+F (../Core/Src/stm32f4xx_hal_msp.c)(0x68D34DEE)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_msp.o --omf_browse stm32f407_template\stm32f4xx_hal_msp.crf --depend stm32f407_template\stm32f4xx_hal_msp.d)
+I (../Core/Inc/main.h)(0x68D34DEF)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
+F (../Core/Src/stm32f4xx_hal_timebase_tim.c)(0x68D34DEE)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_timebase_tim.o --omf_browse stm32f407_template\stm32f4xx_hal_timebase_tim.crf --depend stm32f407_template\stm32f4xx_hal_timebase_tim.d)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
+F (..\Core\Src\servo.c)(0x68D52E9A)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\servo.o --omf_browse stm32f407_template\servo.crf --depend stm32f407_template\servo.d)
+I (../Core/Inc/servo.h)(0x68D4EAB0)
+I (..\CANOpen\hardware\timer5.h)(0x68D353EF)
+I (..\CANOpen\inc\stm32\timerscfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
+I (..\CANOpen\inc\data.h)(0x5AF53B62)
+I (..\CANOpen\inc\def.h)(0x5AF53B62)
+I (..\CANOpen\hardware\config.h)(0x68D25E40)
+I (..\CANOpen\inc\can.h)(0x5AF53B62)
+I (..\CANOpen\inc\objdictdef.h)(0x5AF53B62)
+I (..\CANOpen\inc\objacces.h)(0x5AF53B62)
+I (..\CANOpen\inc\sdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\timer.h)(0x5AF53B62)
+I (..\CANOpen\inc\pdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\states.h)(0x5AF53B62)
+I (..\CANOpen\inc\lifegrd.h)(0x5AF53B62)
+I (..\CANOpen\inc\sync.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
+I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
+I (..\CANOpen\hardware\Kinco_Ctrl.h)(0x68D5F38D)
+I (../Core/Inc/can.h)(0x68D4A471)
+I (../Core/Inc/main.h)(0x68D34DEF)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_adc.o --omf_browse stm32f407_template\stm32f4xx_hal_adc.crf --depend stm32f407_template\stm32f4xx_hal_adc.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -620,7 +723,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_adc_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_adc_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_adc_ex.crf --depend stm32f407_template\stm32f4xx_hal_adc_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -657,7 +760,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_ll_adc.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_ll_adc.o --omf_browse stm32f407_template\stm32f4xx_ll_adc.crf --depend stm32f407_template\stm32f4xx_ll_adc.d)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_rcc.o --omf_browse stm32f407_template\stm32f4xx_hal_rcc.crf --depend stm32f407_template\stm32f4xx_hal_rcc.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -693,7 +796,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_rcc_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_rcc_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_rcc_ex.crf --depend stm32f407_template\stm32f4xx_hal_rcc_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -729,7 +832,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_flash.o --omf_browse stm32f407_template\stm32f4xx_hal_flash.crf --depend stm32f407_template\stm32f4xx_hal_flash.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -765,7 +868,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_flash_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_flash_ex.crf --depend stm32f407_template\stm32f4xx_hal_flash_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -801,7 +904,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_flash_ramfunc.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_flash_ramfunc.o --omf_browse stm32f407_template\stm32f4xx_hal_flash_ramfunc.crf --depend stm32f407_template\stm32f4xx_hal_flash_ramfunc.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -837,7 +940,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_gpio.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_gpio.o --omf_browse stm32f407_template\stm32f4xx_hal_gpio.crf --depend stm32f407_template\stm32f4xx_hal_gpio.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -873,7 +976,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_dma_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_dma_ex.crf --depend stm32f407_template\stm32f4xx_hal_dma_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -909,7 +1012,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_dma.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_dma.o --omf_browse stm32f407_template\stm32f4xx_hal_dma.crf --depend stm32f407_template\stm32f4xx_hal_dma.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -945,7 +1048,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_pwr.o --omf_browse stm32f407_template\stm32f4xx_hal_pwr.crf --depend stm32f407_template\stm32f4xx_hal_pwr.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -981,7 +1084,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_pwr_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_pwr_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_pwr_ex.crf --depend stm32f407_template\stm32f4xx_hal_pwr_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1017,7 +1120,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_cortex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_cortex.o --omf_browse stm32f407_template\stm32f4xx_hal_cortex.crf --depend stm32f407_template\stm32f4xx_hal_cortex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1053,7 +1156,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal.o --omf_browse stm32f407_template\stm32f4xx_hal.crf --depend stm32f407_template\stm32f4xx_hal.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1089,7 +1192,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_exti.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_exti.o --omf_browse stm32f407_template\stm32f4xx_hal_exti.crf --depend stm32f407_template\stm32f4xx_hal_exti.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1125,7 +1228,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_can.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_can.o --omf_browse stm32f407_template\stm32f4xx_hal_can.crf --depend stm32f407_template\stm32f4xx_hal_can.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1161,7 +1264,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_spi.o --omf_browse stm32f407_template\stm32f4xx_hal_spi.crf --depend stm32f407_template\stm32f4xx_hal_spi.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1197,7 +1300,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_tim.o --omf_browse stm32f407_template\stm32f4xx_hal_tim.crf --depend stm32f407_template\stm32f4xx_hal_tim.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1233,7 +1336,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_tim_ex.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_tim_ex.o --omf_browse stm32f407_template\stm32f4xx_hal_tim_ex.crf --depend stm32f407_template\stm32f4xx_hal_tim_ex.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1269,7 +1372,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 F (../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_uart.c)(0x68900EB6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\stm32f4xx_hal_uart.o --omf_browse stm32f407_template\stm32f4xx_hal_uart.crf --depend stm32f407_template\stm32f4xx_hal_uart.d)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1314,7 +1417,7 @@ I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
 I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
@@ -1343,7 +1446,7 @@ F (../Middlewares/Third_Party/FreeRTOS/Source/croutine.c)(0x68900E7C)(--c99 -c -
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1357,7 +1460,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1372,7 +1475,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1385,7 +1488,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1399,7 +1502,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1408,13 +1511,13 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h)(0x68900E7C
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/stream_buffer.h)(0x68900E7C)
-F (../Middlewares/Third_Party/FreeRTOS/Source/tasks.c)(0x68900E7C)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\tasks.o --omf_browse stm32f407_template\tasks.crf --depend stm32f407_template\tasks.d)
+F (../Middlewares/Third_Party/FreeRTOS/Source/tasks.c)(0x68D4A554)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\tasks.o --omf_browse stm32f407_template\tasks.crf --depend stm32f407_template\tasks.d)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1429,7 +1532,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1447,7 +1550,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
 I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1468,7 +1571,7 @@ I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
 I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
@@ -1497,7 +1600,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1509,7 +1612,7 @@ F (../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/port.c)(0x6
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1540,9 +1643,9 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (..\Ethernet\w5500.h)(0x6632F091)
 F (..\Ethernet\w5500_port.c)(0x68D0B027)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\w5500_port.o --omf_browse stm32f407_template\w5500_port.crf --depend stm32f407_template\w5500_port.d)
 I (..\Ethernet\w5500_port.h)(0x68D0B018)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1581,7 +1684,7 @@ I (..\Ethernet\wizchip_conf.h)(0x68B02BAE)
 I (..\Ethernet\w5500.h)(0x6632F091)
 I (..\Ethernet\socket.h)(0x6632F091)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1711,9 +1814,9 @@ F (..\MQTT\mqtt_network.c)(0x68B17618)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROL
 I (..\MQTT\mqtt_network.h)(0x68B1614F)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (..\Ethernet\w5500_port.h)(0x68D0B018)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1757,7 +1860,7 @@ I (..\MQTT\mqtt_timer.h)(0x68B15D22)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1767,7 +1870,7 @@ F (..\MODBUS-LIB\Src\Modbus.c)(0x68D26D83)(--c99 -c --cpu Cortex-M4.fp.sp -D__MI
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1778,9 +1881,9 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x68900E7C)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1822,7 +1925,7 @@ F (..\MODBUS-LIB\Src\UARTCallback.c)(0x68D11B66)(--c99 -c --cpu Cortex-M4.fp.sp 
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h)(0x68900E7C)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
-I (../Core/Inc/FreeRTOSConfig.h)(0x68D270C0)
+I (../Core/Inc/FreeRTOSConfig.h)(0x68D34DEB)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h)(0x68900E7C)
@@ -1832,9 +1935,9 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h)(0x68900E
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/task.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/list.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h)(0x68900E7C)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -1874,7 +1977,7 @@ I (../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h)(0x68900E7C)
 I (../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h)(0x68900E7C)
 F (..\CANOpen\src\dcf.c)(0x68D25EC2)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\dcf.o --omf_browse stm32f407_template\dcf.crf --depend stm32f407_template\dcf.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -1897,7 +2000,7 @@ I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 I (..\CANOpen\inc\dcf.h)(0x5AF53B62)
 F (..\CANOpen\src\emcy.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\emcy.o --omf_browse stm32f407_template\emcy.crf --depend stm32f407_template\emcy.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -1920,7 +2023,7 @@ I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\lifegrd.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\lifegrd.o --omf_browse stm32f407_template\lifegrd.crf --depend stm32f407_template\lifegrd.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -1944,7 +2047,7 @@ I (..\CANOpen\inc\dcf.h)(0x5AF53B62)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\lss.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\lss.o --omf_browse stm32f407_template\lss.crf --depend stm32f407_template\lss.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -1969,7 +2072,7 @@ I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\nmtMaster.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\nmtmaster.o --omf_browse stm32f407_template\nmtmaster.crf --depend stm32f407_template\nmtmaster.d)
 I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -1991,7 +2094,7 @@ I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\nmtSlave.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\nmtslave.o --omf_browse stm32f407_template\nmtslave.crf --depend stm32f407_template\nmtslave.d)
 I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2012,9 +2115,9 @@ I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
 I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
-F (..\CANOpen\src\objacces.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\objacces.o --omf_browse stm32f407_template\objacces.crf --depend stm32f407_template\objacces.d)
+F (..\CANOpen\src\objacces.c)(0x68D5F263)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\objacces.o --omf_browse stm32f407_template\objacces.crf --depend stm32f407_template\objacces.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2033,9 +2136,10 @@ I (..\CANOpen\inc\sync.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
-F (..\CANOpen\src\pdo.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\pdo.o --omf_browse stm32f407_template\pdo.crf --depend stm32f407_template\pdo.d)
+I (..\CANOpen\hardware\Kinco_Ctrl.h)(0x68D5F38D)
+F (..\CANOpen\src\pdo.c)(0x68D5EF9A)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\pdo.o --omf_browse stm32f407_template\pdo.crf --depend stm32f407_template\pdo.d)
 I (..\CANOpen\inc\pdo.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2061,7 +2165,7 @@ I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdlib.h)(0x5E8E3CC2)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 I (..\CANOpen\hardware\config.h)(0x68D25E40)
 I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2082,7 +2186,7 @@ I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
 F (..\CANOpen\src\states.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\states.o --omf_browse stm32f407_template\states.crf --depend stm32f407_template\states.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2104,7 +2208,7 @@ I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\sync.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\sync.o --omf_browse stm32f407_template\sync.crf --depend stm32f407_template\sync.d)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2126,7 +2230,7 @@ I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
 I (..\CANOpen\inc\stm32\canfestival.h)(0x68D25DF7)
 I (..\CANOpen\inc\sysdep.h)(0x5AF53B62)
 F (..\CANOpen\src\timer.c)(0x5AF53B62)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\timer.o --omf_browse stm32f407_template\timer.crf --depend stm32f407_template\timer.d)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
@@ -2146,11 +2250,33 @@ I (..\CANOpen\inc\sync.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
-F (..\CANOpen\hardware\can1.c)(0x68D26A8F)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\can1.o --omf_browse stm32f407_template\can1.crf --depend stm32f407_template\can1.d)
+F (..\CANOpen\hardware\Kinco_Ctrl.c)(0x68D5F3D0)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\kinco_ctrl.o --omf_browse stm32f407_template\kinco_ctrl.crf --depend stm32f407_template\kinco_ctrl.d)
+I (..\CANOpen\hardware\Kinco_Ctrl.h)(0x68D5F38D)
+I (..\CANOpen\inc\data.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
+I (..\CANOpen\inc\def.h)(0x5AF53B62)
+I (..\CANOpen\hardware\config.h)(0x68D25E40)
+I (..\CANOpen\inc\can.h)(0x5AF53B62)
+I (..\CANOpen\inc\objdictdef.h)(0x5AF53B62)
+I (..\CANOpen\inc\objacces.h)(0x5AF53B62)
+I (..\CANOpen\inc\sdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\timer.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\timerscfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\pdo.h)(0x5AF53B62)
+I (..\CANOpen\inc\states.h)(0x5AF53B62)
+I (..\CANOpen\inc\lifegrd.h)(0x5AF53B62)
+I (..\CANOpen\inc\sync.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
+I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
+I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
+F (..\CANOpen\hardware\can1.c)(0x68D4A67D)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\can1.o --omf_browse stm32f407_template\can1.crf --depend stm32f407_template\can1.d)
 I (..\CANOpen\hardware\can1.h)(0x68D26A2E)
-I (../Core/Inc/main.h)(0x68D270C3)
+I (../Core/Inc/main.h)(0x68D34DEF)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
-I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D270C3)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
 I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
@@ -2186,7 +2312,7 @@ I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
 I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)
 I (..\CANOpen\inc\data.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
 I (..\CANOpen\inc\def.h)(0x5AF53B62)
@@ -2204,10 +2330,47 @@ I (..\CANOpen\inc\sync.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtSlave.h)(0x5AF53B62)
 I (..\CANOpen\inc\nmtMaster.h)(0x5AF53B62)
 I (..\CANOpen\inc\emcy.h)(0x5AF53B62)
-F (..\CANOpen\hardware\timer5.c)(0x68D26B7A)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\timer5.o --omf_browse stm32f407_template\timer5.crf --depend stm32f407_template\timer5.d)
-I (..\CANOpen\hardware\timer5.h)(0x68D26BAC)
+F (..\CANOpen\hardware\timer5.c)(0x68D390C6)(--c99 -c --cpu Cortex-M4.fp.sp -D__MICROLIB -g -O3 --apcs=interwork --split_sections -I ../Core/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc -I ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy -I ../Drivers/CMSIS/Device/ST/STM32F4xx/Include -I ../Drivers/CMSIS/Include -I ..\FreeRTOS\include -I ..\FreeRTOS\portable\ARM_CM4F -I ..\FreeRTOS\portable\MemMang -I ../Middlewares/Third_Party/FreeRTOS/Source/include -I ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F -I ..\Ethernet -I ..\MQTT -I ..\MODBUS-LIB\Inc -I ..\MODBUS-LIB\Config -I ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2 -I ..\CANOpen\inc -I ..\CANOpen\inc\stm32 -I ..\CANOpen\dictionary -I ..\CANOpen\hardware-I.\RTE\_STM32F407_Template-ID:\Keil_v5\ARM\Packs\ARM\CMSIS\6.1.0\CMSIS\Core\Include-D__UVISION_VERSION="541" -DSTM32F407xx -D_RTE_ -DUSE_HAL_DRIVER -DSTM32F407xx-o stm32f407_template\timer5.o --omf_browse stm32f407_template\timer5.crf --depend stm32f407_template\timer5.d)
+I (..\CANOpen\hardware\timer5.h)(0x68D353EF)
 I (..\CANOpen\inc\stm32\timerscfg.h)(0x5AF53B62)
-I (..\CANOpen\inc\stm32\applicfg.h)(0x5AF53B62)
+I (..\CANOpen\inc\stm32\applicfg.h)(0x68D4EBBB)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdio.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdint.h)(0x5E8E3CC2)
 I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\string.h)(0x5E8E3CC2)
+I (../Core/Inc/tim.h)(0x68D34DED)
+I (../Core/Inc/main.h)(0x68D34DEF)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h)(0x68900EB6)
+I (../Core/Inc/stm32f4xx_hal_conf.h)(0x68D34DEE)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_def.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h)(0x68900EB6)
+I (../Drivers/CMSIS/Include/core_cm4.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_version.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_compiler.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/cmsis_armcc.h)(0x68900E78)
+I (../Drivers/CMSIS/Include/mpu_armv7.h)(0x68900E78)
+I (../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stddef.h)(0x5E8E3CC2)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_exti.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_dma_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_cortex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_ll_adc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_adc_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_can.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_flash_ramfunc.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_pwr_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_spi.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h)(0x68900EB6)
+I (../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h)(0x68900EB6)
+I (D:\Keil_v5\ARM\ARM_Compiler_5.06u7\include\stdbool.h)(0x5E8E3CC2)

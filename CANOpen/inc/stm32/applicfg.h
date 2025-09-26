@@ -1,5 +1,5 @@
 /*
-This file is part of CanFestival, a library implementing CanOpen Stack. 
+This file is part of CanFestival, a library implementing CanOpen Stack.
 
 Copyright (C): Edouard TISSERANT and Francis DUPIN
 
@@ -46,7 +46,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  data[3] = 0xCD;
  */
 
-/* Integers */
+ /* Integers */
 #define INTEGER8 int8_t
 #define INTEGER16 int16_t
 #define INTEGER24 int32_t
@@ -70,6 +70,9 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define REAL32	float
 #define REAL64 double
 
+#define DEBUG_ERR_CONSOLE_ON
+#define DEBUG_WAR_CONSOLE_ON
+
 /* Definition of error and warning macros */
 /* -------------------------------------- */
 #	define MSG(...) printf (__VA_ARGS__)
@@ -78,7 +81,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* --------------------- */
 #ifdef DEBUG_ERR_CONSOLE_ON
 #    define MSG_ERR(num, str, val)            \
-          MSG("%s,%d : 0X%x %s 0X%x \n",__FILE__, __LINE__,num, str, val);
+          MSG("%s,%d : 0X%x %s 0X%x \r\n",__FILE__, __LINE__,num, str, val);
 #else
 #    define MSG_ERR(num, str, val)
 #endif
@@ -87,7 +90,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 /* --------------------- */
 #ifdef DEBUG_WAR_CONSOLE_ON
 #    define MSG_WAR(num, str, val)          \
-          MSG("%s,%d : 0X%x %s 0X%x \n",__FILE__, __LINE__,num, str, val);
+          MSG("%s,%d : 0X%x %s 0X%x \r\n",__FILE__, __LINE__,num, str, val);
 #else
 #    define MSG_WAR(num, str, val)
 #endif

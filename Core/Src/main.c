@@ -106,12 +106,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
-
   MX_ADC1_Init();
-  MX_DMA_Init();
 
-  MX_CAN1_Init();
-  MX_CAN2_Init();
+  MX_DMA_Init();
 
   MX_USART1_UART_Init();
   MX_USART2_UART_Init();
@@ -119,8 +116,11 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
 
+  MX_CAN1_Init();
+
   MX_SPI2_Init();
-  MX_TIM5_Init();
+  MX_CAN2_Init();
+  // MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   Lift_Hold();
   RS485_Init();
@@ -218,23 +218,23 @@ void SystemClock_Config(void)
   * @param  htim : TIM handle
   * @retval None
   */
-void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-{
-  /* USER CODE BEGIN Callback 0 */
+  // void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
+  // {
+  //   /* USER CODE BEGIN Callback 0 */
 
-  /* USER CODE END Callback 0 */
-  if (htim->Instance == TIM6) {
-    HAL_IncTick();
-  }
-  /* USER CODE BEGIN Callback 1 */
+  //   /* USER CODE END Callback 0 */
+  //   if (htim->Instance == TIM6) {
+  //     HAL_IncTick();
+  //   }
+  //   /* USER CODE BEGIN Callback 1 */
 
-  /* USER CODE END Callback 1 */
-}
+  //   /* USER CODE END Callback 1 */
+  // }
 
-/**
-  * @brief  This function is executed in case of error occurrence.
-  * @retval None
-  */
+  /**
+    * @brief  This function is executed in case of error occurrence.
+    * @retval None
+    */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */

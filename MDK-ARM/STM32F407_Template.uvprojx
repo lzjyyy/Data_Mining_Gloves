@@ -515,6 +515,11 @@
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f4xx_hal_timebase_tim.c</FilePath>
             </File>
+            <File>
+              <FileName>servo.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\servo.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -1091,6 +1096,11 @@
               <FileName>timer.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CANOpen\src\timer.c</FilePath>
+            </File>
+            <File>
+              <FileName>Kinco_Ctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\hardware\Kinco_Ctrl.c</FilePath>
             </File>
           </Files>
         </Group>
