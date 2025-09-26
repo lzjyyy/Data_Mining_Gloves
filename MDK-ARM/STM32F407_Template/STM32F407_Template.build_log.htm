@@ -42,6 +42,8 @@ compiling freertos.c...
     can1TestTaskHandle = osThreadNew(StartCan1TestTask, NULL, &can1TestTask_attributes);
 ../Core/Src/freertos.c(379): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
     can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
+../Core/Src/freertos.c(383): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
 ../Core/Src/freertos.c(438): warning:  #188-D: enumerated type mixed with another type
     HAL_StatusTypeDef send_result = 0;
 ../Core/Src/freertos.c(474): warning:  #188-D: enumerated type mixed with another type
@@ -102,11 +104,11 @@ compiling freertos.c...
       if (notifyVal != ERR_OK_QUERY) {
 ../Core/Src/freertos.c(135): warning:  #177-D: variable "CAN1_Test_TxMailBox"  was declared but never referenced
   static uint32_t CAN1_Test_TxMailBox;
-../Core/Src/freertos.c: 37 warnings, 0 errors
+../Core/Src/freertos.c: 38 warnings, 0 errors
 linking...
-Program Size: Code=52356 RO-data=1356 RW-data=2156 ZI-data=23260  
+Program Size: Code=67928 RO-data=1732 RW-data=2188 ZI-data=23276  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 37 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 38 Warning(s).
 
 <h2>Software Packages used:</h2>
 

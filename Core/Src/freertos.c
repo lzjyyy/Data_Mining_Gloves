@@ -202,7 +202,7 @@ const osThreadAttr_t modbusMasterTestTask_attributes = {
 
 const osThreadAttr_t can1TestTask_attributes = {
   .name = "can1TestTask",
-  .stack_size = 2048 * 4,
+  .stack_size = 512 * 4,
   .priority = (osPriority_t)osPriorityNormal,
 };
 
@@ -380,16 +380,16 @@ void MX_FREERTOS_Init(void) {
 
   // modbusMasterTestHandle = osThreadNew(StartModbusMasterTestTask, NULL, &modbusMasterTestTask_attributes);
 
-  // mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
+  mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
 
   // osThreadDef(canTask, StartCanTask, osPriorityAboveNormal, 0, 512);
   // canTaskHandle = osThreadCreate(osThread(canTask), NULL);
 
   // osThreadDef(monitorTask, StartMonitorTask, osPriorityLow, 0, 256);
   // monitorTaskHandle = osThreadCreate(osThread(monitorTask), NULL);
-  // leftGripperTaskHandle = osThreadNew(LeftGripperTask, NULL, &leftGripperTask_attributes);
+  leftGripperTaskHandle = osThreadNew(LeftGripperTask, NULL, &leftGripperTask_attributes);
 
-  // rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
+  rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
 
   // gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
   /* USER CODE END RTOS_THREADS */
