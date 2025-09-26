@@ -44,7 +44,7 @@ int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subInde
         cnt++;
         osDelay(1);
     }
-    printf("Write time:%d\r\n", cnt);
+    // printf("Write time:%d\r\n", cnt);
 
     return SDO_OK;
 }
@@ -94,7 +94,7 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
         cnt++;
         osDelay(1);
     }
-    printf("Read time:%d\r\n", cnt);
+    // printf("Read time:%d\r\n", cnt);
 
     switch (dataType)
     {
@@ -108,6 +108,26 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
     return SDO_ERR_TIMEOUT;
 }
 
+void Kinco_MasterNode_Init(void)
+{
+    setNodeId(&Kinco_Ctrl_Data, KINCO_MASTER_MODE_ID);
+    Kinco_Ctrl_Data.canHandle = 0x01;
+    setState(&Kinco_Ctrl_Data, Initialisation);
+    //  setState(&Kinco_Ctrl_Data, Disconnected);
+    setState(&Kinco_Ctrl_Data, Pre_operational);
+    setState(&Kinco_Ctrl_Data, Operational);
+    // stopSYNC(&Kinco_Ctrl_Data);
+
+    masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Stop_Node);
+    // Step 1: Reset Communication
+    masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Reset_Comunication);
+    osDelay(200); // 等待200ms，保证从站复位完成
+
+    // Step 2: Enter Pre - Operational
+    masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Enter_PreOperational);
+    osDelay(50);
+}
+
 void Kinco_Setup(void)
 {
     int result = 0;
@@ -116,7 +136,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write SERVO_WORK_MODE_INDEX Success\r\n");
+        // printf("Kinco SDO Write SERVO_WORK_MODE_INDEX Success\r\n");
     }
     else
     {
@@ -128,15 +148,15 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO read SERVO_WORK_MODE_INDEX Success,work_mode:0x%x\r\n", work_mode);
+        // printf("Kinco SDO read SERVO_WORK_MODE_INDEX Success,work_mode:0x%x\r\n", work_mode);
     }
     else
     {
-        printf("Kinco SDO read SERVO_WORK_MODE_INDEX Success\r\n");
+        printf("Kinco SDO read SERVO_WORK_MODE_INDEX Failed\r\n");
     }
     if (work_mode == POSITION_MODE)
     {
-        printf("Kinco set position mode Success\r\n");
+        // printf("Kinco set position mode Success\r\n");
     }
     else
     {
@@ -149,7 +169,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
+        // printf("Kinco SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
     }
     else
     {
@@ -161,16 +181,16 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO read PROFILED_VELOCITY_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+        // printf("Kinco SDO read PROFILED_VELOCITY_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
     {
-        printf("Kinco SDO read PROFILED_VELOCITY_INDEX Success\r\n");
+        printf("Kinco SDO read PROFILED_VELOCITY_INDEX Failed\r\n");
     }
 
     if (profiled_val == set_val_u32)
     {
-        printf("Kinco set profiled velocity to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_VELOCITY);
+        // printf("Kinco set profiled velocity to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_VELOCITY);
     }
     else
     {
@@ -183,7 +203,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write PROFILED_ACC_INDEX Success\r\n");
+        // printf("Kinco SDO Write PROFILED_ACC_INDEX Success\r\n");
     }
     else
     {
@@ -195,16 +215,16 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO read PROFILED_ACC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+        // printf("Kinco SDO read PROFILED_ACC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
     {
-        printf("Kinco SDO read PROFILED_ACC_INDEX Success\r\n");
+        printf("Kinco SDO read PROFILED_ACC_INDEX Failed\r\n");
     }
 
     if (profiled_val == set_val_u32)
     {
-        printf("Kinco set profiled acceleration to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_ACC);
+        // printf("Kinco set profiled acceleration to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_ACC);
     }
     else
     {
@@ -217,7 +237,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write PROFILED_DEC_INDEX Success\r\n");
+        // printf("Kinco SDO Write PROFILED_DEC_INDEX Success\r\n");
     }
     else
     {
@@ -229,16 +249,16 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO read PROFILED_DEC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+        // printf("Kinco SDO read PROFILED_DEC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
     {
-        printf("Kinco SDO read PROFILED_DEC_INDEX Success\r\n");
+        printf("Kinco SDO read PROFILED_DEC_INDEX Failed\r\n");
     }
 
     if (profiled_val == set_val_u32)
     {
-        printf("Kinco set profiled deceleration to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_DEC);
+        // printf("Kinco set profiled deceleration to %d rpm Success\r\n", KINCO_DEFAULT_PROFILED_DEC);
     }
     else
     {
@@ -250,11 +270,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write RPDO1_PARAM_INDEX Failed\r\n");
     }
 
     uint8_t set_val_u8 = 0x01;
@@ -262,7 +282,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
@@ -274,7 +294,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -286,7 +306,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -298,7 +318,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -310,7 +330,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -322,11 +342,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write RPDO1_PARAM_INDEX Failed\r\n");
     }
 
     set_val_u32 = 0x8000021 + KINCO_SLAVE_NODE_ID;
@@ -334,11 +354,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write RPDO2_PARAM_INDEX Failed\r\n");
     }
 
     set_val_u8 = 0x01;
@@ -346,7 +366,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
     {
@@ -358,7 +378,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -370,11 +390,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+        printf("Kinco SDO Write RPDO2_MAPPING_INDEX Failed\r\n");
     }
 
     set_val_u8 = 0x01;
@@ -382,7 +402,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -394,11 +414,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write RPDO2_PARAM_INDEX Failed\r\n");
     }
 
     set_val_u32 = 0x80000180 + KINCO_SLAVE_NODE_ID;
@@ -406,11 +426,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write TPDO1_PARAM_INDEX Failed\r\n");
     }
 
     set_val_u8 = 0x01;
@@ -418,7 +438,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
@@ -430,7 +450,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -442,11 +462,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
     }
 
     set_val_u32 = 0x60630020;
@@ -454,11 +474,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
     }
 
     set_val_u32 = 0x60780010;
@@ -466,11 +486,11 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
     }
 
     set_val_u8 = 0x03;
@@ -478,7 +498,7 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
     {
@@ -490,36 +510,108 @@ void Kinco_Setup(void)
     if (result == SDO_OK)
     {
         print_can1_recv_msg();
-        printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
     {
-        printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+        printf("Kinco SDO Write TPDO1_PARAM_INDEX Failed\r\n");
     }
 }
 
-void Kinco_Enable(void)
+void Kinco_Enable_PDO(void)
 {
-    // Kinco_Ctrl_Data.scanIndexOD = Kinco_Ctrl_scanIndexOD;
-    // Kinco_Ctrl_Data.valueRangeTest = Kinco_Ctrl_valueRangeTest;
-    // Kinco_Ctrl_Data.storeODSubIndex = NULL;
-
-    printf("scanIndexOD = %p\r\n", Kinco_Ctrl_Data.scanIndexOD);
-
-    uint32_t ctrl_word = 0x0006;
-    uint32_t size = 2;
-
-    // const indextable* ptrTable;
-    // UNS32 err;
-    // ptrTable = Kinco_Ctrl_scanIndexOD(0x6040, &err, NULL);
-    // if (err != OD_SUCCESSFUL) while (1); // 错误
-    // printf("Kinco_Ctrl_scanIndexOD:%p\r\n", Kinco_Ctrl_scanIndexOD);
-    // if (ptrTable->pSubindex[0].pObject == NULL) while (1); // 错误
-    // printf("ptrTable:%p,ptrTable->pSubindex[0].pObject:%p\r\n", ptrTable, ptrTable->pSubindex[0].pObject);
-
-    // setODentry(&Kinco_Ctrl_Data, 0x2000, 0x0, &ctrl_word, &size, 0);
-    Controlword = 0x0006;
-    // sendPDOrequest(&Kinco_Ctrl_Data, 0x1800);
-    // writeLocalDict(&Kinco_Ctrl_Data, 0x6040, 0x00, &ctrl_word, (uint32_t*)&size, RW);
+    uint32_t size;
+    ctrl_word = 0x06;
+    size = 2;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
+    target_pos = 0x0000;
+    size = 4;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2001, 0x00, &target_pos, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+
+    osDelay(10);
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+
+    ctrl_word = 0x07;
+    size = 2;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+
+    osDelay(10);
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+
+    ctrl_word = 0x0F;
+    size = 2;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+
+    osDelay(10);
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+}
+
+void Kinco_Disable_PDO(void)
+{
+    uint32_t size;
+    ctrl_word = 0x06;
+    size = 2;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (uint32_t*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+
+    osDelay(10);
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+
+    ctrl_word = 0x00;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (uint32_t*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+
+    osDelay(10);
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+}
+
+void Kinco_MovPos_PDO(uint32_t pos)
+{
+    uint32_t size;
+    ctrl_word = 0x2F;
+    size = 2;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
+    target_pos = pos;
+    printf("target_pos:0x%x\r\n", target_pos);
+    size = 4;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2001, 0x00, &target_pos, (UNS32*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+
+    ctrl_word = 0x3F;
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
+    osDelay(5);
+
+    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+        Statusword, Position_actual_value, Current_actual_value);
+}
+
+void Kinco_SetVel_PDO(uint32_t vel)
+{
+    uint32_t size = 4;
+    Profile_velocity = (uint32_t)(vel * (KINCO_RESOLUTION * KINCO_RPM_TO_DEC_MULT));
+    writeLocalDict(&Kinco_Ctrl_Data, 0x2002, 0x00, &Profile_velocity, (UNS32*)&size, RW);
+    sendPDOevent(&Kinco_Ctrl_Data);
+    sendSYNC(&Kinco_Ctrl_Data);
+    print_can1_recv_msg();
 }

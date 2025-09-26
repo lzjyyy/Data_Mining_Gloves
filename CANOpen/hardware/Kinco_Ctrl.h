@@ -14,6 +14,7 @@ const indextable* Kinco_Ctrl_scanIndexOD(CO_Data* d, UNS16 wIndex, UNS32* errorC
 extern CO_Data Kinco_Ctrl_Data;
 extern UNS16 ctrl_word;		/* Mapped at index 0x2000, subindex 0x00*/
 extern UNS32 target_pos;		/* Mapped at index 0x2001, subindex 0x00*/
+extern UNS32 target_vel;		/* Mapped at index 0x2002, subindex 0x00*/
 extern UNS16 Controlword;		/* Mapped at index 0x6040, subindex 0x00*/
 extern UNS16 Statusword;		/* Mapped at index 0x6041, subindex 0x00*/
 extern INTEGER32 Position_actual_value;		/* Mapped at index 0x6064, subindex 0x00*/

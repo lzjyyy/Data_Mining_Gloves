@@ -97,7 +97,7 @@ UNS32 _getODentry(CO_Data* d,
   UNS32 szData;
   const indextable* ptrTable;
 
-  printf("_getODentry,wIndex=0x%x, bSubindex=0x%x\r\n", wIndex, bSubindex);
+  // printf("_getODentry,wIndex=0x%x, bSubindex=0x%x\r\n", wIndex, bSubindex);
   // if (d == &Kinco_Ctrl_Data)
   // {
   //   ptrTable = Kinco_Ctrl_scanIndexOD(wIndex, &errorCode, NULL);

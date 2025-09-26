@@ -70,8 +70,8 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #define REAL32	float
 #define REAL64 double
 
-#define DEBUG_ERR_CONSOLE_ON
-#define DEBUG_WAR_CONSOLE_ON
+// #define DEBUG_ERR_CONSOLE_ON
+// #define DEBUG_WAR_CONSOLE_ON
 
 /* Definition of error and warning macros */
 /* -------------------------------------- */
@@ -95,8 +95,12 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #    define MSG_WAR(num, str, val)
 #endif
 
-typedef void* CAN_HANDLE;
+// typedef void* CAN_HANDLE;
 
-typedef void* CAN_PORT;
+// typedef void* CAN_PORT;
+
+typedef UNS8 CAN_HANDLE;
+
+typedef UNS8 CAN_PORT;
 
 #endif

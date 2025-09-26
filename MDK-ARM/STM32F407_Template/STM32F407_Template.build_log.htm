@@ -27,11 +27,86 @@ Project File Date:  09/25/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling Kinco_Ctrl.c...
+compiling freertos.c...
+../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
+  uint16_t getTimeOut(); //!<get communication watch-dog timer value
+..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
+  bool getTimeOutState(); //!<get communication watch-dog timer state
+..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/servo.h(64): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Src/freertos.c(377): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    can1TestTaskHandle = osThreadNew(StartCan1TestTask, NULL, &can1TestTask_attributes);
+../Core/Src/freertos.c(379): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
+../Core/Src/freertos.c(438): warning:  #188-D: enumerated type mixed with another type
+    HAL_StatusTypeDef send_result = 0;
+../Core/Src/freertos.c(474): warning:  #188-D: enumerated type mixed with another type
+    HAL_StatusTypeDef send_result = 0;
+../Core/Src/freertos.c(478): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485A_CH, rs485a_test_msg, strlen((char*)rs485a_test_msg), 1000);
+../Core/Src/freertos.c(482): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
+../Core/Src/freertos.c(486): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
+../Core/Src/freertos.c(686): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 16; // function code (this one is registers read)
+../Core/Src/freertos.c(727): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 6; // function code (this one is registers read)
+../Core/Src/freertos.c(770): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 16; // function code (this one is registers read)
+../Core/Src/freertos.c(810): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 6; // function code (this one is registers read)
+../Core/Src/freertos.c(680): warning:  #177-D: variable "right_status"  was declared but never referenced
+    GripperStatus_t right_status;
+../Core/Src/freertos.c(1268): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+../Core/Src/freertos.c(1275): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1282): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+../Core/Src/freertos.c(1305): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+../Core/Src/freertos.c(1319): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+../Core/Src/freertos.c(1325): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1465): warning:  #177-D: variable "notifyVal"  was declared but never referenced
+    uint32_t notifyVal;
+../Core/Src/freertos.c(1575): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1586): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1612): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1620): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1651): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1659): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1686): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1694): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1726): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1735): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1762): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1771): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(135): warning:  #177-D: variable "CAN1_Test_TxMailBox"  was declared but never referenced
+  static uint32_t CAN1_Test_TxMailBox;
+../Core/Src/freertos.c: 37 warnings, 0 errors
 linking...
-Program Size: Code=61732 RO-data=3032 RW-data=2100 ZI-data=23260  
+Program Size: Code=52356 RO-data=1356 RW-data=2156 ZI-data=23260  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 0 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 37 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -53,7 +128,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:04
 </pre>
 </body>
 </html>

@@ -7,6 +7,7 @@
 #include "Kinco_Ctrl.h"
 #include "can.h"
 
+#define KINCO_MASTER_MODE_ID 2
 #define KINCO_SLAVE_NODE_ID 1
 #define CAN1_CH  0
 #define CAN2_CH  1
@@ -53,7 +54,11 @@ int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subInde
     void* data, uint8_t dataType);
 int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType);
+void Kinco_MasterNode_Init(void);
 void Kinco_Setup(void);
-void Kinco_Enable(void);
+void Kinco_Enable_PDO(void);
+void Kinco_Disable_PDO(void);
+void Kinco_MovPos_PDO(uint32_t pos);
+void Kinco_SetVel_PDO(uint32_t vel);
 
 #endif

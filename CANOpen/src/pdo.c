@@ -84,7 +84,7 @@ UNS8 buildPDO(CO_Data* d, UNS8 numPdo, Message* pdo)
       MSG_WAR(0x3050, "    at index : ", TPDO_map->index);
       MSG_WAR(0x3051, "    sub-index : ", prp_j + 1);
 
-      printf("getODentry,index=0x%x, subIndex=0x%x\r\n", index, subIndex);
+      // printf("getODentry,index=0x%x, subIndex=0x%x\r\n", index, subIndex);
       if (getODentry(d, index, subIndex, tmp, &ByteSize, &dataType, 0) !=
         OD_SUCCESSFUL)
       {

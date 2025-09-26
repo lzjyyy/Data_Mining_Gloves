@@ -376,7 +376,7 @@ void MX_FREERTOS_Init(void) {
 
   can1TestTaskHandle = osThreadNew(StartCan1TestTask, NULL, &can1TestTask_attributes);
 
-  // can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
+  can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
 
   // modbusMasterTestHandle = osThreadNew(StartModbusMasterTestTask, NULL, &modbusMasterTestTask_attributes);
 
@@ -558,94 +558,54 @@ void StartCan1TestTask(void const* argument)
     printf("Enable CAN notification failed!\r\n");
     vTaskDelete(NULL);   // delete self
   }
-
   TIM5_Init();
 
-  setNodeId(&Kinco_Ctrl_Data, 0x00);
-  setState(&Kinco_Ctrl_Data, Initialisation);
-  //  setState(&Kinco_Ctrl_Data, Disconnected);
-  setState(&Kinco_Ctrl_Data, Pre_operational);
-  setState(&Kinco_Ctrl_Data, Operational);
-  // stopSYNC(&Kinco_Ctrl_Data);
+  Kinco_MasterNode_Init();
 
-  // masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Stop_Node);
-  // Step 1: Reset Communication
-  // masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Reset_Comunication);
-  // vTaskDelay(pdMS_TO_TICKS(200));  // 等待200ms，保证从站复位完成
+  Kinco_Setup();
 
-  // Step 2: Enter Pre-Operational
-  // masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Enter_PreOperational);
-  // vTaskDelay(pdMS_TO_TICKS(50));
+  stopSYNC(&Kinco_Ctrl_Data);
 
-  // Kinco_Setup();
+  masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Start_Node);
 
-  // UNS8 mode = 1;  // Profile Position Mode
-  // UNS32 abortCode = 0;
-  // uint32_t count = 1;
-  // writeNetworkDict(&Kinco_Ctrl_Data, 0x01, 0x6060, 0x00, count, uint8, &mode, 0);
-  // while (getWriteResultNetworkDict(&Kinco_Ctrl_Data, 0x01, &abortCode) == SDO_UPLOAD_IN_PROGRESS)
-  // {
-  //   break;
-  // }
-  // if (can1_rx_ready)
-  // {
-  //   printf("CAN1 RX: ID=0x%03X DLC=%d Data=", can1_temp_rx.StdId, can1_temp_rx.DLC);
-  //   for (int i = 0; i < can1_temp_rx.DLC; i++)
-  //     printf("%02X ", can1_temp_rx.Data[i]);
-  //   printf("\r\n");
-  //   can1_rx_ready = 0;
-  // }
-
-  // count = 4;
-  // uint32_t val = 0x369d07;
-  // writeNetworkDict(&Kinco_Ctrl_Data, 0x01, 0x6081, 0x00, count, uint32, &val, 0);
-  // while (getWriteResultNetworkDict(&Kinco_Ctrl_Data, 0x01, &abortCode) == SDO_UPLOAD_IN_PROGRESS)
-  // {
-  //   break;
-  // }
-  // if (can1_rx_ready)
-  // {
-  //   printf("CAN1 RX: ID=0x%03X DLC=%d Data=", can1_temp_rx.StdId, can1_temp_rx.DLC);
-  //   for (int i = 0; i < can1_temp_rx.DLC; i++)
-  //     printf("%02X ", can1_temp_rx.Data[i]);
-  //   printf("\r\n");
-  //   can1_rx_ready = 0;
-  // }
-
-  // if (readNetworkDict(&Kinco_Ctrl_Data, 1, 0x6041, 0x00, uint16, 0) != 0) {
-  //   printf("readNetworkDict failed\n");
-  // }
-  // uint16_t status = 0;
-  // count = 2;
-  // while (getReadResultNetworkDict(&Kinco_Ctrl_Data, 0x01, &status, &count, &abortCode) != SDO_FINISHED)
-  // {
-  //   break;
-  // }
-  // if (can1_rx_ready)
-  // {
-  //   printf("CAN1 RX: ID=0x%03X DLC=%d Data=", can1_temp_rx.StdId, can1_temp_rx.DLC);
-  //   for (int i = 0; i < can1_temp_rx.DLC; i++)
-  //     printf("%02X ", can1_temp_rx.Data[i]);
-  //   printf("\r\n");
-  //   can1_rx_ready = 0;
-  // }
-  // printf("status = 0x%x\r\n", status);
-
-  // masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Start_Node);
-
-  //  Kinco_Enable();
 
   while (1)
   {
     printf("CAN1 test tasks is running\r\n");
-    ctrl_word = 0x06;
-    target_pos = 0x1000;
-    osDelay(1000);
-    ctrl_word = 0x07;
-    target_pos = 0x2000;
-    osDelay(1000);
-    ctrl_word = 0x0F;
-    target_pos = 0x3000;
+    printf("Enable Kinco\r\n");
+    Kinco_Enable_PDO();
+    osDelay(10);
+
+    printf("Mov pos:0\r\n");
+    Kinco_MovPos_PDO(0);
+    osDelay(3000);
+
+    printf("Mov pos:65536 * 10\r\n");
+    Kinco_MovPos_PDO(65536 * 10);
+    osDelay(3000);
+
+    Kinco_SetVel_PDO(500);
+
+    printf("Mov pos:65536*50\r\n");
+    Kinco_MovPos_PDO(65536 * 100);
+    osDelay(3000);
+
+    printf("Mov pos:65536*5\r\n");
+    Kinco_MovPos_PDO(65536 * 5);
+    Kinco_SetVel_PDO(100);
+    osDelay(3000);
+
+    printf("Mov pos:65536*500\r\n");
+    Kinco_MovPos_PDO(65536 * 500);
+    Kinco_SetVel_PDO(1000);
+    osDelay(10000);
+
+    Kinco_MovPos_PDO(65536 * 50);
+    Kinco_SetVel_PDO(50);
+    osDelay(10000);
+
+    Kinco_Disable_PDO();
+
     osDelay(1000);
   }
 }
