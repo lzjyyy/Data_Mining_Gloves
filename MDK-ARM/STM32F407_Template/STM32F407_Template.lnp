@@ -80,8 +80,9 @@
 "stm32f407_template\sync.o"
 "stm32f407_template\timer.o"
 "stm32f407_template\kinco_ctrl.o"
-"stm32f407_template\can1.o"
+"stm32f407_template\zeroerr_ctrl.o"
 "stm32f407_template\timer5.o"
+"stm32f407_template\can_canopen.o"
 --library_type=microlib --strict --scatter "STM32F407_Template\STM32F407_Template.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
 --info sizes --info totals --info unused --info veneers

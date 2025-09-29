@@ -1,11 +1,7 @@
 #include "servo.h"
 
-static uint8_t can1_write_data_u8[8] = { 0 };
-static uint16_t can1_write_data_u16[8] = { 0 };
-static uint32_t can1_write_data_u32[8] = { 0 };
-static uint8_t can2_write_data_u8[8] = { 0 };
-static uint16_t can2_write_data_u16[8] = { 0 };
-static uint32_t can2_write_data_u32[8] = { 0 };
+static Servo_Status_t kinco_curr_status;
+static Servo_Status_t zeroerr_curr_status;
 
 int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType)
@@ -110,7 +106,7 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
 
 void Kinco_MasterNode_Init(void)
 {
-    setNodeId(&Kinco_Ctrl_Data, KINCO_MASTER_MODE_ID);
+    setNodeId(&Kinco_Ctrl_Data, KINCO_MASTER_NODE_ID);
     Kinco_Ctrl_Data.canHandle = 0x01;
     setState(&Kinco_Ctrl_Data, Initialisation);
     //  setState(&Kinco_Ctrl_Data, Disconnected);
@@ -518,8 +514,24 @@ void Kinco_Setup(void)
     }
 }
 
-void Kinco_Enable_PDO(void)
+int Kinco_Enable_PDO(void)
 {
+    for (int i = 0; i < 10; i++)
+    {
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status != INVALID) {
+            break;
+        }
+    }
+
+    if (kinco_curr_status == INVALID) {
+        printf("Kinco enable failed, GET_STATUS_FAILED.\r\n");
+        return GET_STATUS_FAILED;
+    }
+    else if (kinco_curr_status == SWITCH_ON_DISABLED) {
+        printf("Kinco current status is SWITCH_ON_DISABLED, continue...\r\n");
+    }
+
     uint32_t size;
     ctrl_word = 0x06;
     size = 2;
@@ -528,59 +540,106 @@ void Kinco_Enable_PDO(void)
     size = 4;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2001, 0x00, &target_pos, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
-    sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    for (int i = 0; i < 10; i++) {
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status == READY_TO_SWITCH_ON) {
+            break;
+        }
+    }
 
-    osDelay(10);
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    if (kinco_curr_status != READY_TO_SWITCH_ON) {
+        printf("Kinco enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        return READY_SWITCH_ON_FAILED;
+    }
+    else {
+        printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
+    }
+    osDelay(5);
 
     ctrl_word = 0x07;
     size = 2;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
-    sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    for (int i = 0; i < 10; i++)
+    {
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status == SWITCHED_ON) {
+            break;
+        }
+    }
 
-    osDelay(10);
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    if (kinco_curr_status != SWITCHED_ON) {
+        printf("Kinco enable failed, SWITCHED_ON_FAILED.\r\n");
+        return SWITCHED_ON_FAILED;
+    }
+    else {
+        printf("Kinco current status is SWITCHED_ON, continue...\r\n");
+    }
+    osDelay(5);
 
     ctrl_word = 0x0F;
-    size = 2;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
-    sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    for (int i = 0; i < 10; i++)
+    {
+        osDelay(50);
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status == OPERATION_ENABLED) {
+            break;
+        }
+    }
 
-    osDelay(10);
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    if (kinco_curr_status != OPERATION_ENABLED) {
+        printf("Kinco enable failed, OPERATION_ENABLED_FAILED.\r\n");
+        return OPERATION_ENABLED_FAILED;
+    }
+    else {
+        printf("Kinco current status is OPERATION_ENABLED, enable completed.\r\n");
+    }
+
+    return ENABLE_OK;
 }
 
-void Kinco_Disable_PDO(void)
+int  Kinco_Disable_PDO(void)
 {
-    uint32_t size;
+    uint32_t size = 2;
     ctrl_word = 0x06;
-    size = 2;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (uint32_t*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
-    sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    for (int i = 0; i < 10; i++) {
+        osDelay(50);
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status == READY_TO_SWITCH_ON) {
+            break;
+        }
+    }
 
-    osDelay(10);
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    if (kinco_curr_status != READY_TO_SWITCH_ON) {
+        printf("Kinco enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        return READY_SWITCH_ON_FAILED;
+    }
+    else {
+        printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
+    }
+    osDelay(5);
 
     ctrl_word = 0x00;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (uint32_t*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
-    sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    for (int i = 0; i < 10; i++) {
+        Get_Parse_StatusWord(0);
+        if (kinco_curr_status == SWITCH_ON_DISABLED) {
+            break;
+        }
+    }
 
-    osDelay(10);
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    if (kinco_curr_status != SWITCH_ON_DISABLED) {
+        printf("Kinco enable failed, SWITCH_ON_DISABLED_FAILED.\r\n");
+        return SWITCH_ON_DISABLED_FAILED;
+    }
+    else {
+        printf("Kinco current status is SWITCH_ON_DISABLED, disable completed.\r\n");
+    }
 }
 
 void Kinco_MovPos_PDO(uint32_t pos)
@@ -614,4 +673,724 @@ void Kinco_SetVel_PDO(uint32_t vel)
     sendPDOevent(&Kinco_Ctrl_Data);
     sendSYNC(&Kinco_Ctrl_Data);
     print_can1_recv_msg();
+}
+
+void ZeroErr_MasterNode_Init(void)
+{
+    setNodeId(&ZeroErr_Ctrl_Data, ZEROERR_MASTER_NODE_ID);
+    ZeroErr_Ctrl_Data.canHandle = 0x02;
+    setState(&ZeroErr_Ctrl_Data, Initialisation);
+    setState(&ZeroErr_Ctrl_Data, Pre_operational);
+    setState(&ZeroErr_Ctrl_Data, Operational);
+
+    masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Stop_Node);
+    // Step 1: Reset Communication
+    masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Reset_Comunication);
+    osDelay(200); // 等待200ms，保证从站复位完成
+
+    // Step 2: Enter Pre - Operational
+    masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Enter_PreOperational);
+    osDelay(50);
+}
+
+void ZeroErr_Setup(void)
+{
+    int result = 0;
+    uint16_t set_ctrl = 0x0F;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0, &set_ctrl, uint16);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write set CTRL_WORD Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write set CTRL_WORD Failed\r\n");
+    }
+
+    uint8_t work_mode = 1;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write SERVO_WORK_MODE_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write SERVO_WORK_MODE_INDEX Failed\r\n");
+    }
+
+    work_mode = 0;
+    result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO read SERVO_WORK_MODE_INDEX Success,work_mode:0x%x\r\n", work_mode);
+    }
+    else
+    {
+        printf("ZeroErr SDO read SERVO_WORK_MODE_INDEX Failed\r\n");
+    }
+    if (work_mode == POSITION_MODE)
+    {
+        // printf("ZeroErr set position mode Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr set position mode Failed\r\n");
+    }
+
+    uint32_t set_val_u32 = (uint32_t)(ZEROERR_DEFAULT_PROFILED_VELOCITY * ZEROERR_DPS_TO_DEC_MULT);
+    uint32_t profiled_val = set_val_u32;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("Zeroerr SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Zeroerr SDO Write PROFILED_VELOCITY_INDEX Failed\r\n");
+    }
+
+    profiled_val = 0;
+    result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("Zeroerr SDO read PROFILED_VELOCITY_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+    }
+    else
+    {
+        printf("Zeroerr SDO read PROFILED_VELOCITY_INDEX Failed\r\n");
+    }
+
+    if (profiled_val == set_val_u32)
+    {
+        // printf("Zeroerr set profiled velocity to %d dps Success\r\n", ZEROERR_DEFAULT_PROFILED_VELOCITY);
+    }
+    else
+    {
+        printf("Zeroerr set profiled velocity to %d dps Failed\r\n", ZEROERR_DEFAULT_PROFILED_VELOCITY);
+    }
+
+    set_val_u32 = (uint32_t)(ZEROERR_DEFAULT_PROFILED_ACC * ZEROERR_ACC_DEC_MULT);
+    profiled_val = set_val_u32;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write PROFILED_ACC_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write PROFILED_ACC_INDEX Failed\r\n");
+    }
+
+    profiled_val = 0;
+    result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO read PROFILED_ACC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+    }
+    else
+    {
+        printf("ZeroErr SDO read PROFILED_ACC_INDEX Failed\r\n");
+    }
+
+    if (profiled_val == set_val_u32)
+    {
+        // printf("ZeroErr set profiled acceleration to %d dpss Success\r\n", KINCO_DEFAULT_PROFILED_ACC);
+    }
+    else
+    {
+        printf("ZeroErr set profiled acceleration to %d dpss Failed\r\n", ZEROERR_DEFAULT_PROFILED_ACC);
+    }
+
+    set_val_u32 = (uint32_t)(ZEROERR_DEFAULT_PROFILED_DEC * ZEROERR_ACC_DEC_MULT);
+    profiled_val = set_val_u32;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write PROFILED_DEC_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write PROFILED_DEC_INDEX Failed\r\n");
+    }
+
+    profiled_val = 0;
+    result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO read PROFILED_DEC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+    }
+    else
+    {
+        printf("ZeroErr SDO read PROFILED_DEC_INDEX Failed\r\n");
+    }
+
+    if (profiled_val == set_val_u32)
+    {
+        // printf("ZeroErr set profiled deceleration to %d dpss Success\r\n", KINCO_DEFAULT_PROFILED_DEC);
+    }
+    else
+    {
+        printf("ZeroErr set profiled deceleration to %d dpss Failed\r\n", ZEROERR_DEFAULT_PROFILED_DEC);
+    }
+
+    set_val_u32 = 0x80;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, 0x1005, 0, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+    }
+    else
+    {
+        printf("ZeroErr SDO disable SYNC Failed\r\n");
+    }
+
+    set_val_u32 = 1000;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, 0x1006, 0, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+    }
+    else
+    {
+        printf("ZeroErr SDO disable comm cycle period Failed\r\n");
+    }
+
+    set_val_u32 = 0x80000180 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    uint8_t set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x00;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x60410010;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x60640020;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x02;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x00000180 + KINCO_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x80000200 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x1;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x60400010;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x607A0020;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x02;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x200 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x80000201 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x02, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x00;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x60810020;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x201 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Failed\r\n");
+    }
+}
+
+int ZeroErr_Enable_PDO(void)
+{
+    for (int i = 0; i < 10; i++)
+    {
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status != INVALID) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status == INVALID) {
+        printf("ZeroErr enable failed, GET_STATUS_FAILED.\r\n");
+        return GET_STATUS_FAILED;
+    }
+    else if (zeroerr_curr_status == SWITCH_ON_DISABLED) {
+        printf("ZeroErr current status is SWITCH_ON_DISABLED, continue...\r\n");
+    }
+
+    uint32_t size;
+    ctrl_word_zeroerr = 0x06;
+    size = 2;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
+    target_pos_zeroerr = 0x0000;
+    size = 4;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2001, 0x00, &target_pos_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    for (int i = 0; i < 10; i++) {
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == READY_TO_SWITCH_ON) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status != READY_TO_SWITCH_ON) {
+        printf("ZeroErr enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        return READY_SWITCH_ON_FAILED;
+    }
+    else {
+        printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
+    }
+    osDelay(5);
+
+    ctrl_word_zeroerr = 0x07;
+    size = 2;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    for (int i = 0; i < 10; i++)
+    {
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == SWITCHED_ON) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status != SWITCHED_ON) {
+        printf("ZeroErr enable failed, SWITCHED_ON_FAILED.\r\n");
+        return SWITCHED_ON_FAILED;
+    }
+    else {
+        printf("ZeroErr current status is SWITCHED_ON, continue...\r\n");
+    }
+    osDelay(5);
+
+    ctrl_word_zeroerr = 0x0F;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    for (int i = 0; i < 10; i++)
+    {
+        osDelay(50);
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == OPERATION_ENABLED) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status != OPERATION_ENABLED) {
+        printf("ZeroErr enable failed, OPERATION_ENABLED_FAILED.\r\n");
+        return OPERATION_ENABLED_FAILED;
+    }
+    else {
+        printf("ZeroErr current status is OPERATION_ENABLED, enable completed.\r\n");
+    }
+
+    return ENABLE_OK;
+}
+
+int ZeroErr_Disable_PDO(void)
+{
+    uint32_t size = 2;
+    ctrl_word_zeroerr = 0x06;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (uint32_t*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    for (int i = 0; i < 10; i++) {
+        osDelay(50);
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == READY_TO_SWITCH_ON) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status != READY_TO_SWITCH_ON) {
+        printf("ZeroErr enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        return READY_SWITCH_ON_FAILED;
+    }
+    else {
+        printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
+    }
+    osDelay(5);
+
+    ctrl_word_zeroerr = 0x00;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (uint32_t*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    for (int i = 0; i < 10; i++) {
+        osDelay(100);
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == SWITCH_ON_DISABLED) {
+            break;
+        }
+    }
+
+    if (zeroerr_curr_status != SWITCH_ON_DISABLED) {
+        printf("ZeroErr enable failed, SWITCH_ON_DISABLED_FAILED.\r\n");
+        return SWITCH_ON_DISABLED_FAILED;
+    }
+    else {
+        printf("ZeroErr current status is SWITCH_ON_DISABLED, disable completed.\r\n");
+    }
+}
+
+void ZeroErr_Set_QuickStop_option(uint16_t option)
+{
+    uint16_t set_val_u16 = option;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, STOP_OPTION_INDEX, 0x00, &set_val_u16, uint16);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Failed\r\n");
+    }
+}
+
+void ZeroErr_MovPos_PDO(float degree)
+{
+    uint32_t size;
+    ctrl_word_zeroerr = 0x2F;
+    size = 2;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
+    target_pos_zeroerr = (uint32_t)(degree * ZEROERR_RESOLUTION / 360);
+    printf("target_pos:0x%x\r\n", target_pos_zeroerr);
+    size = 4;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2001, 0x00, &target_pos_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+
+    ctrl_word_zeroerr = 0x3F;
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    sendSYNC(&ZeroErr_Ctrl_Data);
+    print_can2_recv_msg();
+    osDelay(5);
+
+    printf("status_word_error:0x%x, Position_actual_value:0x%x\r\n",
+        status_word_zeroerr, pos_actual_val_zeroerr);
+}
+
+void ZeroErr_QuickStop_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0;
+    int result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+    if (result == SDO_OK)
+    {
+        print_can2_recv_msg();
+        // printf("ZeroErr SDO read SERVO_CTRL_WORD_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
+        cur_ctrl_word &= ~(1 << 2);
+
+        result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+        if (result == SDO_OK)
+        {
+            print_can2_recv_msg();
+            // printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Success\r\n");
+        }
+        else
+        {
+            printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Failed\r\n");
+        }
+    }
+    else
+    {
+        printf("ZeroErr SDO read SERVO_CTRL_WORD_INDEX Failed\r\n");
+    }
+}
+
+void ZeroErr_QuickStop_Resume_SDO(void)
+{
+
+}
+
+void Get_Parse_StatusWord(uint8_t servo_type)
+{
+    if (servo_type == 0) {
+        sendSYNC(&Kinco_Ctrl_Data);
+        print_can1_recv_msg();
+        osDelay(1);
+        if ((Statusword & 0x004F) == 0x0000) {
+            printf("Kinco State: Not ready to switch on\r\n");
+            kinco_curr_status = NOT_READY_TO_SWITCH_ON;
+        }
+        else if ((Statusword & 0x004F) == 0x0040) {
+            printf("Kinco State: Switch on disabled\r\n");
+            kinco_curr_status = SWITCH_ON_DISABLED;
+        }
+        else if ((Statusword & 0x006F) == 0x0021) {
+            printf("Kinco State: Ready to switch on\r\n");
+            kinco_curr_status = READY_TO_SWITCH_ON;
+        }
+        else if ((Statusword & 0x006F) == 0x0023) {
+            printf("Kinco State: Switched on\r\n");
+            kinco_curr_status = SWITCHED_ON;
+        }
+        else if ((Statusword & 0x006F) == 0x0027) {
+            printf("Kinco State: Operation enabled\r\n");
+            kinco_curr_status = OPERATION_ENABLED;
+        }
+        else if ((Statusword & 0x006F) == 0x0007) {
+            printf("Kinco State: Quick stop active\r\n");
+            kinco_curr_status = QUICK_STOP_ACT;
+        }
+        else if ((Statusword & 0x004F) == 0x000F) {
+            printf("Kinco State: Fault reaction active\r\n");
+            kinco_curr_status = FAULT_REACTION_ACT;
+        }
+        else if ((Statusword & 0x004F) == 0x0008) {
+            printf("Kinco State: Fault\r\n");
+            kinco_curr_status = FAULT;
+        }
+    }
+    else
+    {
+        sendSYNC(&ZeroErr_Ctrl_Data);
+        print_can2_recv_msg();
+        osDelay(1);
+        if ((status_word_zeroerr & 0x004F) == 0x0000) {
+            printf("ZeroErr State: Not ready to switch on\r\n");
+            zeroerr_curr_status = NOT_READY_TO_SWITCH_ON;
+        }
+        else if ((status_word_zeroerr & 0x004F) == 0x0040) {
+            printf("ZeroErr State: Switch on disabled\r\n");
+            zeroerr_curr_status = SWITCH_ON_DISABLED;
+        }
+        else if ((status_word_zeroerr & 0x006F) == 0x0021) {
+            printf("ZeroErr State: Ready to switch on\r\n");
+            zeroerr_curr_status = READY_TO_SWITCH_ON;
+        }
+        else if ((status_word_zeroerr & 0x006F) == 0x0023) {
+            printf("ZeroErr State: Switched on\r\n");
+            zeroerr_curr_status = SWITCHED_ON;
+        }
+        else if ((status_word_zeroerr & 0x006F) == 0x0027) {
+            printf("ZeroErr State: Operation enabled\r\n");
+            zeroerr_curr_status = OPERATION_ENABLED;
+        }
+        else if ((status_word_zeroerr & 0x006F) == 0x0007) {
+            printf("ZeroErr State: Quick stop active\r\n");
+            zeroerr_curr_status = QUICK_STOP_ACT;
+        }
+        else if ((status_word_zeroerr & 0x004F) == 0x000F) {
+            printf("ZeroErr State: Fault reaction active\r\n");
+            zeroerr_curr_status = FAULT_REACTION_ACT;
+        }
+        else if ((status_word_zeroerr & 0x004F) == 0x0008) {
+            printf("ZeroErr: Fault\r\n");
+            zeroerr_curr_status = FAULT;
+        }
+    }
+}
+
+Servo_Status_t Get_Curr_Status(uint8_t servo_type)
+{
+    if (servo_type == 0)
+    {
+        return kinco_curr_status;
+    }
+    else
+    {
+        return zeroerr_curr_status;
+    }
 }

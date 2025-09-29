@@ -22,6 +22,7 @@
 #include "canfestival.h"
 
 extern CO_Data Kinco_Ctrl_Data;
+extern CO_Data ZeroErr_Ctrl_Data;
 
 /* USER CODE BEGIN 0 */
 static CAN_RxHeaderTypeDef CAN1_Test_RxHeader;
@@ -33,6 +34,9 @@ extern uint8_t CAN2_Test_RxData[8];
 
 volatile CAN_TempRxMsg can1_temp_rx;
 volatile uint8_t can1_rx_ready = 0;
+
+volatile CAN_TempRxMsg can2_temp_rx;
+volatile uint8_t can2_rx_ready = 0;
 
 /* USER CODE END 0 */
 
@@ -260,7 +264,7 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
     Message rxm = { 0 };
 
     // 读取 FIFO0 中消息
-    if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
+    if (HAL_CAN_GetRxMessage(&hcan1, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
     {
       // 接收错误处理
       return;
@@ -285,15 +289,33 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef* hcan)
   }
   else if (hcan->Instance == CAN2)
   {
-    if (HAL_CAN_GetRxMessage(hcan, CAN_RX_FIFO0, &CAN2_Test_RxHeader, CAN2_Test_RxData) == HAL_OK)
+    CAN_RxHeaderTypeDef RxHeader = { 0 };
+    uint8_t RxData[8] = { 0 };
+    Message rxm = { 0 };
+
+    // 读取 FIFO0 中消息
+    if (HAL_CAN_GetRxMessage(&hcan2, CAN_RX_FIFO0, &RxHeader, RxData) != HAL_OK)
     {
-      printf("CAN2 RX: ID=0x%03X DLC=%d Data=", CAN2_Test_RxHeader.StdId, CAN2_Test_RxHeader.DLC);
-      for (int i = 0; i < CAN2_Test_RxHeader.DLC; i++)
-      {
-        printf("%02X ", CAN2_Test_RxData[i]);
-      }
-      printf("\r\n");
+      // 接收错误处理
+      return;
     }
+
+    // 丢弃扩展帧
+    if (RxHeader.IDE == CAN_ID_EXT)
+      return;
+
+    rxm.cob_id = RxHeader.StdId;
+    rxm.rtr = (RxHeader.RTR == CAN_RTR_REMOTE) ? 1 : 0;
+    rxm.len = RxHeader.DLC;
+    memcpy(rxm.data, RxData, RxHeader.DLC);
+    // 保存到临时变量，主循环打印
+    can2_temp_rx.StdId = RxHeader.StdId;
+    can2_temp_rx.DLC = RxHeader.DLC;
+    memcpy(can2_temp_rx.Data, RxData, RxHeader.DLC);
+    can2_rx_ready = 1;
+
+    // 调用 CANopen 分发函数
+    canDispatch(&ZeroErr_Ctrl_Data, &rxm);
   }
 }
 
@@ -309,4 +331,15 @@ void print_can1_recv_msg(void)
   }
 }
 
+void print_can2_recv_msg(void)
+{
+  if (can2_rx_ready)
+  {
+    printf("CAN2 RX: ID=0x%03X DLC=%d Data=", can2_temp_rx.StdId, can2_temp_rx.DLC);
+    for (int i = 0; i < can2_temp_rx.DLC; i++)
+      printf("%02X ", can2_temp_rx.Data[i]);
+    printf("\r\n");
+    can2_rx_ready = 0;
+  }
+}
 /* USER CODE END 1 */

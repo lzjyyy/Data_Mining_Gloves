@@ -100,3 +100,5 @@ stm32f407_template\freertos.o: ..\CANOpen\inc\emcy.h
 stm32f407_template\freertos.o: ..\CANOpen\inc\stm32\canfestival.h
 stm32f407_template\freertos.o: ..\CANOpen\hardware\timer5.h
 stm32f407_template\freertos.o: ../Core/Inc/servo.h
+stm32f407_template\freertos.o: ..\CANOpen\hardware\ZeroErr_Ctrl.h
+stm32f407_template\freertos.o: ..\CANOpen\hardware\can_canopen.h

@@ -24,6 +24,7 @@ stm32f407_template\servo.o: ..\CANOpen\inc\nmtMaster.h
 stm32f407_template\servo.o: ..\CANOpen\inc\emcy.h
 stm32f407_template\servo.o: ..\CANOpen\inc\stm32\canfestival.h
 stm32f407_template\servo.o: ..\CANOpen\hardware\Kinco_Ctrl.h
+stm32f407_template\servo.o: ..\CANOpen\hardware\ZeroErr_Ctrl.h
 stm32f407_template\servo.o: ../Core/Inc/can.h
 stm32f407_template\servo.o: ../Core/Inc/main.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h

@@ -5,10 +5,25 @@
 #include "data.h"
 #include "canfestival.h"
 #include "Kinco_Ctrl.h"
+#include "ZeroErr_Ctrl.h"
 #include "can.h"
 
-#define KINCO_MASTER_MODE_ID 2
-#define KINCO_SLAVE_NODE_ID 1
+typedef enum {
+    INVALID,
+    NOT_READY_TO_SWITCH_ON,
+    SWITCH_ON_DISABLED,
+    READY_TO_SWITCH_ON,
+    SWITCHED_ON,
+    OPERATION_ENABLED,
+    QUICK_STOP_ACT,
+    FAULT_REACTION_ACT,
+    FAULT,
+}Servo_Status_t;
+
+#define KINCO_MASTER_NODE_ID    2
+#define KINCO_SLAVE_NODE_ID     1
+#define ZEROERR_MASTER_NODE_ID  3
+#define ZEROERR_SLAVE_NODE_ID   1
 #define CAN1_CH  0
 #define CAN2_CH  1
 
@@ -43,6 +58,12 @@
 #define KINCO_DEFAULT_PROFILED_VELOCITY     200 // 200 rpm 
 #define KINCO_DEFAULT_PROFILED_ACC        100 // 200 rpm/s 
 #define KINCO_DEFAULT_PROFILED_DEC        100 // 200 rpm/s 
+#define ZEROERR_RESOLUTION  524288
+#define ZEROERR_DPS_TO_DEC_MULT 1456.36
+#define ZEROERR_ACC_DEC_MULT 1456.36
+#define ZEROERR_DEFAULT_PROFILED_VELOCITY   10 // 10 deg/s
+#define ZEROERR_DEFAULT_PROFILED_ACC    20 // 20 deg/s
+#define ZEROERR_DEFAULT_PROFILED_DEC    20 // 20 deg/s
 
 #define SDO_OK              0   // 成功
 #define SDO_ERR_TYPE       -1   // 不支持的数据类型
@@ -50,15 +71,35 @@
 #define SDO_ERR_ABORT      -3   // 从站返回Abort
 #define SDO_ERR_TIMEOUT    -4   // 超时未完成
 
+#define ENABLE_OK                  0
+#define GET_STATUS_FAILED         -1
+#define SWITCH_ON_DISABLED_FAILED -2
+#define READY_SWITCH_ON_FAILED    -3
+#define SWITCHED_ON_FAILED        -4
+#define OPERATION_ENABLED_FAILED  -5
+#define SWITCH_ON_DISABLED_FAILED -6
+
 int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType);
 int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType);
+void Get_Parse_StatusWord(uint8_t servo_type); // servo_type = 0,kinco;
+// servo_type = 1,zeroerr
+Servo_Status_t Get_Curr_Status(uint8_t servo_type);
 void Kinco_MasterNode_Init(void);
 void Kinco_Setup(void);
-void Kinco_Enable_PDO(void);
-void Kinco_Disable_PDO(void);
+int Kinco_Enable_PDO(void);
+int Kinco_Disable_PDO(void);
 void Kinco_MovPos_PDO(uint32_t pos);
 void Kinco_SetVel_PDO(uint32_t vel);
+
+void ZeroErr_MasterNode_Init(void);
+void ZeroErr_Setup(void);
+int ZeroErr_Enable_PDO(void);
+int ZeroErr_Disable_PDO(void);
+void ZeroErr_MovPos_PDO(float degree);
+void ZeroErr_Set_QuickStop_option(uint16_t option);
+void ZeroErr_QuickStop_SDO(void);
+void ZeroErr_QuickStop_Resume_SDO(void);
 
 #endif

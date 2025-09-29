@@ -1102,20 +1102,25 @@
               <FileType>1</FileType>
               <FilePath>..\CANOpen\hardware\Kinco_Ctrl.c</FilePath>
             </File>
+            <File>
+              <FileName>ZeroErr_Ctrl.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\hardware\ZeroErr_Ctrl.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>CANopen_Driver</GroupName>
           <Files>
             <File>
-              <FileName>can1.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\CANOpen\hardware\can1.c</FilePath>
-            </File>
-            <File>
               <FileName>timer5.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\CANOpen\hardware\timer5.c</FilePath>
+            </File>
+            <File>
+              <FileName>can_canopen.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\CANOpen\hardware\can_canopen.c</FilePath>
             </File>
           </Files>
         </Group>

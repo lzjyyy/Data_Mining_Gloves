@@ -44,6 +44,7 @@
 #include "canfestival.h"
 #include "timer5.h"
 #include "servo.h"
+#include "can_canopen.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,6 +64,22 @@ typedef struct {
   uint16_t reached;
   uint16_t warning;
 } GripperStatus_t;
+
+typedef struct {
+  struct {
+    int is_enable;
+    int position;
+    int velocity;
+  }kinco, zeroerr;
+} ServoCmd_t;
+
+typedef struct {
+  uint8_t type;
+  uint16_t status_word;
+  uint32_t position;
+  uint32_t velocity;
+  uint16_t error_code;
+} ServoStatus_t;
 
 typedef struct {
   int type;
@@ -137,8 +154,8 @@ static uint32_t CAN2_Test_TxMailBox;
 
 osThreadId mqttTestTaskHandle;
 osThreadId_t modbusMasterTestHandle;
-osThreadId_t can1TestTaskHandle;
-osThreadId_t can2TestTaskHandle;
+osThreadId_t kincoCtrlTaskHandle;
+osThreadId_t zeroerrCtrlTaskHandle;
 
 /* Task handles */
 osThreadId_t mqttTaskHandle;
@@ -151,7 +168,9 @@ osThreadId_t gpioTaskHandle;
 osMessageQId leftGripperQueueHandle;     /* grippers control commands from MQTT */
 osMessageQId rightGripperQueueHandle;
 osMessageQId statusQueueHandle;
-osMessageQId gpioQueueHandle;
+osMessageQId gpioQueueHandle;           /* GPIOs control commands from MQTT */
+osMessageQId kincoQueueHandle;          /* kinco control commands from MQTT */
+osMessageQId zeroerrQueueHanle;         /* zeroerr control commands from MQTT */
 
 // grippers semaphores
 osSemaphoreId_t semQueueLeftHandle;
@@ -200,15 +219,15 @@ const osThreadAttr_t modbusMasterTestTask_attributes = {
   .priority = (osPriority_t)osPriorityNormal,
 };
 
-const osThreadAttr_t can1TestTask_attributes = {
-  .name = "can1TestTask",
+const osThreadAttr_t kincoCtrlTask_attributes = {
+  .name = "kincoCtrlTask",
   .stack_size = 512 * 4,
   .priority = (osPriority_t)osPriorityNormal,
 };
 
-const osThreadAttr_t can2TestTask_attributes = {
-  .name = "can2TestTask",
-  .stack_size = 128 * 4,
+const osThreadAttr_t zeroerrCtrlTask_attributes = {
+  .name = "zeroerrCtrlTask",
+  .stack_size = 512 * 4,
   .priority = (osPriority_t)osPriorityNormal,
 };
 
@@ -262,8 +281,8 @@ const osThreadAttr_t RS485TestTask_attributes = {
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
 void StartMQTTTestTask(void const* argument);
-void StartCan1TestTask(void const* argument);
-void StartCan2TestTask(void const* argument);
+void StartKincoCtrlTask(void const* argument);
+void StartZeroErrCtrlTask(void const* argument);
 void StartMqttTask(void const* argument);
 void StartMonitorTask(void const* argument);
 void StartModbusMasterTestTask(void* argument);
@@ -304,6 +323,8 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
   cjson_memory_hook();
+
+  TIM5_Init();
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -341,12 +362,12 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
-
   leftGripperQueueHandle = osMessageQueueNew(10, sizeof(GripperCmd_t), NULL);
-
   rightGripperQueueHandle = osMessageQueueNew(10, sizeof(GripperCmd_t), NULL);
-
   statusQueueHandle = osMessageQueueNew(10, sizeof(GripperStatus_t), NULL);
+
+  kincoQueueHandle = osMessageQueueNew(10, sizeof(ServoCmd_t), NULL);
+  zeroerrQueueHanle = osMessageQueueNew(10, sizeof(ServoCmd_t), NULL);
 
   gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
@@ -374,16 +395,13 @@ void MX_FREERTOS_Init(void) {
   // osThreadDef(MQTTTestTask, StartMQTTTestTask, osPriorityNormal, 0, 512);
   // mqttTestTaskHandle = osThreadCreate(osThread(MQTTTestTask), NULL);
 
-  can1TestTaskHandle = osThreadNew(StartCan1TestTask, NULL, &can1TestTask_attributes);
+  kincoCtrlTaskHandle = osThreadNew(StartKincoCtrlTask, NULL, &kincoCtrlTask_attributes);
 
-  can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
+  zeroerrCtrlTaskHandle = osThreadNew(StartZeroErrCtrlTask, NULL, &zeroerrCtrlTask_attributes);
 
   // modbusMasterTestHandle = osThreadNew(StartModbusMasterTestTask, NULL, &modbusMasterTestTask_attributes);
 
   mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
-
-  // osThreadDef(canTask, StartCanTask, osPriorityAboveNormal, 0, 512);
-  // canTaskHandle = osThreadCreate(osThread(canTask), NULL);
 
   // osThreadDef(monitorTask, StartMonitorTask, osPriorityLow, 0, 256);
   // monitorTaskHandle = osThreadCreate(osThread(monitorTask), NULL);
@@ -391,7 +409,7 @@ void MX_FREERTOS_Init(void) {
 
   rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
 
-  // gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
+  gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -544,21 +562,13 @@ void StartMQTTTestTask(void const* argument)
   }
 }
 
-void StartCan1TestTask(void const* argument)
+void StartKincoCtrlTask(void const* argument)
 {
-  if (HAL_CAN_Start(&hcan1) != HAL_OK)
+  if (can1Init(&Kinco_Ctrl_Data, 500000) != true)
   {
-    printf("CAN1 start failed,stop StartCanTestTask!\r\n");
-    vTaskDelete(NULL);   // delete self
+    printf("CAN1 init failed\r\n");
+    vTaskDelete(NULL);
   }
-
-  /* Enable FIFO0 message pending interrupt */
-  if (HAL_CAN_ActivateNotification(&hcan1, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
-  {
-    printf("Enable CAN notification failed!\r\n");
-    vTaskDelete(NULL);   // delete self
-  }
-  TIM5_Init();
 
   Kinco_MasterNode_Init();
 
@@ -568,97 +578,175 @@ void StartCan1TestTask(void const* argument)
 
   masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Start_Node);
 
-
-  while (1)
-  {
-    printf("CAN1 test tasks is running\r\n");
-    printf("Enable Kinco\r\n");
-    Kinco_Enable_PDO();
-    osDelay(10);
-
-    printf("Mov pos:0\r\n");
-    Kinco_MovPos_PDO(0);
-    osDelay(3000);
-
-    printf("Mov pos:65536 * 10\r\n");
-    Kinco_MovPos_PDO(65536 * 10);
-    osDelay(3000);
-
-    Kinco_SetVel_PDO(500);
-
-    printf("Mov pos:65536*50\r\n");
-    Kinco_MovPos_PDO(65536 * 100);
-    osDelay(3000);
-
-    printf("Mov pos:65536*5\r\n");
-    Kinco_MovPos_PDO(65536 * 5);
-    Kinco_SetVel_PDO(100);
-    osDelay(3000);
-
-    printf("Mov pos:65536*500\r\n");
-    Kinco_MovPos_PDO(65536 * 500);
-    Kinco_SetVel_PDO(1000);
-    osDelay(10000);
-
-    Kinco_MovPos_PDO(65536 * 50);
-    Kinco_SetVel_PDO(50);
-    osDelay(10000);
-
-    Kinco_Disable_PDO();
-
-    osDelay(1000);
-  }
-}
-
-void StartCan2TestTask(void const* argument)
-{
-  /* Configure CAN Tx header */
-  CAN2_Test_TxHeader.StdId = 0x123;
-  CAN2_Test_TxHeader.ExtId = 0x01;
-  CAN2_Test_TxHeader.IDE = CAN_ID_STD;
-  CAN2_Test_TxHeader.RTR = CAN_RTR_DATA;
-  CAN2_Test_TxHeader.DLC = 8;
-  CAN2_Test_TxHeader.TransmitGlobalTime = DISABLE;
-
-  /* Start CAN peripheral */
-  if (HAL_CAN_Start(&hcan2) != HAL_OK)
-  {
-    printf("CAN2 start failed,stop StartCanTestTask!\r\n");
-    vTaskDelete(NULL);   // delete self
+  int enable_result = 0;
+  for (int i = 0; i < 10; i++) {
+    enable_result = Kinco_Enable_PDO();
+    if (enable_result == ENABLE_OK)
+    {
+      break;
+    }
   }
 
-  /* Enable FIFO0 message pending interrupt */
-  if (HAL_CAN_ActivateNotification(&hcan2, CAN_IT_RX_FIFO0_MSG_PENDING) != HAL_OK)
+  if (enable_result == ENABLE_OK)
   {
-    printf("Enable CAN notification failed!\r\n");
-    vTaskDelete(NULL);   // delete self
+    printf("Kinco ENABLE_OK\r\n");
+  }
+  else
+  {
+    printf("Kinco ENABLE_FAILED\r\n");
   }
 
-  uint32_t cnt = 0;
+  ServoCmd_t cmd;
 
   for (;;)
   {
-    // printf("CAN2 test task is running...\r\n");
-    /* Prepare Tx data */
-    for (int i = 0; i < 8; i++)
-    {
-      CAN2_Test_TxData[i] = cnt + i;
-    }
+    if (osMessageQueueGet(kincoQueueHandle, &cmd, NULL, 0) == osOK) {
+      if ((cmd.kinco.is_enable == 1) && (Get_Curr_Status(0) != OPERATION_ENABLED))
+      {
+        Kinco_Enable_PDO();
+      }
 
-    /* Send CAN frame */
-    if (HAL_CAN_AddTxMessage(&hcan2, &CAN2_Test_TxHeader, CAN2_Test_TxData, &CAN2_Test_TxMailBox) == HAL_OK)
-    {
-      // printf("CAN2 TX OK, cnt=%lu\r\n", cnt);
+      if ((cmd.kinco.is_enable == 0) && (Get_Curr_Status(0) == OPERATION_ENABLED))
+      {
+        Kinco_Disable_PDO();
+      }
     }
-    else
-    {
-      printf("CAN2 TX FAILED!\r\n");
-    }
-
-    cnt++;
-
-    osDelay(10); // Send every 100ms
+    osDelay(1);
   }
+
+  // for(;;)
+  // {
+  //   printf("CAN1 test tasks is running\r\n");
+  //   printf("Enable Kinco\r\n");
+  //   Kinco_Enable_PDO();
+  //   osDelay(10);
+
+  //   printf("Mov pos:0\r\n");
+  //   Kinco_MovPos_PDO(0);
+  //   osDelay(3000);
+
+  //   printf("Mov pos:65536 * 10\r\n");
+  //   Kinco_MovPos_PDO(65536 * 10);
+  //   osDelay(3000);
+
+  //   Kinco_SetVel_PDO(500);
+
+  //   printf("Mov pos:65536*50\r\n");
+  //   Kinco_MovPos_PDO(65536 * 100);
+  //   osDelay(3000);
+
+  //   printf("Mov pos:65536*5\r\n");
+  //   Kinco_MovPos_PDO(65536 * 5);
+  //   Kinco_SetVel_PDO(100);
+  //   osDelay(3000);
+
+  //   printf("Mov pos:65536*500\r\n");
+  //   Kinco_MovPos_PDO(65536 * 500);
+  //   Kinco_SetVel_PDO(1000);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:65536*50\r\n");
+  //   Kinco_MovPos_PDO(65536 * 50);
+  //   Kinco_SetVel_PDO(50);
+  //   osDelay(10000);
+
+  //   printf("Disable Kinco\r\n");
+  //   Kinco_Disable_PDO();
+
+  //   osDelay(1000);
+  // }
+}
+
+void StartZeroErrCtrlTask(void const* argument)
+{
+  if (can2Init(&ZeroErr_Ctrl_Data, 1000000) != true)
+  {
+    printf("CAN2 init failed\r\n");
+    vTaskDelete(NULL);
+  }
+
+  osDelay(3000);
+
+  ZeroErr_MasterNode_Init();
+
+  ZeroErr_Setup();
+
+  stopSYNC(&ZeroErr_Ctrl_Data);
+
+  masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Start_Node);
+
+  int enable_result = 0;
+  for (int i = 0; i < 10; i++) {
+    enable_result = ZeroErr_Enable_PDO();
+    if (enable_result == ENABLE_OK)
+    {
+      break;
+    }
+  }
+
+  if (enable_result == ENABLE_OK)
+  {
+    printf("ZeroErr ENABLE_OK\r\n");
+  }
+  else
+  {
+    printf("ZeroErr ENABLE_FAILED\r\n");
+  }
+
+  ServoCmd_t cmd;
+
+  for (;;)
+  {
+    if (osMessageQueueGet(zeroerrQueueHanle, &cmd, NULL, 0) == osOK) {
+      if ((cmd.zeroerr.is_enable == 1) && (Get_Curr_Status(1) != OPERATION_ENABLED))
+      {
+        ZeroErr_Enable_PDO();
+      }
+
+      if ((cmd.zeroerr.is_enable == 0) && (Get_Curr_Status(1) == OPERATION_ENABLED))
+      {
+        ZeroErr_Disable_PDO();
+      }
+    }
+    osDelay(1);
+  }
+
+  // for(;;)
+  // {
+  //   printf("CAN2 test task is running...\r\n");
+  //   printf("Enable ZeroErr\r\n");
+  //   ZeroErr_Enable_PDO();
+  //   osDelay(1000);
+
+  //   printf("Mov pos:0 deg\r\n");
+  //   ZeroErr_MovPos_PDO(0);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:90 deg\r\n");
+  //   ZeroErr_MovPos_PDO(90);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:60 deg\r\n");
+  //   ZeroErr_MovPos_PDO(60);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:180 deg\r\n");
+  //   ZeroErr_MovPos_PDO(180);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:120 deg\r\n");
+  //   ZeroErr_MovPos_PDO(120);
+  //   osDelay(10000);
+
+  //   printf("Mov pos:30 deg\r\n");
+  //   ZeroErr_MovPos_PDO(30);
+  //   osDelay(10000);
+
+  //   printf("Disable ZeroErr\r\n");
+  //   ZeroErr_Disable_PDO();
+
+  //   osDelay(10000); // Send every 100ms
+  // }
 }
 
 /* USER CODE BEGIN Header_StartTaskMaster */
@@ -856,135 +944,6 @@ void cjson_memory_hook(void)
   cJSON_InitHooks(&hooks);
 }
 
-/* MQTT Task */
-// void StartMqttTask(void const* argument) {
-//   int rc;
-
-//   if (get_w5500_init_status() != 1) {
-//     printf("W5500 init failed,stop MQTT task.\r\n");
-//     vTaskDelete(NULL);
-//   }
-
-//   NetworkInit(&mqttNet);
-//   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-//     printf("MQTT Network connect failed!\r\n");
-//     vTaskDelete(NULL);
-//   }
-
-//   MQTTClientInit(&mqttClient, &mqttNet, 1000,
-//     mqttSendBuf, sizeof(mqttSendBuf),
-//     mqttReadBuf, sizeof(mqttReadBuf));
-
-//   MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-//   data.MQTTVersion = 4;
-//   data.clientID.cstring = "STM32_Client";
-//   data.keepAliveInterval = 60;
-
-//   if ((rc = MQTTConnect(&mqttClient, &data)) != 0) {
-//     printf("MQTT Connect failed, rc=%d\r\n", rc);
-//     vTaskDelete(NULL);
-//   }
-//   printf("MQTT Connected!\r\n");
-
-//   rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived);
-//   if (rc != 0) {
-//     printf("Subscribe motor failed, rc=%d\r\n", rc);
-//   }
-
-//   rc = MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived);
-//   if (rc != 0) {
-//     printf("Subscribe gripper failed, rc=%d\r\n", rc);
-//   }
-
-//   for (;;) {
-//     // 1. �????????????????�???????????????? W5500 初始化状�????????????????
-//     if (get_w5500_init_status() != 1) {
-//       printf("W5500 not initialized, trying...\r\n");
-//       rc = W5500_DriverInit();
-//       if (rc != 0) {
-//         printf("W5500 init failed, retry after 1s\r\n");
-//         vTaskDelay(pdMS_TO_TICKS(1000));
-//         continue;
-//       }
-//       W5500_Init_Status = 1;
-//       W5500_NetInfo_SetStatic();
-//       W5500_PrintNetInfo();
-//       W5500_RaiseSpiSpeed();
-//     }
-
-//     // 2. �????????查PHY链路，手动模式不起作�????????
-//     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-//       printf("PHY Link Down, retry in 500ms...\r\n");
-//       osDelay(500);
-//       continue;
-//     }
-
-//     // 3. 网络初始化并连接 MQTT
-//     NetworkInit(&mqttNet);
-//     if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-//       printf("MQTT Network connect failed, retry in 1s\r\n");
-//       osDelay(1000);
-//       continue;
-//     }
-
-//     MQTTClientInit(&mqttClient, &mqttNet, 1000,
-//       mqttSendBuf, sizeof(mqttSendBuf),
-//       mqttReadBuf, sizeof(mqttReadBuf));
-
-//     MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-//     data.MQTTVersion = 4;
-//     data.clientID.cstring = "STM32_Client";
-//     data.keepAliveInterval = 60; // 60s
-
-//     rc = MQTTConnect(&mqttClient, &data);
-//     if (rc != 0) {
-//       printf("MQTT Connect failed, rc=%d, retry 1s\r\n", rc);
-//       osDelay(1000);
-//       continue;
-//     }
-
-//     printf("MQTT Connected!\r\n");
-
-//     // 订阅主题
-//     rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived);
-//     rc |= MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived);
-//     if (rc != 0) {
-//       printf("MQTT Subscribe failed, rc=%d\r\n", rc);
-//     }
-
-//     // 4. MQTT 循环
-//     for (;;) {
-//       rc = MQTTYield(&mqttClient, 100);  // 处理 MQTT 收发 100ms delay
-//       if (rc != 0) {
-//         printf("MQTTYield failed rc=%d, reconnecting...\r\n", rc);
-//         MQTTDisconnect(&mqttClient);
-//         NetworkDisconnect(&mqttNet);
-//         break; // 跳出循环，重新初始化
-//       }
-
-//       GripperStatus_t status;
-//       osStatus_t qStatus = osMessageQueueGet(statusQueueHandle, &status, NULL, 0);
-//       if (qStatus == osOK) {
-//         mqtt_publish_gripper_status(&status, status.side);
-//       }
-
-//       mqtt_publish_gpio_status();
-
-//       if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-//         printf("PHY Link Down during operation, reconnecting...\r\n");
-//         MQTTDisconnect(&mqttClient);
-//         NetworkDisconnect(&mqttNet);
-//         W5500_Init_Status = 0;
-//         break;
-//       }
-
-//       osDelay(10);
-//     }
-
-//     osDelay(100);
-//   }
-// }
-
 void StartMqttTask(void const* argument) {
   int rc;
 
@@ -1009,7 +968,7 @@ reconnect:
   MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
   data.MQTTVersion = 4;
   data.clientID.cstring = "STM32_Client";
-  data.keepAliveInterval = 60;   // 60秒心�?
+  data.keepAliveInterval = 60;   // 60秒heartbeat
 
   rc = MQTTConnect(&mqttClient, &data);
   if (rc != 0) {
@@ -1021,6 +980,7 @@ reconnect:
 
   rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived);
   rc |= MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived);
+  rc |= MQTTSubscribe(&mqttClient, "robot/servo/cmd", QOS0, messageArrived);
   if (rc != 0) {
     printf("MQTT Subscribe failed, rc=%d\r\n", rc);
   }
@@ -1046,11 +1006,10 @@ reconnect:
       goto reconnect;
     }
 
-    // 4. 发布状�?�消息，不阻�?
+    // 4. 发布状态消息，不阻塞
     GripperStatus_t status;
     if (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
       mqtt_publish_gripper_status(&status, status.side);
-
     }
 
     mqtt_publish_gpio_status();
@@ -1058,88 +1017,6 @@ reconnect:
     osDelay(10);  // 防止任务占用 CPU
   }
 }
-
-/* MQTT Task */
-// void StartMqttTask(void const* argument) {
-//   int rc;
-
-//   if (get_w5500_init_status() != 1) {
-//     printf("W5500 init failed, stop MQTT task.\r\n");
-//     vTaskDelete(NULL);
-//   }
-
-// mqtt_reconnect:
-
-//   // 1. 初始化网�?
-//   NetworkInit(&mqttNet);
-//   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-//     printf("MQTT Network connect failed, retry in 1s\r\n");
-//     osDelay(1000);
-//     goto mqtt_reconnect;
-//   }
-
-//   // 2. 初始�? MQTT 客户�?
-//   MQTTClientInit(&mqttClient, &mqttNet, 1000,
-//     mqttSendBuf, sizeof(mqttSendBuf),
-//     mqttReadBuf, sizeof(mqttReadBuf));
-
-//   MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-//   data.MQTTVersion = 4;
-//   data.clientID.cstring = "STM32_Client";
-//   data.keepAliveInterval = 60;  // 60秒心�?
-
-//   rc = MQTTConnect(&mqttClient, &data);
-//   if (rc != 0) {
-//     printf("MQTT Connect failed, rc=%d, retry 1s\r\n", rc);
-//     osDelay(1000);
-//     goto mqtt_reconnect;
-//   }
-
-//   printf("MQTT Connected!\r\n");
-
-//   // 订阅主题
-//   rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived);
-//   rc |= MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived);
-//   if (rc != 0) {
-//     printf("MQTT Subscribe failed, rc=%d\r\n", rc);
-//   }
-
-//   // 3. MQTT 主循�?
-//   for (;;) {
-//     // 3.1 手动�? W5500 中断
-//     setSn_IR(0, 0xFF);
-
-//     // 3.2 调用 MQTTYield，处理心跳和收发数据
-//     rc = MQTTYield(&mqttClient, 100);  // 100ms循环
-//     if (rc != 0) {
-//       printf("MQTTYield failed rc=%d, reconnecting...\r\n", rc);
-//       MQTTDisconnect(&mqttClient);
-//       NetworkDisconnect(&mqttNet);
-//       osDelay(500);
-//       goto mqtt_reconnect;
-//     }
-
-//     // 3.3 非阻塞读取消息队列并发布
-//     GripperStatus_t status;
-//     while (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
-//       mqtt_publish_gripper_status(&status, status.side);
-//     }
-
-//     mqtt_publish_gpio_status();
-
-//     // 3.4 �?�? PHY
-//     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-//       printf("PHY Link Down, reconnecting...\r\n");
-//       MQTTDisconnect(&mqttClient);
-//       NetworkDisconnect(&mqttNet);
-//       W5500_Init_Status = 0;
-//       osDelay(500);
-//       goto mqtt_reconnect;
-//     }
-
-//     osDelay(10);  // CPU让出
-//   }
-// }
 
 void messageArrived(MessageData* data)
 {
@@ -1163,12 +1040,11 @@ void messageArrived(MessageData* data)
   printf("Gripper ctrl mode:%d\r\n", cmd.mode);
   cJSON* left = cJSON_GetObjectItem(root, "left");
   cJSON* right = cJSON_GetObjectItem(root, "right");
-
   if (left) {
     cmd.left.position = cJSON_GetObjectItem(left, "position")->valueint;
     cmd.left.speed = cJSON_GetObjectItem(left, "speed")->valueint;
     cmd.left.torque = cJSON_GetObjectItem(left, "torque")->valueint;
-    printf("Mqtt msg left gripper info,pos = %d, speed = %d, tprque = %d\r\n",
+    printf("Mqtt msg left gripper info,pos = %d, speed = %d, torque = %d\r\n",
       cmd.left.position, cmd.left.speed, cmd.left.torque);
     osMessageQueuePut(leftGripperQueueHandle, &cmd, 0, 0);
   }
@@ -1176,9 +1052,31 @@ void messageArrived(MessageData* data)
     cmd.right.position = cJSON_GetObjectItem(right, "position")->valueint;
     cmd.right.speed = cJSON_GetObjectItem(right, "speed")->valueint;
     cmd.right.torque = cJSON_GetObjectItem(right, "torque")->valueint;
-    printf("Mqtt msg right gripper info,pos = %d, speed = %d, tprque = %d\r\n",
+    printf("Mqtt msg right gripper info,pos = %d, speed = %d, torque = %d\r\n",
       cmd.right.position, cmd.right.speed, cmd.right.torque);
     osMessageQueuePut(rightGripperQueueHandle, &cmd, 0, 0);
+  }
+
+  /* ================== Servo 命令解析 ================== */
+  ServoCmd_t servoCmd;
+  memset(&servoCmd, 0, sizeof(servoCmd));
+  cJSON* kinco = cJSON_GetObjectItem(root, "kinco");
+  cJSON* zeroerr = cJSON_GetObjectItem(root, "zeroerr");
+  if (kinco) {
+    servoCmd.kinco.is_enable = cJSON_GetObjectItem(kinco, "is_enable")->valueint;
+    servoCmd.kinco.position = cJSON_GetObjectItem(kinco, "position")->valueint;
+    servoCmd.kinco.velocity = cJSON_GetObjectItem(kinco, "velocity")->valueint;
+    printf("Mqtt msg kinco info,is_enable = %d, position = %d, velocity = %d\r\n",
+      servoCmd.kinco.is_enable, servoCmd.kinco.position, servoCmd.kinco.velocity);
+    osMessageQueuePut(kincoQueueHandle, &servoCmd, 0, 0);
+  }
+  if (zeroerr) {
+    servoCmd.zeroerr.is_enable = cJSON_GetObjectItem(zeroerr, "is_enable")->valueint;
+    servoCmd.zeroerr.position = cJSON_GetObjectItem(zeroerr, "position")->valueint;
+    servoCmd.zeroerr.velocity = cJSON_GetObjectItem(zeroerr, "velocity")->valueint;
+    printf("Mqtt msg zeroerr info,is_enable = %d, position = %d, velocity = %d\r\n",
+      servoCmd.zeroerr.is_enable, servoCmd.zeroerr.position, servoCmd.zeroerr.velocity);
+    osMessageQueuePut(zeroerrQueueHanle, &servoCmd, 0, 0);
   }
 
   /* ================== GPIO 命令解析 ================== */

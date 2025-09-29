@@ -22,93 +22,131 @@ Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
 D:\robot\keil_ws\stm32-f407_-template_v2\MDK-ARM\STM32F407_Template.uvprojx
-Project File Date:  09/25/2025
+Project File Date:  09/28/2025
 
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling freertos.c...
-../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
+compiling servo.c...
 ..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/servo.h(64): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/servo.h(80): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 76)
+  #define SWITCH_ON_DISABLED_FAILED -6
+../Core/Inc/servo.h(105): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Src/freertos.c(377): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    can1TestTaskHandle = osThreadNew(StartCan1TestTask, NULL, &can1TestTask_attributes);
-../Core/Src/freertos.c(379): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    can2TestTaskHandle = osThreadNew(StartCan2TestTask, NULL, &can2TestTask_attributes);
-../Core/Src/freertos.c(383): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
-../Core/Src/freertos.c(438): warning:  #188-D: enumerated type mixed with another type
-    HAL_StatusTypeDef send_result = 0;
-../Core/Src/freertos.c(474): warning:  #188-D: enumerated type mixed with another type
-    HAL_StatusTypeDef send_result = 0;
-../Core/Src/freertos.c(478): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485A_CH, rs485a_test_msg, strlen((char*)rs485a_test_msg), 1000);
-../Core/Src/freertos.c(482): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
-../Core/Src/freertos.c(486): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
-../Core/Src/freertos.c(686): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(727): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(770): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(810): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(680): warning:  #177-D: variable "right_status"  was declared but never referenced
-    GripperStatus_t right_status;
-../Core/Src/freertos.c(1268): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1275): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1282): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1305): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1319): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1325): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1465): warning:  #177-D: variable "notifyVal"  was declared but never referenced
-    uint32_t notifyVal;
-../Core/Src/freertos.c(1575): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1586): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1612): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1620): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1651): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1659): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1686): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1694): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1726): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1735): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1762): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1771): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(135): warning:  #177-D: variable "CAN1_Test_TxMailBox"  was declared but never referenced
-  static uint32_t CAN1_Test_TxMailBox;
-../Core/Src/freertos.c: 38 warnings, 0 errors
+..\Core\Src\servo.c(41): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(21): warning:  #177-D: variable "state"  was declared but never referenced
+      uint8_t state = 0;
+..\Core\Src\servo.c(91): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(104): warning:  #111-D: statement is unreachable
+      return SDO_ERR_TIMEOUT;
+..\Core\Src\servo.c(63): warning:  #177-D: variable "state"  was declared but never referenced
+      uint8_t state = 0;
+..\Core\Src\servo.c(120): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(200); // 等待200ms，保证从站复位完�?
+..\Core\Src\servo.c(557): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(610): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(50);
+..\Core\Src\servo.c(624): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(643): warning:  #940-D: missing return statement at end of non-void function "Kinco_Disable_PDO" 
+  }
+..\Core\Src\servo.c(662): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(689): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(200); // 等待200ms，保证从站复位完�?
+..\Core\Src\servo.c(703): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(715): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(727): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(748): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(760): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(782): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(794): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(816): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(828): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(849): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(860): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(871): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(883): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(895): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(907): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(919): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(931): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(943): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(955): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(967): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(979): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(991): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1003): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1015): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1027): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1039): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1051): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1063): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1075): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1087): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1099): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1148): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1201): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(50);
+..\Core\Src\servo.c(1215): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1235): warning:  #940-D: missing return statement at end of non-void function "ZeroErr_Disable_PDO" 
+  }
+..\Core\Src\servo.c(1243): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1268): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+      print_can2_recv_msg();
+..\Core\Src\servo.c(1269): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1281): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1312): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(1349): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
+          print_can2_recv_msg();
+..\Core\Src\servo.c(1350): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c: 57 warnings, 0 errors
 linking...
-Program Size: Code=67928 RO-data=1732 RW-data=2188 ZI-data=23276  
+Program Size: Code=74132 RO-data=2228 RW-data=3768 ZI-data=23240  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 38 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 57 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -130,7 +168,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:04
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>
