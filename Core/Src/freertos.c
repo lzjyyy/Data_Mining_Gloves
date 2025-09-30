@@ -74,11 +74,8 @@ typedef struct {
 } ServoCmd_t;
 
 typedef struct {
-  uint8_t type;
   uint16_t status_word;
-  uint32_t position;
-  uint32_t velocity;
-  uint16_t error_code;
+  int32_t position;
 } ServoStatus_t;
 
 typedef struct {
@@ -140,18 +137,6 @@ char rs485a_test_msg[] = "RS485A transmit test.\r\n";
 char rs485b_test_msg[] = "RS485B transmit test.\r\n";
 char rs485c_test_msg[] = "RS485C transmit test.\r\n";
 
-CAN_TxHeaderTypeDef CAN1_Test_TxHeader;
-CAN_RxHeaderTypeDef CAN1_Test_RxHeader;
-CAN_TxHeaderTypeDef CAN2_Test_TxHeader;
-CAN_RxHeaderTypeDef CAN2_Test_RxHeader;
-
-uint8_t CAN1_Test_TxData[8];
-uint8_t CAN1_Test_RxData[8];
-uint8_t CAN2_Test_TxData[8];
-uint8_t CAN2_Test_RxData[8];
-static uint32_t CAN1_Test_TxMailBox;
-static uint32_t CAN2_Test_TxMailBox;
-
 osThreadId mqttTestTaskHandle;
 osThreadId_t modbusMasterTestHandle;
 osThreadId_t kincoCtrlTaskHandle;
@@ -212,6 +197,8 @@ static modbusRecvRawData_t* p_rightRecvRawData = NULL;
 static bool is_leftRecvRawDataPtr_ok = false;
 static bool is_rightRecvRawDataPtr_ok = false;
 static bool gpio_in_status[6] = { false, false, false, false, false, false };
+static ServoStatus_t kinco_status;
+static ServoStatus_t zeroerr_status;
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -300,6 +287,7 @@ static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side);
 static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side);
 static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side);
 static void mqtt_publish_gpio_status(void);
+static void mqtt_publish_servos_status(uint8_t type);
 
 // left and right grippers timer callback functions
 static void Timer50msLeft_Callback(void* argument);
@@ -585,6 +573,7 @@ void StartKincoCtrlTask(void const* argument)
     {
       break;
     }
+    osDelay(10);
   }
 
   if (enable_result == ENABLE_OK)
@@ -597,6 +586,7 @@ void StartKincoCtrlTask(void const* argument)
   }
 
   ServoCmd_t cmd;
+  TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
 
   for (;;)
   {
@@ -606,55 +596,35 @@ void StartKincoCtrlTask(void const* argument)
         Kinco_Enable_PDO();
       }
 
+      if (cmd.kinco.is_enable == 1)
+      {
+        Kinco_MovPos_PDO(cmd.kinco.position);
+      }
+
+      if (cmd.kinco.velocity > 0 && cmd.kinco.velocity < 3000)
+      {
+        Kinco_SetVel_PDO(cmd.kinco.velocity);
+      }
+
       if ((cmd.kinco.is_enable == 0) && (Get_Curr_Status(0) == OPERATION_ENABLED))
       {
         Kinco_Disable_PDO();
       }
     }
-    osDelay(1);
+
+    /* 每隔 50ms 读取kinco状态和位置 */
+    static uint32_t counter = 0;
+    if (counter % 50 == 0) {  // 系统tick=1ms
+      sendSYNC(&Kinco_Ctrl_Data);
+      // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
+      kinco_status.status_word = Statusword;
+      kinco_status.position = Position_actual_value;
+    }
+    counter++;
+
+    /* 精确定时，每次循环维持50ms周期 */
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(1));  // 1ms
   }
-
-  // for(;;)
-  // {
-  //   printf("CAN1 test tasks is running\r\n");
-  //   printf("Enable Kinco\r\n");
-  //   Kinco_Enable_PDO();
-  //   osDelay(10);
-
-  //   printf("Mov pos:0\r\n");
-  //   Kinco_MovPos_PDO(0);
-  //   osDelay(3000);
-
-  //   printf("Mov pos:65536 * 10\r\n");
-  //   Kinco_MovPos_PDO(65536 * 10);
-  //   osDelay(3000);
-
-  //   Kinco_SetVel_PDO(500);
-
-  //   printf("Mov pos:65536*50\r\n");
-  //   Kinco_MovPos_PDO(65536 * 100);
-  //   osDelay(3000);
-
-  //   printf("Mov pos:65536*5\r\n");
-  //   Kinco_MovPos_PDO(65536 * 5);
-  //   Kinco_SetVel_PDO(100);
-  //   osDelay(3000);
-
-  //   printf("Mov pos:65536*500\r\n");
-  //   Kinco_MovPos_PDO(65536 * 500);
-  //   Kinco_SetVel_PDO(1000);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:65536*50\r\n");
-  //   Kinco_MovPos_PDO(65536 * 50);
-  //   Kinco_SetVel_PDO(50);
-  //   osDelay(10000);
-
-  //   printf("Disable Kinco\r\n");
-  //   Kinco_Disable_PDO();
-
-  //   osDelay(1000);
-  // }
 }
 
 void StartZeroErrCtrlTask(void const* argument)
@@ -694,59 +664,49 @@ void StartZeroErrCtrlTask(void const* argument)
   }
 
   ServoCmd_t cmd;
-
+  TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
   for (;;)
   {
     if (osMessageQueueGet(zeroerrQueueHanle, &cmd, NULL, 0) == osOK) {
       if ((cmd.zeroerr.is_enable == 1) && (Get_Curr_Status(1) != OPERATION_ENABLED))
       {
+        // ZeroErr_QuickStop_Resume_SDO();
         ZeroErr_Enable_PDO();
       }
 
-      if ((cmd.zeroerr.is_enable == 0) && (Get_Curr_Status(1) == OPERATION_ENABLED))
+      if (cmd.zeroerr.velocity > 0 && cmd.zeroerr.velocity <= 30)
       {
+        // ZeroErr_SetVel_SDO(cmd.zeroerr.velocity);
+        ZeroErr_SetVel_PDO(cmd.zeroerr.velocity);
+      }
+
+      if (cmd.zeroerr.is_enable == 1)
+      {
+        ZeroErr_MovPos_PDO(cmd.zeroerr.position);
+      }
+
+      if (cmd.zeroerr.is_enable == 0)
+      {
+        printf("Disable zeroerr\r\n");
+        ZeroErr_QuickStop_SDO();
         ZeroErr_Disable_PDO();
       }
+
     }
-    osDelay(1);
+
+    /* 每隔 50ms 读取ZeroErr状态和位置 */
+    static uint32_t counter = 0;
+    if (counter % 50 == 0) {  // 系统tick=1ms
+      sendSYNC(&ZeroErr_Ctrl_Data);
+      // printf("ZeroErr Status=0x%04X, Pos=%ld\r\n", status_word_zeroerr, pos_actual_val_zeroerr);
+      zeroerr_status.status_word = status_word_zeroerr;
+      zeroerr_status.position = pos_actual_val_zeroerr;
+    }
+    counter++;
+
+    /* 精确定时，每次循环维持50ms周期 */
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(1));  // 1ms
   }
-
-  // for(;;)
-  // {
-  //   printf("CAN2 test task is running...\r\n");
-  //   printf("Enable ZeroErr\r\n");
-  //   ZeroErr_Enable_PDO();
-  //   osDelay(1000);
-
-  //   printf("Mov pos:0 deg\r\n");
-  //   ZeroErr_MovPos_PDO(0);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:90 deg\r\n");
-  //   ZeroErr_MovPos_PDO(90);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:60 deg\r\n");
-  //   ZeroErr_MovPos_PDO(60);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:180 deg\r\n");
-  //   ZeroErr_MovPos_PDO(180);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:120 deg\r\n");
-  //   ZeroErr_MovPos_PDO(120);
-  //   osDelay(10000);
-
-  //   printf("Mov pos:30 deg\r\n");
-  //   ZeroErr_MovPos_PDO(30);
-  //   osDelay(10000);
-
-  //   printf("Disable ZeroErr\r\n");
-  //   ZeroErr_Disable_PDO();
-
-  //   osDelay(10000); // Send every 100ms
-  // }
 }
 
 /* USER CODE BEGIN Header_StartTaskMaster */
@@ -1013,6 +973,10 @@ reconnect:
     }
 
     mqtt_publish_gpio_status();
+
+    mqtt_publish_servos_status(0);
+
+    mqtt_publish_servos_status(1);
 
     osDelay(10);  // 防止任务占用 CPU
   }
@@ -1779,6 +1743,35 @@ static void mqtt_publish_gpio_status(void)
   }
   else {
     // printf("Publish GPIO status: %s\r\n", payload);
+  }
+}
+
+static void mqtt_publish_servos_status(uint8_t type)
+{
+  char topic[64];
+  char payload[128];
+
+  snprintf(topic, sizeof(topic), "robot/servos/%s/status", type == 0 ? "kinco" : "zeroerr");
+  if (type == 0)
+  {
+    snprintf(payload, sizeof(payload), "{\"statusWord\":%d,\"position\":%d}",
+      kinco_status.status_word, kinco_status.position);
+  }
+  else
+  {
+    snprintf(payload, sizeof(payload), "{\"statusWord\":%d,\"position\":%d}",
+      zeroerr_status.status_word, zeroerr_status.position);
+  }
+
+  MQTTMessage message;
+  message.qos = QOS0;
+  message.retained = 0;
+  message.payload = payload;
+  message.payloadlen = strlen(payload);
+
+  int rc = MQTTPublish(&mqttClient, topic, &message);
+  if (rc != 0) {
+    printf("MQTT publish failed, rc=%d\r\n", rc);
   }
 }
 /* USER CODE END Application */

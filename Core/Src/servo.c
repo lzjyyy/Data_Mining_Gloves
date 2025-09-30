@@ -2,6 +2,8 @@
 
 static Servo_Status_t kinco_curr_status;
 static Servo_Status_t zeroerr_curr_status;
+static bool kinco_lock;
+static bool zeroerr_lock;
 
 int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType)
@@ -131,7 +133,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write SERVO_WORK_MODE_INDEX Success\r\n");
     }
     else
@@ -143,7 +145,7 @@ void Kinco_Setup(void)
     result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO read SERVO_WORK_MODE_INDEX Success,work_mode:0x%x\r\n", work_mode);
     }
     else
@@ -164,7 +166,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
     }
     else
@@ -176,7 +178,7 @@ void Kinco_Setup(void)
     result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO read PROFILED_VELOCITY_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -198,7 +200,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write PROFILED_ACC_INDEX Success\r\n");
     }
     else
@@ -210,7 +212,7 @@ void Kinco_Setup(void)
     result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO read PROFILED_ACC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -232,7 +234,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write PROFILED_DEC_INDEX Success\r\n");
     }
     else
@@ -244,7 +246,7 @@ void Kinco_Setup(void)
     result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO read PROFILED_DEC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -265,7 +267,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -277,7 +279,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -289,7 +291,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -301,7 +303,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -313,7 +315,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -325,7 +327,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -337,7 +339,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -349,7 +351,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -361,7 +363,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -373,7 +375,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -385,7 +387,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -397,7 +399,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -409,7 +411,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -421,7 +423,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -433,7 +435,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -445,7 +447,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -457,7 +459,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -469,7 +471,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -481,7 +483,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x03, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -493,7 +495,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -505,7 +507,7 @@ void Kinco_Setup(void)
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -516,6 +518,12 @@ void Kinco_Setup(void)
 
 int Kinco_Enable_PDO(void)
 {
+    if (kinco_lock)
+    {
+        return ENABLE_BUSY;
+    }
+
+    kinco_lock = true;
     for (int i = 0; i < 10; i++)
     {
         Get_Parse_StatusWord(0);
@@ -526,6 +534,7 @@ int Kinco_Enable_PDO(void)
 
     if (kinco_curr_status == INVALID) {
         printf("Kinco enable failed, GET_STATUS_FAILED.\r\n");
+        kinco_lock = false;
         return GET_STATUS_FAILED;
     }
     else if (kinco_curr_status == SWITCH_ON_DISABLED) {
@@ -549,6 +558,7 @@ int Kinco_Enable_PDO(void)
 
     if (kinco_curr_status != READY_TO_SWITCH_ON) {
         printf("Kinco enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        kinco_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
     else {
@@ -570,6 +580,7 @@ int Kinco_Enable_PDO(void)
 
     if (kinco_curr_status != SWITCHED_ON) {
         printf("Kinco enable failed, SWITCHED_ON_FAILED.\r\n");
+        kinco_lock = false;
         return SWITCHED_ON_FAILED;
     }
     else {
@@ -591,17 +602,24 @@ int Kinco_Enable_PDO(void)
 
     if (kinco_curr_status != OPERATION_ENABLED) {
         printf("Kinco enable failed, OPERATION_ENABLED_FAILED.\r\n");
+        kinco_lock = false;
         return OPERATION_ENABLED_FAILED;
     }
     else {
         printf("Kinco current status is OPERATION_ENABLED, enable completed.\r\n");
     }
 
+    kinco_lock = false;
     return ENABLE_OK;
 }
 
 int  Kinco_Disable_PDO(void)
 {
+    if (kinco_lock)
+    {
+        return DISABLE_BUSY;
+    }
+
     uint32_t size = 2;
     ctrl_word = 0x06;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (uint32_t*)&size, RW);
@@ -616,6 +634,7 @@ int  Kinco_Disable_PDO(void)
 
     if (kinco_curr_status != READY_TO_SWITCH_ON) {
         printf("Kinco enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        kinco_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
     else {
@@ -635,10 +654,12 @@ int  Kinco_Disable_PDO(void)
 
     if (kinco_curr_status != SWITCH_ON_DISABLED) {
         printf("Kinco enable failed, SWITCH_ON_DISABLED_FAILED.\r\n");
+        kinco_lock = false;
         return SWITCH_ON_DISABLED_FAILED;
     }
     else {
         printf("Kinco current status is SWITCH_ON_DISABLED, disable completed.\r\n");
+        return DISABLE_OK;
     }
 }
 
@@ -658,7 +679,7 @@ void Kinco_MovPos_PDO(uint32_t pos)
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
     sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    // print_can1_recv_msg();
     osDelay(5);
 
     printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
@@ -672,7 +693,7 @@ void Kinco_SetVel_PDO(uint32_t vel)
     writeLocalDict(&Kinco_Ctrl_Data, 0x2002, 0x00, &Profile_velocity, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
     sendSYNC(&Kinco_Ctrl_Data);
-    print_can1_recv_msg();
+    // print_can1_recv_msg();
 }
 
 void ZeroErr_MasterNode_Init(void)
@@ -696,23 +717,11 @@ void ZeroErr_MasterNode_Init(void)
 void ZeroErr_Setup(void)
 {
     int result = 0;
-    uint16_t set_ctrl = 0x0F;
-    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0, &set_ctrl, uint16);
-    if (result == SDO_OK)
-    {
-        print_can2_recv_msg();
-        // printf("ZeroErr SDO Write set CTRL_WORD Success\r\n");
-    }
-    else
-    {
-        printf("ZeroErr SDO Write set CTRL_WORD Failed\r\n");
-    }
-
     uint8_t work_mode = 1;
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write SERVO_WORK_MODE_INDEX Success\r\n");
     }
     else
@@ -724,7 +733,7 @@ void ZeroErr_Setup(void)
     result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_WORK_MODE_INDEX, 0x00, &work_mode, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO read SERVO_WORK_MODE_INDEX Success,work_mode:0x%x\r\n", work_mode);
     }
     else
@@ -745,7 +754,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("Zeroerr SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
     }
     else
@@ -757,7 +766,7 @@ void ZeroErr_Setup(void)
     result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("Zeroerr SDO read PROFILED_VELOCITY_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -779,7 +788,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write PROFILED_ACC_INDEX Success\r\n");
     }
     else
@@ -791,7 +800,7 @@ void ZeroErr_Setup(void)
     result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_ACC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO read PROFILED_ACC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -813,7 +822,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write PROFILED_DEC_INDEX Success\r\n");
     }
     else
@@ -825,7 +834,7 @@ void ZeroErr_Setup(void)
     result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_DEC_INDEX, 0x00, &profiled_val, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO read PROFILED_DEC_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
     }
     else
@@ -846,7 +855,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, 0x1005, 0, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
     }
     else
     {
@@ -857,7 +866,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, 0x1006, 0, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
     }
     else
     {
@@ -868,7 +877,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -880,7 +889,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -892,7 +901,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -904,7 +913,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -916,7 +925,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -928,7 +937,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -940,7 +949,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -952,7 +961,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -964,7 +973,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -976,7 +985,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -988,7 +997,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1000,7 +1009,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x02, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1012,7 +1021,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1024,7 +1033,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO1_PARAM_INDEX Success\r\n");
     }
     else
@@ -1036,7 +1045,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -1048,7 +1057,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x02, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -1060,7 +1069,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1072,7 +1081,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1084,7 +1093,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_MAPPING_INDEX Success\r\n");
     }
     else
@@ -1096,7 +1105,7 @@ void ZeroErr_Setup(void)
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, RPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -1107,6 +1116,11 @@ void ZeroErr_Setup(void)
 
 int ZeroErr_Enable_PDO(void)
 {
+    if (zeroerr_lock)
+    {
+        return ENABLE_BUSY;
+    }
+
     for (int i = 0; i < 10; i++)
     {
         Get_Parse_StatusWord(1);
@@ -1117,10 +1131,16 @@ int ZeroErr_Enable_PDO(void)
 
     if (zeroerr_curr_status == INVALID) {
         printf("ZeroErr enable failed, GET_STATUS_FAILED.\r\n");
+        zeroerr_lock = false;
         return GET_STATUS_FAILED;
     }
     else if (zeroerr_curr_status == SWITCH_ON_DISABLED) {
         printf("ZeroErr current status is SWITCH_ON_DISABLED, continue...\r\n");
+    }
+    else if (zeroerr_curr_status == OPERATION_ENABLED)
+    {
+        printf("ZeroErr current status is OPERATION_ENABLED\r\n");
+        return ENABLE_OK;
     }
 
     uint32_t size;
@@ -1140,6 +1160,7 @@ int ZeroErr_Enable_PDO(void)
 
     if (zeroerr_curr_status != READY_TO_SWITCH_ON) {
         printf("ZeroErr enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        zeroerr_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
     else {
@@ -1161,6 +1182,7 @@ int ZeroErr_Enable_PDO(void)
 
     if (zeroerr_curr_status != SWITCHED_ON) {
         printf("ZeroErr enable failed, SWITCHED_ON_FAILED.\r\n");
+        zeroerr_lock = false;
         return SWITCHED_ON_FAILED;
     }
     else {
@@ -1182,17 +1204,23 @@ int ZeroErr_Enable_PDO(void)
 
     if (zeroerr_curr_status != OPERATION_ENABLED) {
         printf("ZeroErr enable failed, OPERATION_ENABLED_FAILED.\r\n");
+        zeroerr_lock = false;
         return OPERATION_ENABLED_FAILED;
     }
     else {
         printf("ZeroErr current status is OPERATION_ENABLED, enable completed.\r\n");
     }
 
+    zeroerr_lock = false;
     return ENABLE_OK;
 }
 
 int ZeroErr_Disable_PDO(void)
 {
+    if (zeroerr_lock)
+    {
+        return DISABLE_BUSY;
+    }
     uint32_t size = 2;
     ctrl_word_zeroerr = 0x06;
     writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (uint32_t*)&size, RW);
@@ -1207,6 +1235,7 @@ int ZeroErr_Disable_PDO(void)
 
     if (zeroerr_curr_status != READY_TO_SWITCH_ON) {
         printf("ZeroErr enable failed, READY_SWITCH_ON_FAILED.\r\n");
+        zeroerr_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
     else {
@@ -1227,10 +1256,12 @@ int ZeroErr_Disable_PDO(void)
 
     if (zeroerr_curr_status != SWITCH_ON_DISABLED) {
         printf("ZeroErr enable failed, SWITCH_ON_DISABLED_FAILED.\r\n");
+        zeroerr_lock = false;
         return SWITCH_ON_DISABLED_FAILED;
     }
     else {
         printf("ZeroErr current status is SWITCH_ON_DISABLED, disable completed.\r\n");
+        return DISABLE_OK;
     }
 }
 
@@ -1240,7 +1271,7 @@ void ZeroErr_Set_QuickStop_option(uint16_t option)
     int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, STOP_OPTION_INDEX, 0x00, &set_val_u16, uint16);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         // printf("ZeroErr SDO Write RPDO2_PARAM_INDEX Success\r\n");
     }
     else
@@ -1265,50 +1296,157 @@ void ZeroErr_MovPos_PDO(float degree)
     writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
     sendPDOevent(&ZeroErr_Ctrl_Data);
     sendSYNC(&ZeroErr_Ctrl_Data);
-    print_can2_recv_msg();
+    // print_can2_recv_msg();
     osDelay(5);
 
     printf("status_word_error:0x%x, Position_actual_value:0x%x\r\n",
         status_word_zeroerr, pos_actual_val_zeroerr);
 }
 
-void ZeroErr_QuickStop_SDO(void)
+void ZeroErr_SetVel_PDO(uint32_t vel)
 {
-    uint32_t cur_ctrl_word = 0;
-    int result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+    uint32_t size = 4;
+    target_vel_zeroerr = (uint32_t)(vel * ZEROERR_DPS_TO_DEC_MULT);
+    writeLocalDict(&ZeroErr_Ctrl_Data, 0x2002, 0x00, &target_vel_zeroerr, (UNS32*)&size, RW);
+    sendPDOevent(&ZeroErr_Ctrl_Data);
+    sendSYNC(&ZeroErr_Ctrl_Data);
+    // print_can2_recv_msg();
+}
+
+void ZeroErr_SetVel_SDO(uint32_t vel)
+{
+    uint32_t set_val_u32 = (uint32_t)(vel * ZEROERR_DPS_TO_DEC_MULT);
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, PROFILED_VELOCITY_INDEX, 0x00, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
-        print_can2_recv_msg();
-        // printf("ZeroErr SDO read SERVO_CTRL_WORD_INDEX Success,profiled_val:0x%x\r\n", profiled_val);
-        cur_ctrl_word &= ~(1 << 2);
-
-        result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
-        if (result == SDO_OK)
-        {
-            print_can2_recv_msg();
-            // printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Success\r\n");
-        }
-        else
-        {
-            printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Failed\r\n");
-        }
+        // print_can2_recv_msg();
+        // printf("Zeroerr SDO Write PROFILED_VELOCITY_INDEX Success\r\n");
     }
     else
     {
-        printf("ZeroErr SDO read SERVO_CTRL_WORD_INDEX Failed\r\n");
+        printf("Zeroerr SDO Write PROFILED_VELOCITY_INDEX Failed\r\n");
     }
 }
 
-void ZeroErr_QuickStop_Resume_SDO(void)
+void ZeroErr_QuickStop_SDO(void)
 {
+    uint16_t cur_ctrl_word = 0;
+    int result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint16);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        printf("Zeroerr SDO read SERVO_CTRL_WORD_INDEX Success,cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
+    }
+    else
+    {
+        printf("Zeroerr SDO read SERVO_CTRL_WORD_INDEX Failed\r\n");
+    }
 
+    cur_ctrl_word &= ~(1 << 2);
+    printf("cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint16);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Failed\r\n");
+    }
+}
+
+void ZeroErr_Clr_Fault_CWord_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0x80;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+}
+
+void ZeroErr_Clr_Zero_CWord_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0x00;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+}
+
+void ZeroErr_ShutDown_CWord_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0x06;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+}
+
+void ZeroErr_SwitchOn_CWord_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0x07;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+}
+
+void ZeroErr_EnOper_CWord_SDO(void)
+{
+    uint32_t cur_ctrl_word = 0x0F;
+    int result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint32);
+}
+
+bool ZeroErr_QuickStop_Resume_SDO(void)
+{
+    Get_Parse_StatusWord(1);
+    if (zeroerr_curr_status == FAULT ||
+        zeroerr_curr_status == FAULT_REACTION_ACT)
+    {
+        ZeroErr_Clr_Fault_CWord_SDO();
+        osDelay(10);
+        ZeroErr_Clr_Zero_CWord_SDO();
+        osDelay(10);
+        if (!ZeroErr_Wait_Status(SWITCH_ON_DISABLED))
+        {
+            printf("zeroerr FAULT_RESET failed\r\n");
+            return false;
+        }
+    }
+
+    ZeroErr_ShutDown_CWord_SDO();
+    if (!ZeroErr_Wait_Status(READY_TO_SWITCH_ON))
+    {
+        printf("zeroerr READY_TO_SWITCH_ON failed\r\n");
+        return false;
+    }
+
+    ZeroErr_SwitchOn_CWord_SDO();
+    if (!ZeroErr_Wait_Status(SWITCHED_ON))
+    {
+        printf("zeroerr SWITCHED_ON failed\r\n");
+        return false;
+    }
+
+    ZeroErr_EnOper_CWord_SDO();
+    if (!ZeroErr_Wait_Status(OPERATION_ENABLED))
+    {
+        printf("zeroerr OPERATION_ENABLED failed\r\n");
+        return false;
+    }
+
+    printf("zeroerr RESUME ok\r\n");
+    return true;
+}
+
+bool ZeroErr_Wait_Status(Servo_Status_t target_state)
+{
+    for (int i = 0; i < 50; i++)
+    {
+        Get_Parse_StatusWord(1);
+        if (zeroerr_curr_status == target_state)
+        {
+            return true;
+        }
+        osDelay(5);
+    }
+    return false;
 }
 
 void Get_Parse_StatusWord(uint8_t servo_type)
 {
     if (servo_type == 0) {
         sendSYNC(&Kinco_Ctrl_Data);
-        print_can1_recv_msg();
+        // print_can1_recv_msg();
         osDelay(1);
         if ((Statusword & 0x004F) == 0x0000) {
             printf("Kinco State: Not ready to switch on\r\n");
@@ -1346,7 +1484,7 @@ void Get_Parse_StatusWord(uint8_t servo_type)
     else
     {
         sendSYNC(&ZeroErr_Ctrl_Data);
-        print_can2_recv_msg();
+        // print_can2_recv_msg();
         osDelay(1);
         if ((status_word_zeroerr & 0x004F) == 0x0000) {
             printf("ZeroErr State: Not ready to switch on\r\n");

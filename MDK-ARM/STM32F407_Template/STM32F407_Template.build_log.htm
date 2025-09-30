@@ -27,126 +27,70 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
+compiling can_canopen.c...
+..\CANOpen\hardware\can_canopen.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\CANOpen\hardware\can_canopen.c(56): warning:  #177-D: variable "i"  was declared but never referenced
+          int i;
+..\CANOpen\hardware\can_canopen.c(82): warning:  #177-D: variable "i"  was declared but never referenced
+          int i;
+..\CANOpen\hardware\can_canopen.c(103): warning:  #940-D: missing return statement at end of non-void function "canSend" 
+  }
+..\CANOpen\hardware\can_canopen.c(118): warning:  #1-D: last line of file ends without a newline
+  }
+..\CANOpen\hardware\can_canopen.c(111): warning:  #177-D: function "printCanMessage"  was declared but never referenced
+  static void printCanMessage(uint32_t id, uint8_t dlc, uint8_t* data, const char* prefix)
+..\CANOpen\hardware\can_canopen.c: 6 warnings, 0 errors
 compiling servo.c...
 ..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
   #endif
-../Core/Inc/servo.h(80): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 76)
+../Core/Inc/servo.h(83): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 79)
   #define SWITCH_ON_DISABLED_FAILED -6
-../Core/Inc/servo.h(105): warning:  #1-D: last line of file ends without a newline
+../Core/Inc/servo.h(116): warning:  #1-D: last line of file ends without a newline
   #endif
-..\Core\Src\servo.c(41): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(43): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(1);
-..\Core\Src\servo.c(21): warning:  #177-D: variable "state"  was declared but never referenced
+..\Core\Src\servo.c(23): warning:  #177-D: variable "state"  was declared but never referenced
       uint8_t state = 0;
-..\Core\Src\servo.c(91): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(93): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(1);
-..\Core\Src\servo.c(104): warning:  #111-D: statement is unreachable
+..\Core\Src\servo.c(106): warning:  #111-D: statement is unreachable
       return SDO_ERR_TIMEOUT;
-..\Core\Src\servo.c(63): warning:  #177-D: variable "state"  was declared but never referenced
+..\Core\Src\servo.c(65): warning:  #177-D: variable "state"  was declared but never referenced
       uint8_t state = 0;
-..\Core\Src\servo.c(120): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(122): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(200); // 等待200ms，保证从站复位完�?
-..\Core\Src\servo.c(557): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(567): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(610): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(628): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(50);
-..\Core\Src\servo.c(624): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(643): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(643): warning:  #940-D: missing return statement at end of non-void function "Kinco_Disable_PDO" 
-  }
-..\Core\Src\servo.c(662): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(683): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(689): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(710): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(200); // 等待200ms，保证从站复位完�?
-..\Core\Src\servo.c(703): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(715): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(727): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(748): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(760): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(782): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(794): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(816): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(828): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(849): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(860): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(871): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(883): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(895): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(907): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(919): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(931): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(943): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(955): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(967): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(979): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(991): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1003): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1015): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1027): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1039): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1051): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1063): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1075): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1087): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1099): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1148): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1169): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(1201): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1229): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(50);
-..\Core\Src\servo.c(1215): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1244): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(1235): warning:  #940-D: missing return statement at end of non-void function "ZeroErr_Disable_PDO" 
-  }
-..\Core\Src\servo.c(1243): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1268): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-      print_can2_recv_msg();
-..\Core\Src\servo.c(1269): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1300): warning:  #223-D: function "osDelay" declared implicitly
       osDelay(5);
-..\Core\Src\servo.c(1281): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1312): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1396): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(10);
+..\Core\Src\servo.c(1440): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(5);
+..\Core\Src\servo.c(1450): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(1);
-..\Core\Src\servo.c(1349): warning:  #223-D: function "print_can2_recv_msg" declared implicitly
-          print_can2_recv_msg();
-..\Core\Src\servo.c(1350): warning:  #223-D: function "osDelay" declared implicitly
+..\Core\Src\servo.c(1488): warning:  #223-D: function "osDelay" declared implicitly
           osDelay(1);
-..\Core\Src\servo.c: 57 warnings, 0 errors
+..\Core\Src\servo.c: 22 warnings, 0 errors
 linking...
-Program Size: Code=74132 RO-data=2228 RW-data=3768 ZI-data=23240  
+Program Size: Code=74752 RO-data=2372 RW-data=3796 ZI-data=23244  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 57 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 28 Warning(s).
 
 <h2>Software Packages used:</h2>
 

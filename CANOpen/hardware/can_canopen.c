@@ -63,7 +63,7 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
         TxHeader.DLC = m->len;              // payload length
         TxHeader.TransmitGlobalTime = DISABLE;
 
-        printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN1 TX");
+        // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN1 TX");
         // transmit data
         hal_status = HAL_CAN_AddTxMessage(&hcan1, &TxHeader, m->data, &TxMailbox);
 
@@ -89,7 +89,7 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
         TxHeader.DLC = m->len;              // payload length
         TxHeader.TransmitGlobalTime = DISABLE;
 
-        printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN2 TX");
+        // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN2 TX");
         // transmit data
         hal_status = HAL_CAN_AddTxMessage(&hcan2, &TxHeader, m->data, &TxMailbox);
 

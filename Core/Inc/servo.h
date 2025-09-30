@@ -55,9 +55,9 @@ typedef enum {
 #define KINCO_RESOLUTION    65536
 #define KINCO_RPM_TO_DEC_MULT   0.273067
 #define KINCO_ACC_DEC_MULT    0.016384
-#define KINCO_DEFAULT_PROFILED_VELOCITY     200 // 200 rpm 
-#define KINCO_DEFAULT_PROFILED_ACC        100 // 200 rpm/s 
-#define KINCO_DEFAULT_PROFILED_DEC        100 // 200 rpm/s 
+#define KINCO_DEFAULT_PROFILED_VELOCITY     500 // 200 rpm 
+#define KINCO_DEFAULT_PROFILED_ACC        50 // 200 rpm/s 
+#define KINCO_DEFAULT_PROFILED_DEC        200 // 200 rpm/s 
 #define ZEROERR_RESOLUTION  524288
 #define ZEROERR_DPS_TO_DEC_MULT 1456.36
 #define ZEROERR_ACC_DEC_MULT 1456.36
@@ -72,6 +72,9 @@ typedef enum {
 #define SDO_ERR_TIMEOUT    -4   // 超时未完成
 
 #define ENABLE_OK                  0
+#define DISABLE_OK                 0
+#define ENABLE_BUSY                1
+#define DISABLE_BUSY               2
 #define GET_STATUS_FAILED         -1
 #define SWITCH_ON_DISABLED_FAILED -2
 #define READY_SWITCH_ON_FAILED    -3
@@ -98,8 +101,16 @@ void ZeroErr_Setup(void);
 int ZeroErr_Enable_PDO(void);
 int ZeroErr_Disable_PDO(void);
 void ZeroErr_MovPos_PDO(float degree);
+void ZeroErr_SetVel_PDO(uint32_t vel);
+void ZeroErr_SetVel_SDO(uint32_t vel);
 void ZeroErr_Set_QuickStop_option(uint16_t option);
 void ZeroErr_QuickStop_SDO(void);
-void ZeroErr_QuickStop_Resume_SDO(void);
+bool ZeroErr_QuickStop_Resume_SDO(void);
+void ZeroErr_Clr_Fault_CWord_SDO(void);
+void ZeroErr_Clr_Zero_CWord_SDO(void);
+void ZeroErr_ShutDown_CWord_SDO(void);
+void ZeroErr_SwitchOn_CWord_SDO(void);
+void ZeroErr_EnOper_CWord_SDO(void);
+bool ZeroErr_Wait_Status(Servo_Status_t target_state);
 
 #endif
