@@ -27,70 +27,22 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling can_canopen.c...
-..\CANOpen\hardware\can_canopen.h(13): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\CANOpen\hardware\can_canopen.c(56): warning:  #177-D: variable "i"  was declared but never referenced
-          int i;
-..\CANOpen\hardware\can_canopen.c(82): warning:  #177-D: variable "i"  was declared but never referenced
-          int i;
-..\CANOpen\hardware\can_canopen.c(103): warning:  #940-D: missing return statement at end of non-void function "canSend" 
+compiling w5500_port.c...
+..\Ethernet\w5500_port.c(15): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RTR"  (declared at line 12)
+  #define Sn_TX_RTR 0x001D   // 8-bit寄存器，TCP重试时间单位 100μs
+..\Ethernet\w5500_port.c(16): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RCR"  (declared at line 14)
+  #define Sn_TX_RCR 0x001E   // 8-bit寄存器，SYN重试次数
+..\Ethernet\w5500_port.c(336): warning:  #1-D: last line of file ends without a newline
   }
-..\CANOpen\hardware\can_canopen.c(118): warning:  #1-D: last line of file ends without a newline
-  }
-..\CANOpen\hardware\can_canopen.c(111): warning:  #177-D: function "printCanMessage"  was declared but never referenced
-  static void printCanMessage(uint32_t id, uint8_t dlc, uint8_t* data, const char* prefix)
-..\CANOpen\hardware\can_canopen.c: 6 warnings, 0 errors
-compiling servo.c...
-..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Inc/servo.h(83): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 79)
-  #define SWITCH_ON_DISABLED_FAILED -6
-../Core/Inc/servo.h(116): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\Core\Src\servo.c(43): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(1);
-..\Core\Src\servo.c(23): warning:  #177-D: variable "state"  was declared but never referenced
-      uint8_t state = 0;
-..\Core\Src\servo.c(93): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(1);
-..\Core\Src\servo.c(106): warning:  #111-D: statement is unreachable
-      return SDO_ERR_TIMEOUT;
-..\Core\Src\servo.c(65): warning:  #177-D: variable "state"  was declared but never referenced
-      uint8_t state = 0;
-..\Core\Src\servo.c(122): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(200); // 等待200ms，保证从站复位完�?
-..\Core\Src\servo.c(567): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(628): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(50);
-..\Core\Src\servo.c(643): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(683): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(710): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(200); // 等待200ms，保证从站复位完�?
-..\Core\Src\servo.c(1169): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(1229): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(50);
-..\Core\Src\servo.c(1244): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(1300): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(5);
-..\Core\Src\servo.c(1396): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(10);
-..\Core\Src\servo.c(1440): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(5);
-..\Core\Src\servo.c(1450): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(1);
-..\Core\Src\servo.c(1488): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(1);
-..\Core\Src\servo.c: 22 warnings, 0 errors
+..\Ethernet\w5500_port.c(111): warning:  #177-D: function "setSn_TX_RTR"  was declared but never referenced
+  static void setSn_TX_RTR(uint8_t sock, uint8_t value)
+..\Ethernet\w5500_port.c(116): warning:  #177-D: function "setSn_TX_RCR"  was declared but never referenced
+  static void setSn_TX_RCR(uint8_t sock, uint8_t value)
+..\Ethernet\w5500_port.c: 5 warnings, 0 errors
 linking...
-Program Size: Code=74752 RO-data=2372 RW-data=3796 ZI-data=23244  
+Program Size: Code=74640 RO-data=2420 RW-data=3804 ZI-data=23244  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 28 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 5 Warning(s).
 
 <h2>Software Packages used:</h2>
 

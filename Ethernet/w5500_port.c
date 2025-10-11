@@ -41,18 +41,26 @@ static inline void W5500_HwReset(void)
 static uint8_t W5500_ReadByte(void)
 {
     uint8_t tx = 0xFF, rx = 0;
-    xSemaphoreTake(spiMutex, portMAX_DELAY);
-    HAL_SPI_TransmitReceive(&hspi2, &tx, &rx, 1, HAL_MAX_DELAY);
-    xSemaphoreGive(spiMutex);
+    // xSemaphoreTake(spiMutex, portMAX_DELAY);
+    // HAL_SPI_TransmitReceive(&hspi2, &tx, &rx, 1, HAL_MAX_DELAY);
+    if (HAL_SPI_TransmitReceive(&hspi2, &tx, &rx, 1, 20) != HAL_OK)
+    {
+        printf("W5500 SPI read timeout\r\n");
+    }
+    // xSemaphoreGive(spiMutex);
     return rx;
 }
 
 static void W5500_WriteByte(uint8_t byte)
 {
     uint8_t rx;
-    xSemaphoreTake(spiMutex, portMAX_DELAY);
-    HAL_SPI_TransmitReceive(&hspi2, &byte, &rx, 1, HAL_MAX_DELAY);
-    xSemaphoreGive(spiMutex);
+    // xSemaphoreTake(spiMutex, portMAX_DELAY);
+    // HAL_SPI_TransmitReceive(&hspi2, &byte, &rx, 1, HAL_MAX_DELAY);
+    if (HAL_SPI_TransmitReceive(&hspi2, &byte, &rx, 1, 20) != HAL_OK)
+    {
+        printf("W5500 SPI write timeout\r\n");
+    }
+    // xSemaphoreGive(spiMutex);
 }
 
 /* ========== 临界区（可选） ========== */

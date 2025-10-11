@@ -148,6 +148,7 @@ osThreadId_t monitorTaskHandle;
 osThreadId_t leftGripperTaskHandle;
 osThreadId_t rightGripperTaskHandle;
 osThreadId_t gpioTaskHandle;
+osThreadId_t monitorTaskHandle;
 
 /* Message queues */
 osMessageQId leftGripperQueueHandle;     /* grippers control commands from MQTT */
@@ -164,9 +165,9 @@ osSemaphoreId_t semQueueRightHandle;
 osSemaphoreId_t semStatusRightHandle;
 
 // grippers timers
-osTimerId_t timer50msLeft;
+osTimerId_t timer10msLeft;
 osTimerId_t timer200msLeft;
-osTimerId_t timer50msRight;
+osTimerId_t timer10msRight;
 osTimerId_t timer200msRight;
 
 /* Mutex */
@@ -199,6 +200,8 @@ static bool is_rightRecvRawDataPtr_ok = false;
 static bool gpio_in_status[6] = { false, false, false, false, false, false };
 static ServoStatus_t kinco_status;
 static ServoStatus_t zeroerr_status;
+static uint16_t gripper_err_cnt = 0;
+static uint16_t mqtt_err_cnt = 0;
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -240,6 +243,12 @@ const osThreadAttr_t gpioTask_attributes = {
   .name = "gpioTask",
   .stack_size = 128 * 4,
   .priority = (osPriority_t)osPriorityNormal,
+};
+
+const osThreadAttr_t monitorTask_attributes = {
+  .name = "monitorTask",
+  .stack_size = 128 * 4,
+  .priority = (osPriority_t)osPriorityLow,
 };
 
 /* USER CODE END Variables */
@@ -286,13 +295,14 @@ static void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint
 static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side);
 static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side);
 static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side);
-static void mqtt_publish_gpio_status(void);
+static bool mqtt_publish_gpio_status(void);
 static void mqtt_publish_servos_status(uint8_t type);
+static void system_reset(void);
 
 // left and right grippers timer callback functions
-static void Timer50msLeft_Callback(void* argument);
+static void Timer10msLeft_Callback(void* argument);
 static void Timer200msLeft_Callback(void* argument);
-static void Timer50msRight_Callback(void* argument);
+static void Timer10msRight_Callback(void* argument);
 static void Timer200msRight_Callback(void* argument);
 
 /* USER CODE END FunctionPrototypes */
@@ -339,10 +349,10 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   // left gripper timers
-  timer50msLeft = osTimerNew(Timer50msLeft_Callback, osTimerPeriodic, NULL, NULL);
+  timer10msLeft = osTimerNew(Timer10msLeft_Callback, osTimerPeriodic, NULL, NULL);
   timer200msLeft = osTimerNew(Timer200msLeft_Callback, osTimerPeriodic, NULL, NULL);
 
-  timer50msRight = osTimerNew(Timer50msRight_Callback, osTimerPeriodic, NULL, NULL);
+  timer10msRight = osTimerNew(Timer10msRight_Callback, osTimerPeriodic, NULL, NULL);
   timer200msRight = osTimerNew(Timer200msRight_Callback, osTimerPeriodic, NULL, NULL);
   // right gripper timers
 
@@ -360,10 +370,10 @@ void MX_FREERTOS_Init(void) {
   gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
   // start timers
-  osTimerStart(timer50msLeft, 50);
+  osTimerStart(timer10msLeft, 10);
   osTimerStart(timer200msLeft, 200);
 
-  osTimerStart(timer50msRight, 50);
+  osTimerStart(timer10msRight, 10);
   osTimerStart(timer200msRight, 200);
 
   /* USER CODE END RTOS_QUEUES */
@@ -391,13 +401,13 @@ void MX_FREERTOS_Init(void) {
 
   mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
 
-  // osThreadDef(monitorTask, StartMonitorTask, osPriorityLow, 0, 256);
-  // monitorTaskHandle = osThreadCreate(osThread(monitorTask), NULL);
   leftGripperTaskHandle = osThreadNew(LeftGripperTask, NULL, &leftGripperTask_attributes);
 
   rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
 
   gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
+
+  monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -908,8 +918,8 @@ void StartMqttTask(void const* argument) {
   int rc;
 
   if (get_w5500_init_status() != 1) {
-    printf("W5500 init failed, stop MQTT task.\r\n");
-    vTaskDelete(NULL);
+    printf("W5500 init failed, MQTT task invalid.\r\n");
+    // vTaskDelete(NULL);
   }
 
   NetworkInit(&mqttNet);
@@ -917,6 +927,7 @@ void StartMqttTask(void const* argument) {
 reconnect:
   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
     printf("MQTT Network connect failed, retry in 1s\r\n");
+    mqtt_err_cnt += 10;
     vTaskDelay(pdMS_TO_TICKS(1000));
     goto reconnect;
   }
@@ -961,6 +972,7 @@ reconnect:
     rc = MQTTYield(&mqttClient, 100);  // 100ms
     if (rc != 0) {
       printf("MQTTYield failed rc=%d, reconnecting...\r\n", rc);
+      mqtt_err_cnt++;
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
       goto reconnect;
@@ -972,7 +984,12 @@ reconnect:
       mqtt_publish_gripper_status(&status, status.side);
     }
 
-    mqtt_publish_gpio_status();
+    if (mqtt_publish_gpio_status() == false)
+    {
+      MQTTDisconnect(&mqttClient);
+      NetworkDisconnect(&mqttNet);
+      goto reconnect;
+    }
 
     mqtt_publish_servos_status(0);
 
@@ -984,13 +1001,13 @@ reconnect:
 
 void messageArrived(MessageData* data)
 {
-  printf("Message arrived on topic %.*s\r\n",
-    data->topicName->lenstring.len,
-    data->topicName->lenstring.data);
+  // printf("Message arrived on topic %.*s\r\n",
+  //   data->topicName->lenstring.len,
+  //   data->topicName->lenstring.data);
 
-  printf("Payload: %.*s\r\n",
-    data->message->payloadlen,
-    (char*)data->message->payload);
+  // printf("Payload: %.*s\r\n",
+  //   data->message->payloadlen,
+  //   (char*)data->message->payload);
 
   cJSON* root = cJSON_Parse((char*)data->message->payload);
   if (!root) {
@@ -1001,23 +1018,23 @@ void messageArrived(MessageData* data)
   GripperCmd_t cmd;
   memset(&cmd, 0, sizeof(cmd));
   cmd.mode = cJSON_GetObjectItem(root, "mode")->valueint;
-  printf("Gripper ctrl mode:%d\r\n", cmd.mode);
+  // printf("Gripper ctrl mode:%d\r\n", cmd.mode);
   cJSON* left = cJSON_GetObjectItem(root, "left");
   cJSON* right = cJSON_GetObjectItem(root, "right");
   if (left) {
     cmd.left.position = cJSON_GetObjectItem(left, "position")->valueint;
     cmd.left.speed = cJSON_GetObjectItem(left, "speed")->valueint;
     cmd.left.torque = cJSON_GetObjectItem(left, "torque")->valueint;
-    printf("Mqtt msg left gripper info,pos = %d, speed = %d, torque = %d\r\n",
-      cmd.left.position, cmd.left.speed, cmd.left.torque);
+    // printf("Mqtt msg left gripper info,pos = %d, speed = %d, torque = %d\r\n",
+    // cmd.left.position, cmd.left.speed, cmd.left.torque);
     osMessageQueuePut(leftGripperQueueHandle, &cmd, 0, 0);
   }
   if (right) {
     cmd.right.position = cJSON_GetObjectItem(right, "position")->valueint;
     cmd.right.speed = cJSON_GetObjectItem(right, "speed")->valueint;
     cmd.right.torque = cJSON_GetObjectItem(right, "torque")->valueint;
-    printf("Mqtt msg right gripper info,pos = %d, speed = %d, torque = %d\r\n",
-      cmd.right.position, cmd.right.speed, cmd.right.torque);
+    // printf("Mqtt msg right gripper info,pos = %d, speed = %d, torque = %d\r\n",
+    // cmd.right.position, cmd.right.speed, cmd.right.torque);
     osMessageQueuePut(rightGripperQueueHandle, &cmd, 0, 0);
   }
 
@@ -1068,9 +1085,12 @@ void messageArrived(MessageData* data)
 /* Monitor Task */
 void StartMonitorTask(void const* argument) {
   for (;;) {
-    // printf("Heap=%d, FreeStack=%d\r\n",
-    //   xPortGetFreeHeapSize(),
-    //   uxTaskGetStackHighWaterMark(NULL));
+    printf("gripper_err_cnt:%d, mqtt_err_cnt:%d\r\n", gripper_err_cnt, mqtt_err_cnt);
+    if (gripper_err_cnt >= 10 || mqtt_err_cnt >= 50)
+    {
+      printf("System Reset!\r\n");
+      system_reset();
+    }
     osDelay(1000);
   }
 }
@@ -1137,6 +1157,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     if (notifyVal != ERR_OK_QUERY) {
       // timeout, no response
       printf("Left gripper modbus query timeout!\r\n");
+      gripper_err_cnt++;
       // h->i8lastError = ERR_TIME_OUT;
     }
 
@@ -1150,12 +1171,13 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     if (notifyVal == 0) {
       // timeout, no response
       printf("Left gripper modbus query timeout!\r\n");
+      gripper_err_cnt++;
       // h->i8lastError = ERR_TIME_OUT;
     }
-    else
-    {
-      printf("Left gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
-    }
+    // else
+    // {
+    //   printf("Left gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
+    // }
   }
   else if (select_gripper == RIGHT_GRIPPER) {
     RightGripperCmdData[0] = (uint16_t)((position >> 16) & 0xFFFF);
@@ -1174,6 +1196,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     if (notifyVal == 0) {
       // timeout, no response
       printf("Right gripper modbus query timeout!\r\n");
+      gripper_err_cnt++;
       // h->i8lastError = ERR_TIME_OUT;
     }
 
@@ -1187,12 +1210,13 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     if (notifyVal != ERR_OK_QUERY) {
       // timeout, no response
       printf("Right gripper modbus query timeout!\r\n");
+      gripper_err_cnt++;
       // h->i8lastError = ERR_TIME_OUT;
     }
-    else
-    {
-      printf("Right gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
-    }
+    // else
+    // {
+    //   printf("Right gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
+    // }
   }
 }
 
@@ -1318,7 +1342,8 @@ void mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
 
   int rc = MQTTPublish(&mqttClient, topic, &message);
   if (rc != 0) {
-    printf("MQTT publish failed, rc=%d\r\n", rc);
+    printf("MQTT publish Gripper Status failed, rc=%d\r\n", rc);
+    mqtt_err_cnt++;
   }
 }
 
@@ -1335,6 +1360,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("Read left REG_REALTIME_POS failed!\r\n");
       status->position = 0xFFFFFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1347,6 +1373,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("L read left REG_POS_REACHED failed!\r\n");
       status->reached = 0xFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1359,6 +1386,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("L read left REG_WARNING_INFO failed!\r\n");
       status->warning = 0xFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1372,6 +1400,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("R read right REG_REALTIME_POS failed!\r\n");
       status->position = 0xFFFFFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1384,6 +1413,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("R read right REG_POS_REACHED failed!\r\n");
       status->reached = 0xFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1396,6 +1426,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     if (result != true) {
       printf("R read right REG_WARNING_INFO failed!\r\n");
       status->warning = 0xFFFF;
+      gripper_err_cnt++;
     }
     else
     {
@@ -1406,7 +1437,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
 }
 
 // left gripper timers callback
-static void Timer50msLeft_Callback(void* argument)
+static void Timer10msLeft_Callback(void* argument)
 {
   osSemaphoreRelease(semQueueLeftHandle);
 }
@@ -1417,7 +1448,7 @@ static void Timer200msLeft_Callback(void* argument)
 }
 
 // right gripper timers callback
-static void Timer50msRight_Callback(void* argument)
+static void Timer10msRight_Callback(void* argument)
 {
   osSemaphoreRelease(semQueueRightHandle);
 }
@@ -1719,7 +1750,7 @@ void GpioTask(void* argument)
   }
 }
 
-static void mqtt_publish_gpio_status(void)
+static bool mqtt_publish_gpio_status(void)
 {
   char payload[128];
   snprintf(payload, sizeof(payload),
@@ -1740,9 +1771,11 @@ static void mqtt_publish_gpio_status(void)
   int rc = MQTTPublish(&mqttClient, "robot/gpio/status", &message);
   if (rc != 0) {
     printf("Publish GPIO status failed, rc=%d\r\n", rc);
+    return false;
   }
   else {
     // printf("Publish GPIO status: %s\r\n", payload);
+    return true;
   }
 }
 
@@ -1771,8 +1804,14 @@ static void mqtt_publish_servos_status(uint8_t type)
 
   int rc = MQTTPublish(&mqttClient, topic, &message);
   if (rc != 0) {
-    printf("MQTT publish failed, rc=%d\r\n", rc);
+    printf("MQTT publish Servo Status failed, rc=%d\r\n", rc);
   }
+}
+
+static void system_reset(void)
+{
+  __disable_irq();          // 可选：先关闭全局中断，避免中途打断
+  NVIC_SystemReset();       // 调用 Cortex-M4 内核提供的系统复位函
 }
 /* USER CODE END Application */
 
