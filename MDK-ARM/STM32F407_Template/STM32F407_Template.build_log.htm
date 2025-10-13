@@ -27,22 +27,16 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling w5500_port.c...
-..\Ethernet\w5500_port.c(15): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RTR"  (declared at line 12)
-  #define Sn_TX_RTR 0x001D   // 8-bit寄存器，TCP重试时间单位 100μs
-..\Ethernet\w5500_port.c(16): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RCR"  (declared at line 14)
-  #define Sn_TX_RCR 0x001E   // 8-bit寄存器，SYN重试次数
-..\Ethernet\w5500_port.c(336): warning:  #1-D: last line of file ends without a newline
-  }
-..\Ethernet\w5500_port.c(111): warning:  #177-D: function "setSn_TX_RTR"  was declared but never referenced
-  static void setSn_TX_RTR(uint8_t sock, uint8_t value)
-..\Ethernet\w5500_port.c(116): warning:  #177-D: function "setSn_TX_RCR"  was declared but never referenced
-  static void setSn_TX_RCR(uint8_t sock, uint8_t value)
-..\Ethernet\w5500_port.c: 5 warnings, 0 errors
+compiling socket.c...
+..\Ethernet\socket.c(355): warning:  #223-D: function "HAL_GetTick" declared implicitly
+     uint32_t tick_start = HAL_GetTick();
+..\Ethernet\socket.c(375): warning:  #223-D: function "osDelay" declared implicitly
+        osDelay(5);
+..\Ethernet\socket.c: 2 warnings, 0 errors
 linking...
-Program Size: Code=74640 RO-data=2420 RW-data=3804 ZI-data=23244  
+Program Size: Code=75624 RO-data=2420 RW-data=3808 ZI-data=23240  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 5 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 2 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -64,7 +58,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:03
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

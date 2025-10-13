@@ -33,6 +33,7 @@ static int getNextPacketId(MQTTClient* c) {
 
 static int sendPacket(MQTTClient* c, int length, Timer* timer)
 {
+    // printf("sendPacket\r\n");
     int rc = FAILURE,
         sent = 0;
 

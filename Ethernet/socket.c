@@ -314,6 +314,7 @@ int8_t disconnect(uint8_t sn)
    return SOCK_OK;
 }
 
+// 增加了发送超时检测
 int32_t send(uint8_t sn, uint8_t* buf, uint16_t len)
 {
    uint8_t tmp = 0;
@@ -351,6 +352,7 @@ int32_t send(uint8_t sn, uint8_t* buf, uint16_t len)
    }
    freesize = getSn_TxMAX(sn);
    if (len > freesize) len = freesize; // check size not to exceed MAX size.
+   uint32_t tick_start = HAL_GetTick();
    while (1)
    {
       freesize = getSn_TX_FSR(sn);
@@ -362,6 +364,15 @@ int32_t send(uint8_t sn, uint8_t* buf, uint16_t len)
       }
       if ((sock_io_mode & (1 << sn)) && (len > freesize)) return SOCK_BUSY;
       if (len <= freesize) break;
+
+      // === 超时检测 ===
+      if (HAL_GetTick() - tick_start > 500) // 超过500ms
+      {
+         close(sn);
+         return SOCKERR_TIMEOUT;
+      }
+
+      osDelay(5);
    }
    wiz_send_data(sn, buf, len);
 #if _WIZCHIP_ == 5200
@@ -431,7 +442,7 @@ int32_t recv(uint8_t sn, uint8_t* buf, uint16_t len)
          if (recvsize != 0) break;
       };
 #if _WIZCHIP_ == 5300
-   }
+}
 #endif
 
    //A20150601 : For integrating with W5300
@@ -671,10 +682,10 @@ int32_t recvfrom(uint8_t sn, uint8_t* buf, uint16_t len, uint8_t* addr, uint16_t
             sock_remained_size[sn] = head[6];
             sock_remained_size[sn] = (sock_remained_size[sn] << 8) + head[7];
 #if _WIZCHIP_ == 5300
-         }
+      }
 #endif
          sock_pack_info[sn] = PACK_FIRST;
-      }
+   }
       if (len < sock_remained_size[sn]) pack_len = len;
       else pack_len = sock_remained_size[sn];
       //A20150601 : For W5300
@@ -748,7 +759,7 @@ int32_t recvfrom(uint8_t sn, uint8_t* buf, uint16_t len, uint8_t* addr, uint16_t
       wiz_recv_ignore(sn, pack_len); // data copy.
       sock_remained_size[sn] = pack_len;
       break;
-   }
+}
    setSn_CR(sn, Sn_CR_RECV);
    /* wait to process the command... */
    while (getSn_CR(sn));

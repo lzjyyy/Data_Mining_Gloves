@@ -53,6 +53,7 @@ static uint8_t W5500_ReadByte(void)
 
 static void W5500_WriteByte(uint8_t byte)
 {
+    // printf("W5500_WriteByte\r\n");
     uint8_t rx;
     // xSemaphoreTake(spiMutex, portMAX_DELAY);
     // HAL_SPI_TransmitReceive(&hspi2, &byte, &rx, 1, HAL_MAX_DELAY);
@@ -60,6 +61,7 @@ static void W5500_WriteByte(uint8_t byte)
     {
         printf("W5500 SPI write timeout\r\n");
     }
+    // printf("W5500_WriteByte end\r\n");
     // xSemaphoreGive(spiMutex);
 }
 

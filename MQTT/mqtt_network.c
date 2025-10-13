@@ -30,6 +30,7 @@ int W5500_recv(Network* n, uint8_t* buffer, int len, int timeout_ms)
 // send 封装
 int W5500_send(Network* n, uint8_t* buffer, int len, int timeout_ms)
 {
+    // printf("W5500_send\r\n");
     int sent = 0;
     while (sent < len)
     {
