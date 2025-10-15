@@ -670,7 +670,7 @@ void Kinco_MovPos_PDO(uint32_t pos)
     size = 2;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2000, 0x00, &ctrl_word, (UNS32*)&size, RW);
     target_pos = pos;
-    printf("target_pos:0x%x\r\n", target_pos);
+    // printf("target_pos:0x%x\r\n", target_pos);
     size = 4;
     writeLocalDict(&Kinco_Ctrl_Data, 0x2001, 0x00, &target_pos, (UNS32*)&size, RW);
     sendPDOevent(&Kinco_Ctrl_Data);
@@ -682,8 +682,8 @@ void Kinco_MovPos_PDO(uint32_t pos)
     // print_can1_recv_msg();
     osDelay(5);
 
-    printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
-        Statusword, Position_actual_value, Current_actual_value);
+    // printf("Statusword:0x%x, Position_actual_value:0x%x, Current_actual_value:0x%x\r\n",
+    //     Statusword, Position_actual_value, Current_actual_value);
 }
 
 void Kinco_SetVel_PDO(uint32_t vel)
@@ -1287,7 +1287,7 @@ void ZeroErr_MovPos_PDO(float degree)
     size = 2;
     writeLocalDict(&ZeroErr_Ctrl_Data, 0x2000, 0x00, &ctrl_word_zeroerr, (UNS32*)&size, RW);
     target_pos_zeroerr = (uint32_t)(degree * ZEROERR_RESOLUTION / 360);
-    printf("target_pos:0x%x\r\n", target_pos_zeroerr);
+    // printf("target_pos:0x%x\r\n", target_pos_zeroerr);
     size = 4;
     writeLocalDict(&ZeroErr_Ctrl_Data, 0x2001, 0x00, &target_pos_zeroerr, (UNS32*)&size, RW);
     sendPDOevent(&ZeroErr_Ctrl_Data);
@@ -1299,8 +1299,8 @@ void ZeroErr_MovPos_PDO(float degree)
     // print_can2_recv_msg();
     osDelay(5);
 
-    printf("status_word_error:0x%x, Position_actual_value:0x%x\r\n",
-        status_word_zeroerr, pos_actual_val_zeroerr);
+    // printf("status_word_error:0x%x, Position_actual_value:0x%x\r\n",
+    //     status_word_zeroerr, pos_actual_val_zeroerr);
 }
 
 void ZeroErr_SetVel_PDO(uint32_t vel)

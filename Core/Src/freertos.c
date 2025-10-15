@@ -45,6 +45,8 @@
 #include "timer5.h"
 #include "servo.h"
 #include "can_canopen.h"
+#include "FreeRTOS.h"
+#include "timers.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -103,6 +105,14 @@ typedef enum {
   LIFTING = 0,
   WARNING = 1,
 } GPIO_Cmd_Type_t;
+
+typedef struct {
+  GripperStatus_t left_gripper_status;
+  GripperStatus_t right_gripper_status;
+  ServoStatus_t sys_kinco_status;
+  ServoStatus_t sys_zeroerr_status;
+  bool gpio_in_status[6];
+} SysStatus_t;
 
 /* USER CODE END PTD */
 
@@ -203,6 +213,7 @@ static ServoStatus_t zeroerr_status;
 static uint32_t sys_run_cnt = 0;
 static uint16_t gripper_err_cnt = 0;
 static uint16_t mqtt_err_cnt = 0;
+static SysStatus_t sys_status;
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -300,6 +311,7 @@ static bool mqtt_publish_gpio_status(void);
 static bool mqtt_publish_servos_status(uint8_t type);
 static void system_reset(void);
 static void ForceCloseSocket(uint8_t sn);
+static bool mqtt_publish_sys_status(SysStatus_t* status);
 
 // left and right grippers timer callback functions
 static void Timer10msLeft_Callback(void* argument);
@@ -629,13 +641,16 @@ void StartKincoCtrlTask(void const* argument)
     if (counter % 50 == 0) {  // 系统tick=1ms
       sendSYNC(&Kinco_Ctrl_Data);
       // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
-      kinco_status.status_word = Statusword;
-      kinco_status.position = Position_actual_value;
+      // kinco_status.status_word = Statusword;
+      // kinco_status.position = Position_actual_value;
+      sys_status.sys_kinco_status.status_word = Statusword;
+      sys_status.sys_kinco_status.position = Position_actual_value;
     }
     counter++;
 
     /* 精确定时，每次循环维持50ms周期 */
-    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(1));  // 1ms
+    // vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(50));  // 1ms
+    osDelay(50);
   }
 }
 
@@ -711,13 +726,16 @@ void StartZeroErrCtrlTask(void const* argument)
     if (counter % 50 == 0) {  // 系统tick=1ms
       sendSYNC(&ZeroErr_Ctrl_Data);
       // printf("ZeroErr Status=0x%04X, Pos=%ld\r\n", status_word_zeroerr, pos_actual_val_zeroerr);
-      zeroerr_status.status_word = status_word_zeroerr;
-      zeroerr_status.position = pos_actual_val_zeroerr;
+      // zeroerr_status.status_word = status_word_zeroerr;
+      // zeroerr_status.position = pos_actual_val_zeroerr;
+      sys_status.sys_zeroerr_status.status_word = status_word_zeroerr;
+      sys_status.sys_zeroerr_status.position = pos_actual_val_zeroerr;
     }
     counter++;
 
     /* 精确定时，每次循环维持50ms周期 */
-    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(1));  // 1ms
+    // vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(50));  // 1ms
+    osDelay(50);
   }
 }
 
@@ -1136,16 +1154,14 @@ main_loop:
     }
 
     // 额外检查 MQTT 是否仍然被认为连接（若使用 Paho 可用此函数）
-// #ifdef MQTTIsConnected
     if (!MQTTIsConnected(&mqttClient)) {
       printf("MQTTIsConnected returned false, reconnecting...\r\n");
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
       goto reconnect;
     }
-    // #endif
 
-        // 如果长时间没有成功的 MQTTYield（例如超过两倍 keepalive），认为死连接，重连
+    // 如果长时间没有成功的 MQTTYield（例如超过两倍 keepalive），认为死连接，重连
     if ((xTaskGetTickCount() - last_success_yield) > yield_timeout_ticks) {
       printf("No successful MQTTYield for too long, reconnecting...\r\n");
       MQTTDisconnect(&mqttClient);
@@ -1154,20 +1170,27 @@ main_loop:
     }
 
     // 4. 发布状态消息（带失败计数）
-    GripperStatus_t status;
-    if (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
-      if (!mqtt_publish_gripper_status(&status, status.side)) {
-        publish_fail_cnt++;
-        printf("Publish gripper status failed (cnt=%d)\r\n", publish_fail_cnt);
-      }
-      else {
-        publish_fail_cnt = 0;
-      }
-    }
+    // GripperStatus_t status;
+    // if (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
+    //   if (!mqtt_publish_gripper_status(&status, status.side)) {
+    //     publish_fail_cnt++;
+    //     printf("Publish gripper status failed (cnt=%d)\r\n", publish_fail_cnt);
+    //   }
+    //   else {
+    //     publish_fail_cnt = 0;
+    //   }
+    // }
 
-    if (!mqtt_publish_gpio_status()) {
+    // if (!mqtt_publish_gpio_status()) {
+    //   publish_fail_cnt++;
+    //   printf("Publish gpio status failed (cnt=%d)\r\n", publish_fail_cnt);
+    // }
+    // else {
+    //   publish_fail_cnt = 0;
+    // }
+    if (!mqtt_publish_sys_status(&sys_status)) {
       publish_fail_cnt++;
-      printf("Publish gpio status failed (cnt=%d)\r\n", publish_fail_cnt);
+      printf("Publish robot sys status failed (cnt=%d)\r\n", publish_fail_cnt);
     }
     else {
       publish_fail_cnt = 0;
@@ -1182,19 +1205,19 @@ main_loop:
       goto reconnect;
     }
 
-    // 5. 周期性发布伺服状态（若失败，可计数到同一个 publish_fail_cnt）
-    if (!mqtt_publish_servos_status(0)) {
-      publish_fail_cnt++;
-    }
-    else {
-      publish_fail_cnt = 0;
-    }
-    if (!mqtt_publish_servos_status(1)) {
-      publish_fail_cnt++;
-    }
-    else {
-      publish_fail_cnt = 0;
-    }
+    // // 5. 周期性发布伺服状态（若失败，可计数到同一个 publish_fail_cnt）
+    // if (!mqtt_publish_servos_status(0)) {
+    //   publish_fail_cnt++;
+    // }
+    // else {
+    //   publish_fail_cnt = 0;
+    // }
+    // if (!mqtt_publish_servos_status(1)) {
+    //   publish_fail_cnt++;
+    // }
+    // else {
+    //   publish_fail_cnt = 0;
+    // }
 
     // 6. 小延时，避免任务占满 CPU
     osDelay(10);
@@ -1249,16 +1272,16 @@ void messageArrived(MessageData* data)
     servoCmd.kinco.is_enable = cJSON_GetObjectItem(kinco, "is_enable")->valueint;
     servoCmd.kinco.position = cJSON_GetObjectItem(kinco, "position")->valueint;
     servoCmd.kinco.velocity = cJSON_GetObjectItem(kinco, "velocity")->valueint;
-    printf("Mqtt msg kinco info,is_enable = %d, position = %d, velocity = %d\r\n",
-      servoCmd.kinco.is_enable, servoCmd.kinco.position, servoCmd.kinco.velocity);
+    // printf("Mqtt msg kinco info,is_enable = %d, position = %d, velocity = %d\r\n",
+    //   servoCmd.kinco.is_enable, servoCmd.kinco.position, servoCmd.kinco.velocity);
     osMessageQueuePut(kincoQueueHandle, &servoCmd, 0, 0);
   }
   if (zeroerr) {
     servoCmd.zeroerr.is_enable = cJSON_GetObjectItem(zeroerr, "is_enable")->valueint;
     servoCmd.zeroerr.position = cJSON_GetObjectItem(zeroerr, "position")->valueint;
     servoCmd.zeroerr.velocity = cJSON_GetObjectItem(zeroerr, "velocity")->valueint;
-    printf("Mqtt msg zeroerr info,is_enable = %d, position = %d, velocity = %d\r\n",
-      servoCmd.zeroerr.is_enable, servoCmd.zeroerr.position, servoCmd.zeroerr.velocity);
+    // printf("Mqtt msg zeroerr info,is_enable = %d, position = %d, velocity = %d\r\n",
+    //   servoCmd.zeroerr.is_enable, servoCmd.zeroerr.position, servoCmd.zeroerr.velocity);
     osMessageQueuePut(zeroerrQueueHanle, &servoCmd, 0, 0);
   }
 
@@ -1283,17 +1306,68 @@ void messageArrived(MessageData* data)
   cJSON_Delete(root);
 }
 
-
 /* Monitor Task */
-void StartMonitorTask(void const* argument) {
-  for (;;) {
+/* Monitor Task - System Health Check */
+void StartMonitorTask(void const* argument)
+{
+  static uint32_t last_timer_task_counter = 0;
+  static uint32_t timer_stuck_counter = 0;
+
+  for (;;)
+  {
     sys_run_cnt++;
-    printf("sys_run_time:%d s,gripper_err_cnt:%d, mqtt_err_cnt:%d\r\n", sys_run_cnt, gripper_err_cnt, mqtt_err_cnt);
-    if (gripper_err_cnt >= 10 || mqtt_err_cnt >= 50)
+
+    // 打印系统运行时间与错误统计
+    printf("sys_run_time: %lu s, gripper_err_cnt: %d, mqtt_err_cnt: %d\r\n",
+      sys_run_cnt, gripper_err_cnt, mqtt_err_cnt);
+
+    // 打印定时器任务剩余栈
+    UBaseType_t timer_stack_remain = uxTaskGetStackHighWaterMark(xTimerGetTimerDaemonTaskHandle());
+    printf("Timer task stack remaining: %lu\r\n", (unsigned long)timer_stack_remain);
+
+    // 检查 Timer 守护任务是否卡死
+    static uint32_t timer_task_counter = 0;
+    TaskHandle_t xTimerHandle = xTimerGetTimerDaemonTaskHandle();
+    eTaskState timer_state = eTaskGetState(xTimerHandle);
+
+    if (timer_state == eBlocked)
     {
-      printf("System Reset!\r\n");
+      // Timer task 正常在等待延时中，复位检测计数
+      timer_stuck_counter = 0;
+    }
+    else
+    {
+      // Timer task 长时间非阻塞状态，可能卡死
+      timer_stuck_counter++;
+      printf("Warning: Timer task not blocked (%d)\r\n", timer_state);
+    }
+
+    // 检测任务运行时间变化（判断是否真的卡死）
+    timer_task_counter++;
+    if (timer_task_counter == last_timer_task_counter)
+    {
+      timer_stuck_counter++;
+    }
+    else
+    {
+      last_timer_task_counter = timer_task_counter;
+      timer_stuck_counter = 0;
+    }
+
+    // 如果 Timer 任务连续 5 次（约5秒）未变化，则判断为卡死
+    if (timer_stuck_counter > 5)
+    {
+      printf("Error: Timer task stuck! System reset.\r\n");
       system_reset();
     }
+
+    // 其他错误检测逻辑
+    if (gripper_err_cnt >= 10 || mqtt_err_cnt >= 50)
+    {
+      printf("System Reset due to errors!\r\n");
+      // system_reset();
+    }
+
     osDelay(1000);
   }
 }
@@ -1456,13 +1530,14 @@ void LeftGripperTask(void* argument)
     {
       if (osSemaphoreAcquire(semStatusLeftHandle, 0) == osOK)
       {
-        is_left_get_status = true;
-        gripper_get_status(&L_ModbusH, &status, LEFT_GRIPPER);
-        is_left_get_status = false;
+        // is_left_get_status = true;
+        // gripper_get_status(&L_ModbusH, &status, LEFT_GRIPPER);
+        gripper_get_status(&L_ModbusH, &sys_status.left_gripper_status, LEFT_GRIPPER);
+        // is_left_get_status = false;
         // 发布�???????????????? MQTT
         // mqtt_publish_gripper_status(&status, LEFT_GRIPPER);
-        status.side = LEFT_GRIPPER;
-        osMessageQueuePut(statusQueueHandle, &status, 0, 0);
+        // status.side = LEFT_GRIPPER;
+        // osMessageQueuePut(statusQueueHandle, &status, 0, 0);
         lastStatusTick = now;
       }
     }
@@ -1511,10 +1586,11 @@ void RightGripperTask(void* argument)
         {
           osDelay(5);
         }
-        gripper_get_status(&R_ModbusH, &status, RIGHT_GRIPPER);
+        // gripper_get_status(&R_ModbusH, &status, RIGHT_GRIPPER);
+        gripper_get_status(&R_ModbusH, &sys_status.right_gripper_status, RIGHT_GRIPPER);
         // mqtt_publish_gripper_status(&status, RIGHT_GRIPPER);
-        status.side = RIGHT_GRIPPER;
-        osMessageQueuePut(statusQueueHandle, &status, 0, 0);
+        // status.side = RIGHT_GRIPPER;
+        // osMessageQueuePut(statusQueueHandle, &status, 0, 0);
         lastStatusTick = now;
       }
     }
@@ -1560,6 +1636,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
   uint16_t reached = 0;
   uint16_t warning = 0;
   if (side == LEFT_GRIPPER) {
+    status->side = 0;
     // printf("L read POS\r\n");
     result = get_real_pos(h, &pos, LEFT_GRIPPER);
     if (result != true) {
@@ -1600,6 +1677,7 @@ void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t sid
     }
   }
   else {
+    status->side = 1;
     // printf("R read POS\r\n");
     result = get_real_pos(h, &pos, RIGHT_GRIPPER);
     if (result != true) {
@@ -1939,14 +2017,19 @@ void GpioTask(void* argument)
       }
     }
 
-    gpio_in_status[0] = Chk_Distance_Reached();
-    gpio_in_status[1] = Chk_UpperLimit_Reached();
-    if (gpio_in_status[1] == true)
+    // gpio_in_status[0] = Chk_Distance_Reached();
+    // gpio_in_status[1] = Chk_UpperLimit_Reached();
+    sys_status.gpio_in_status[0] = Chk_Distance_Reached();
+    sys_status.gpio_in_status[1] = Chk_UpperLimit_Reached();
+    // if (gpio_in_status[1] == true)
+    if (sys_status.gpio_in_status[1] == true)
     {
       Lift_Hold();
     }
-    gpio_in_status[2] = Chk_UpperLimit_Reached();
-    if (gpio_in_status[1] == true)
+    // gpio_in_status[2] = Chk_UpperLimit_Reached();
+    sys_status.gpio_in_status[2] = Chk_UpperLimit_Reached();
+    // if (gpio_in_status[2] == true)
+    if (sys_status.gpio_in_status[2] == true)
     {
       Lift_Hold();
     }
@@ -2019,6 +2102,63 @@ static void system_reset(void)
 {
   __disable_irq();          // 可选：先关闭全局中断，避免中途打断
   NVIC_SystemReset();       // 调用 Cortex-M4 内核提供的系统复位函
+}
+
+static bool mqtt_publish_sys_status(SysStatus_t* status)
+{
+  char topic[64];
+  char payload[256];  // 足够容纳 JSON
+
+  if (!status) return false;
+
+  snprintf(topic, sizeof(topic), "robot/status");
+
+  // 生成 JSON payload
+  int len = snprintf(payload, sizeof(payload),
+    "{"
+    "\"left_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
+    "\"right_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
+    "\"sys_kinco\":{\"status_word\":%u,\"position\":%ld},"
+    "\"sys_zeroerr\":{\"status_word\":%u,\"position\":%ld},"
+    "\"gpio_in\":[%d,%d,%d,%d,%d,%d]"
+    "}",
+    status->left_gripper_status.position,
+    status->left_gripper_status.reached,
+    status->left_gripper_status.warning,
+    status->right_gripper_status.position,
+    status->right_gripper_status.reached,
+    status->right_gripper_status.warning,
+    status->sys_kinco_status.status_word,
+    status->sys_kinco_status.position,
+    status->sys_zeroerr_status.status_word,
+    status->sys_zeroerr_status.position,
+    status->gpio_in_status[0],
+    status->gpio_in_status[1],
+    status->gpio_in_status[2],
+    status->gpio_in_status[3],
+    status->gpio_in_status[4],
+    status->gpio_in_status[5]
+  );
+
+  if (len < 0 || len >= sizeof(payload)) {
+    printf("MQTT JSON payload overflow!\r\n");
+    return false;
+  }
+
+  MQTTMessage message;
+  message.qos = QOS0;
+  message.retained = 0;
+  message.dup = 0;
+  message.payload = payload;
+  message.payloadlen = strlen(payload);
+
+  int rc = MQTTPublish(&mqttClient, topic, &message);
+  if (rc != 0) {
+    printf("MQTT publish SysStatus failed, rc=%d\r\n", rc);
+    return false;
+  }
+
+  return true;
 }
 /* USER CODE END Application */
 

@@ -27,16 +27,18 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling socket.c...
-..\Ethernet\socket.c(355): warning:  #223-D: function "HAL_GetTick" declared implicitly
-     uint32_t tick_start = HAL_GetTick();
-..\Ethernet\socket.c(375): warning:  #223-D: function "osDelay" declared implicitly
-        osDelay(5);
-..\Ethernet\socket.c: 2 warnings, 0 errors
+compiling can_canopen.c...
+..\CANOpen\hardware\can_canopen.h(13): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\CANOpen\hardware\can_canopen.c(195): warning:  #1-D: last line of file ends without a newline
+  }
+..\CANOpen\hardware\can_canopen.c(188): warning:  #177-D: function "printCanMessage"  was declared but never referenced
+  static void printCanMessage(uint32_t id, uint8_t dlc, uint8_t* data, const char* prefix)
+..\CANOpen\hardware\can_canopen.c: 3 warnings, 0 errors
 linking...
-Program Size: Code=75624 RO-data=2420 RW-data=3808 ZI-data=23240  
+Program Size: Code=75452 RO-data=2436 RW-data=3796 ZI-data=23612  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 2 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 3 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -58,7 +60,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:01
+Build Time Elapsed:  00:00:03
 </pre>
 </body>
 </html>

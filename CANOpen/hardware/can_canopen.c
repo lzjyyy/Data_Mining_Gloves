@@ -46,6 +46,63 @@ bool can2Init(CO_Data* d, uint32_t bitrate)
 }
 
 // Send a CAN message passed from the CANopen stack
+// unsigned char canSend(CAN_PORT canHandle, Message* m)
+// {
+//     if (Kinco_Ctrl_Data.canHandle == canHandle)
+//     {
+//         CAN_TxHeaderTypeDef TxHeader;
+//         uint32_t TxMailbox;
+//         HAL_StatusTypeDef hal_status;
+//         int i;
+
+//         // CAN header 
+//         TxHeader.StdId = m->cob_id;           // standard ID
+//         TxHeader.ExtId = 0;                   // not use Extended ID
+//         TxHeader.IDE = CAN_ID_STD;          // Standard Frame
+//         TxHeader.RTR = (m->rtr ? CAN_RTR_REMOTE : CAN_RTR_DATA);
+//         TxHeader.DLC = m->len;              // payload length
+//         TxHeader.TransmitGlobalTime = DISABLE;
+
+//         // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN1 TX");
+//         // transmit data
+//         hal_status = HAL_CAN_AddTxMessage(&hcan1, &TxHeader, m->data, &TxMailbox);
+//         printf("CAN1 TX HAL status=%d\r\n", hal_status);
+//         if (hal_status != HAL_OK) {
+//             printf("CAN1 TX ERROR: HAL status=%d\r\n", hal_status);
+//             return 1;   // error
+//         }
+
+//         return 0;       // successful
+//     }
+//     else if (ZeroErr_Ctrl_Data.canHandle == canHandle)
+//     {
+//         CAN_TxHeaderTypeDef TxHeader;
+//         uint32_t TxMailbox;
+//         HAL_StatusTypeDef hal_status;
+//         int i;
+
+//         // CAN header 
+//         TxHeader.StdId = m->cob_id;           // standard ID
+//         TxHeader.ExtId = 0;                   // not use Extended ID
+//         TxHeader.IDE = CAN_ID_STD;          // Standard Frame
+//         TxHeader.RTR = (m->rtr ? CAN_RTR_REMOTE : CAN_RTR_DATA);
+//         TxHeader.DLC = m->len;              // payload length
+//         TxHeader.TransmitGlobalTime = DISABLE;
+
+//         // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN2 TX");
+//         // transmit data
+//         hal_status = HAL_CAN_AddTxMessage(&hcan2, &TxHeader, m->data, &TxMailbox);
+//         printf("CAN2 TX HAL status=%d\r\n", hal_status);
+//         if (hal_status != HAL_OK) {
+//             printf("CAN2 TX ERROR: HAL status=%d\r\n", hal_status);
+//             return 1;   // error
+//         }
+
+//         return 0;       // successful
+//     }
+// }
+// Send a CAN message passed from the CANopen stack
+// Send a CAN message passed from the CANopen stack
 unsigned char canSend(CAN_PORT canHandle, Message* m)
 {
     if (Kinco_Ctrl_Data.canHandle == canHandle)
@@ -53,25 +110,33 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
         CAN_TxHeaderTypeDef TxHeader;
         uint32_t TxMailbox;
         HAL_StatusTypeDef hal_status;
-        int i;
 
         // CAN header 
         TxHeader.StdId = m->cob_id;           // standard ID
         TxHeader.ExtId = 0;                   // not use Extended ID
-        TxHeader.IDE = CAN_ID_STD;          // Standard Frame
+        TxHeader.IDE = CAN_ID_STD;            // Standard Frame
         TxHeader.RTR = (m->rtr ? CAN_RTR_REMOTE : CAN_RTR_DATA);
-        TxHeader.DLC = m->len;              // payload length
+        TxHeader.DLC = m->len;                // payload length
         TxHeader.TransmitGlobalTime = DISABLE;
 
-        // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN1 TX");
-        // transmit data
-        hal_status = HAL_CAN_AddTxMessage(&hcan1, &TxHeader, m->data, &TxMailbox);
-
-        if (hal_status != HAL_OK) {
-            printf("CAN1 TX ERROR: HAL status=%d\r\n", hal_status);
-            return 1;   // error
+        // 等待空闲邮箱（最多等待 10ms）
+        uint32_t start_tick = HAL_GetTick();
+        while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan1) == 0) {
+            if (HAL_GetTick() - start_tick > 100) {
+                printf("CAN1 TX timeout, COB-ID=0x%X\r\n", m->cob_id);
+                return 1;
+            }
         }
 
+        // transmit data
+        hal_status = HAL_CAN_AddTxMessage(&hcan1, &TxHeader, m->data, &TxMailbox);
+        // printf("CAN1 TX HAL status=%d\r\n", hal_status);
+        if (hal_status != HAL_OK) {
+            printf("CAN1 TX ERROR: HAL status=%d, HAL_CAN error=0x%lx, TSR=0x%lx\r\n",
+                hal_status, HAL_CAN_GetError(&hcan1), hcan1.Instance->TSR);
+            return 1;   // error
+        }
+        HAL_Delay(10);
         return 0;       // successful
     }
     else if (ZeroErr_Ctrl_Data.canHandle == canHandle)
@@ -79,27 +144,39 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
         CAN_TxHeaderTypeDef TxHeader;
         uint32_t TxMailbox;
         HAL_StatusTypeDef hal_status;
-        int i;
 
         // CAN header 
         TxHeader.StdId = m->cob_id;           // standard ID
         TxHeader.ExtId = 0;                   // not use Extended ID
-        TxHeader.IDE = CAN_ID_STD;          // Standard Frame
+        TxHeader.IDE = CAN_ID_STD;            // Standard Frame
         TxHeader.RTR = (m->rtr ? CAN_RTR_REMOTE : CAN_RTR_DATA);
-        TxHeader.DLC = m->len;              // payload length
+        TxHeader.DLC = m->len;                // payload length
         TxHeader.TransmitGlobalTime = DISABLE;
 
-        // printCanMessage(TxHeader.StdId, TxHeader.DLC, m->data, "CAN2 TX");
-        // transmit data
-        hal_status = HAL_CAN_AddTxMessage(&hcan2, &TxHeader, m->data, &TxMailbox);
-
-        if (hal_status != HAL_OK) {
-            printf("CAN2 TX ERROR: HAL status=%d\r\n", hal_status);
-            return 1;   // error
+        // 等待空闲邮箱（最多等待 100ms）
+        uint32_t start_tick = HAL_GetTick();
+        while (HAL_CAN_GetTxMailboxesFreeLevel(&hcan2) == 0) {
+            if (HAL_GetTick() - start_tick > 100) {
+                printf("CAN2 TX timeout, COB-ID=0x%X\r\n", m->cob_id);
+                return 1;
+            }
         }
 
+        // transmit data
+        hal_status = HAL_CAN_AddTxMessage(&hcan2, &TxHeader, m->data, &TxMailbox);
+        // printf("CAN2 TX HAL status=%d\r\n", hal_status);
+        if (hal_status != HAL_OK) {
+            printf("CAN2 TX ERROR: HAL status=%d, HAL_CAN error=0x%lx, TSR=0x%lx\r\n",
+                hal_status, HAL_CAN_GetError(&hcan2), hcan2.Instance->TSR);
+            return 1;   // error
+        }
+        HAL_Delay(10);
         return 0;       // successful
     }
+
+    // 无效 CAN handle
+    printf("Invalid CAN handle: %d\r\n", canHandle);
+    return 1;
 }
 
 unsigned char canChangeBaudRate_driver(CAN_HANDLE fd, char* baud)
