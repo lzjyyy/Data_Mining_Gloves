@@ -30,6 +30,8 @@ extern "C"
     void W5500_TCP_EchoServer_Loop(void);
     int W5500_TCP_Connect_Debug(uint8_t sock, uint8_t* ip, uint16_t port, uint32_t timeout_ms);
     uint8_t W5500_Get_PHYCFGR(void);
+    void W5500_SoftReset(void);
+    int W5500_WaitForLink(void);
 #ifdef __cplusplus
 }
 #endif

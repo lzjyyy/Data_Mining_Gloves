@@ -43,5 +43,15 @@ stm32f407_template\mqtt_network.o: ..\Ethernet\wizchip_conf.h
 stm32f407_template\mqtt_network.o: ..\Ethernet\w5500.h
 stm32f407_template\mqtt_network.o: ..\Ethernet\wizchip_conf.h
 stm32f407_template\mqtt_network.o: ..\Ethernet\socket.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+stm32f407_template\mqtt_network.o: ../Core/Inc/FreeRTOSConfig.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+stm32f407_template\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
 stm32f407_template\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
 stm32f407_template\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+stm32f407_template\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h

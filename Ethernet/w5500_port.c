@@ -336,3 +336,24 @@ uint8_t W5500_Get_PHYCFGR(void)
 
     return val;
 }
+
+void W5500_SoftReset(void)
+{
+    printf("Performing W5500 Soft Reset...\r\n");
+    wizchip_sw_reset();
+    osDelay(100);
+    printf("W5500 Soft Reset Done.\r\n");
+}
+
+int W5500_WaitForLink(void)
+{
+    const TickType_t start = xTaskGetTickCount();
+    const TickType_t timeout = pdMS_TO_TICKS(5000);
+    while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
+        if ((xTaskGetTickCount() - start) > timeout) {
+            return -1;
+        }
+        osDelay(200);
+    }
+    return 0;
+}

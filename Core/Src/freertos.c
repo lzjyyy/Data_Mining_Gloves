@@ -180,16 +180,11 @@ osTimerId_t timer200msLeft;
 osTimerId_t timer10msRight;
 osTimerId_t timer200msRight;
 
-/* Mutex */
-osMutexId canMutex;
-osMutexId rs485Mutex;
-osMutexId mqttMutex;
-
 /* MQTT globals */
 static Network mqttNet;
 static MQTTClient mqttClient;
-static unsigned char mqttSendBuf[256];
-static unsigned char mqttReadBuf[256];
+static unsigned char mqttSendBuf[512];
+static unsigned char mqttReadBuf[512];
 static volatile int mqtt_connected = 0;
 
 // osThreadId rs485TaskHandle;
@@ -312,6 +307,7 @@ static bool mqtt_publish_servos_status(uint8_t type);
 static void system_reset(void);
 static void ForceCloseSocket(uint8_t sn);
 static bool mqtt_publish_sys_status(SysStatus_t* status);
+static void mqtt_subscribe_all(void);
 
 // left and right grippers timer callback functions
 static void Timer10msLeft_Callback(void* argument);
@@ -340,13 +336,6 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
-  /* add mutexes, ... */
-  // osMutexDef(canMutex);
-  // canMutex = osMutexCreate(osMutex(canMutex));
-  // osMutexDef(rs485Mutex);
-  // rs485Mutex = osMutexCreate(osMutex(rs485Mutex));
-  // osMutexDef(mqttMutex);
-  // mqttMutex = osMutexCreate(osMutex(mqttMutex));
   /* USER CODE END RTOS_MUTEX */
 
   /* USER CODE BEGIN RTOS_SEMAPHORES */
@@ -968,98 +957,32 @@ void cjson_memory_hook(void)
   cJSON_InitHooks(&hooks);
 }
 
-// void StartMqttTask(void const* argument) {
-//   int rc;
-
-//   if (get_w5500_init_status() != 1) {
-//     printf("W5500 init failed, MQTT task invalid.\r\n");
-//     // vTaskDelete(NULL);
-//   }
-
-//   NetworkInit(&mqttNet);
-
-// reconnect:
-//   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-//     printf("MQTT Network connect failed, retry in 1s\r\n");
-//     mqtt_err_cnt += 10;
-//     vTaskDelay(pdMS_TO_TICKS(1000));
-//     goto reconnect;
-//   }
-
-//   MQTTClientInit(&mqttClient, &mqttNet, 2000,   // timeout 2s
-//     mqttSendBuf, sizeof(mqttSendBuf),
-//     mqttReadBuf, sizeof(mqttReadBuf));
-
-//   MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-//   data.MQTTVersion = 4;
-//   data.clientID.cstring = "STM32_Client";
-//   data.keepAliveInterval = 60;   // 60秒heartbeat
-
-//   rc = MQTTConnect(&mqttClient, &data);
-//   if (rc != 0) {
-//     printf("MQTT Connect failed, rc=%d, retry 1s\r\n", rc);
-//     vTaskDelay(pdMS_TO_TICKS(1000));
-//     goto reconnect;
-//   }
-//   printf("MQTT Connected!\r\n");
-
-//   rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived);
-//   rc |= MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived);
-//   rc |= MQTTSubscribe(&mqttClient, "robot/servo/cmd", QOS0, messageArrived);
-//   if (rc != 0) {
-//     printf("MQTT Subscribe failed, rc=%d\r\n", rc);
-//   }
-
-//   TickType_t lastPing = xTaskGetTickCount();
-
-//   for (;;) {
-//     // 1. 保证 PHY link 正常
-//     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-//       printf("PHY Link Down, reconnecting...\r\n");
-//       MQTTDisconnect(&mqttClient);
-//       NetworkDisconnect(&mqttNet);
-//       W5500_Init_Status = 0;
-//       goto reconnect;
-//     }
-
-//     // 3. 处理 MQTT 收发
-//     rc = MQTTYield(&mqttClient, 100);  // 100ms
-//     if (rc != 0) {
-//       printf("MQTTYield failed rc=%d, reconnecting...\r\n", rc);
-//       mqtt_err_cnt++;
-//       MQTTDisconnect(&mqttClient);
-//       NetworkDisconnect(&mqttNet);
-//       goto reconnect;
-//     }
-
-//     // 4. 发布状态消息，不阻塞
-//     GripperStatus_t status;
-//     if (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
-//       mqtt_publish_gripper_status(&status, status.side);
-//     }
-
-//     if (mqtt_publish_gpio_status() == false)
-//     {
-//       MQTTDisconnect(&mqttClient);
-//       NetworkDisconnect(&mqttNet);
-//       goto reconnect;
-//     }
-
-//     mqtt_publish_servos_status(0);
-
-//     mqtt_publish_servos_status(1);
-
-//     osDelay(10);  // 防止任务占用 CPU
-//   }
-// }
-
 static void ForceCloseSocket(uint8_t sn)
 {
-  setSn_CR(sn, Sn_CR_CLOSE);         // 发出关闭命令
-  while (getSn_CR(sn));               // 等待命令完成
-  setSn_IR(sn, 0xFF);               // 清除中断
-  osDelay(10);
+  uint8_t status;
+
+  // 先清所有中断标志（避免干扰）
+  setSn_IR(sn, 0xFF);
+
+  // 发关闭命令
+  setSn_CR(sn, Sn_CR_CLOSE);
+
+  // 最多等待 500ms 等状态切换
+  for (int i = 0; i < 50; i++)
+  {
+    osDelay(10);
+    status = getSn_SR(sn);
+    if (status == SOCK_CLOSED)
+    {
+      printf("Socket %d CLOSED\r\n", sn);
+      return;
+    }
+  }
+
+  // 若超时未关闭
+  printf("Socket %d close timeout, last state=0x%02X\r\n", sn, status);
 }
+
 
 void StartMqttTask(void const* argument) {
   int rc;
@@ -1075,21 +998,21 @@ reconnect:
   // 初次进入或重连前，确保 socket 被彻底关闭
   ForceCloseSocket(mqttNet.sock);
 
-  // 等待 socket 变为 CLOSED（避免资源忙）
-  {
-    const TickType_t wait_start = xTaskGetTickCount();
-    const TickType_t wait_timeout = pdMS_TO_TICKS(2000); // 最多等 2s
-    while (getSn_SR(mqttNet.sock) != SOCK_CLOSED) {
-      if ((xTaskGetTickCount() - wait_start) > wait_timeout) {
-        // 超时仍未关闭，继续，但打印警告
-        printf("Warning: socket not closed after 2s, continue to reconnect.\r\n");
-        break;
-      }
-      osDelay(50);
-    }
-    // 等一小段时间，给 W5500 状态稳定的机会
-    osDelay(50);
-  }
+  // // 等待 socket 变为 CLOSED（避免资源忙）
+  // {
+  //   const TickType_t wait_start = xTaskGetTickCount();
+  //   const TickType_t wait_timeout = pdMS_TO_TICKS(2000); // 最多等 2s
+  //   while (getSn_SR(mqttNet.sock) != SOCK_CLOSED) {
+  //     if ((xTaskGetTickCount() - wait_start) > wait_timeout) {
+  //       // 超时仍未关闭，继续，但打印警告
+  //       printf("Warning: socket not closed after 2s, continue to reconnect.\r\n");
+  //       break;
+  //     }
+  //     osDelay(50);
+  //   }
+  //   // 等一小段时间，给 W5500 状态稳定的机会
+  //   osDelay(50);
+  // }
 
   // 等待 PHY link
   while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
@@ -1204,24 +1127,6 @@ main_loop:
     }
 
     // 4. 发布状态消息（带失败计数）
-    // GripperStatus_t status;
-    // if (osMessageQueueGet(statusQueueHandle, &status, NULL, 0) == osOK) {
-    //   if (!mqtt_publish_gripper_status(&status, status.side)) {
-    //     publish_fail_cnt++;
-    //     printf("Publish gripper status failed (cnt=%d)\r\n", publish_fail_cnt);
-    //   }
-    //   else {
-    //     publish_fail_cnt = 0;
-    //   }
-    // }
-
-    // if (!mqtt_publish_gpio_status()) {
-    //   publish_fail_cnt++;
-    //   printf("Publish gpio status failed (cnt=%d)\r\n", publish_fail_cnt);
-    // }
-    // else {
-    //   publish_fail_cnt = 0;
-    // }
     if (!mqtt_publish_sys_status(&sys_status)) {
       publish_fail_cnt++;
       printf("Publish robot sys status failed (cnt=%d)\r\n", publish_fail_cnt);
@@ -1239,21 +1144,127 @@ main_loop:
       goto reconnect;
     }
 
-    // // 5. 周期性发布伺服状态（若失败，可计数到同一个 publish_fail_cnt）
-    // if (!mqtt_publish_servos_status(0)) {
-    //   publish_fail_cnt++;
-    // }
-    // else {
-    //   publish_fail_cnt = 0;
-    // }
-    // if (!mqtt_publish_servos_status(1)) {
-    //   publish_fail_cnt++;
-    // }
-    // else {
-    //   publish_fail_cnt = 0;
-    // }
+    // 5. 小延时，避免任务占满 CPU
+    osDelay(10);
+  }
+}
 
-    // 6. 小延时，避免任务占满 CPU
+void StartMqttTask_update(void const* argument)
+{
+  int rc;
+
+reconnect:
+
+  // Step 1. 确保 socket 彻底关闭
+  ForceCloseSocket(mqttNet.sock);
+
+  // Step 2. 检查 PHY Link
+  if (W5500_WaitForLink() != 0) {
+    printf("No PHY Link, retry in 1s...\r\n");
+    osDelay(1000);
+    goto reconnect;
+  }
+
+  // Step 3. 建立 TCP 连接
+  if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
+    printf("MQTT Network connect failed, retry in 1s\r\n");
+    mqtt_err_cnt++;
+    if (mqtt_err_cnt > 5) {
+      W5500_SoftReset();
+      mqtt_err_cnt = 0;
+    }
+    osDelay(1000);
+    goto reconnect;
+  }
+
+  // Step 4. 初始化 MQTT
+  MQTTClientInit(&mqttClient, &mqttNet, 2000, mqttSendBuf, sizeof(mqttSendBuf),
+    mqttReadBuf, sizeof(mqttReadBuf));
+
+  MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
+  data.MQTTVersion = 4;
+  data.clientID.cstring = "STM32_Client";
+  data.keepAliveInterval = 60;
+  data.cleansession = 1;
+
+  rc = MQTTConnect(&mqttClient, &data);
+  if (rc != 0) {
+    printf("MQTT Connect failed, rc=%d, retry 1s\r\n", rc);
+    mqtt_err_cnt++;
+    goto reconnect;
+  }
+
+  mqtt_connected = 1;
+  mqtt_err_cnt = 0;
+  printf("MQTT Connected successfully!\r\n");
+
+  mqtt_subscribe_all();
+
+  TickType_t last_success_yield = xTaskGetTickCount();
+  const TickType_t yield_timeout_ticks = pdMS_TO_TICKS(120000); // 2倍 keepalive
+
+  int publish_fail_cnt = 0;
+  const int publish_fail_threshold = 3;
+
+main_loop:
+  for (;;) {
+    // 1️⃣ PHY link 检查
+    if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
+      printf("PHY Link Down, reconnecting...\r\n");
+      MQTTDisconnect(&mqttClient);
+      NetworkDisconnect(&mqttNet);
+      goto reconnect;
+    }
+
+    // 2️⃣ Socket 状态检查
+    uint8_t sock_status = getSn_SR(mqttNet.sock);
+    if (sock_status != SOCK_ESTABLISHED) {
+      printf("Socket lost (0x%02X), reconnecting...\r\n", sock_status);
+      MQTTDisconnect(&mqttClient);
+      NetworkDisconnect(&mqttNet);
+      goto reconnect;
+    }
+
+    // 3️⃣ MQTT 收发循环
+    rc = MQTTYield(&mqttClient, 100);
+    if (rc < 0) {
+      printf("MQTTYield rc=%d, reconnecting...\r\n", rc);
+      mqtt_err_cnt++;
+      MQTTDisconnect(&mqttClient);
+      NetworkDisconnect(&mqttNet);
+      goto reconnect;
+    }
+    else {
+      last_success_yield = xTaskGetTickCount();
+    }
+
+    if (!MQTTIsConnected(&mqttClient)) {
+      printf("MQTTIsConnected=false, reconnecting...\r\n");
+      goto reconnect;
+    }
+
+    if ((xTaskGetTickCount() - last_success_yield) > yield_timeout_ticks) {
+      printf("No MQTTYield for too long, reconnecting...\r\n");
+      goto reconnect;
+    }
+
+    // 4️⃣ 发布状态
+    if (!mqtt_publish_sys_status(&sys_status)) {
+      publish_fail_cnt++;
+      printf("Publish sys status failed %d\r\n", publish_fail_cnt);
+    }
+    else {
+      publish_fail_cnt = 0;
+    }
+
+    if (publish_fail_cnt >= publish_fail_threshold) {
+      printf("Publish failed %d times, reconnecting...\r\n", publish_fail_cnt);
+      publish_fail_cnt = 0;
+      MQTTDisconnect(&mqttClient);
+      NetworkDisconnect(&mqttNet);
+      goto reconnect;
+    }
+
     osDelay(10);
   }
 }
@@ -1396,7 +1407,7 @@ void StartMonitorTask(void const* argument)
     }
 
     // 其他错误检测逻辑
-    if (gripper_err_cnt >= 10 || mqtt_err_cnt >= 50)
+    if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50)
     {
       printf("System Reset due to errors!\r\n");
       system_reset();
@@ -1541,8 +1552,8 @@ void LeftGripperTask(void* argument)
   }
   GripperCmd_t cmd;
   GripperStatus_t status;
-  uint32_t lastStatusTick = 0;   // 上次写命令时�????????????????
-  uint32_t blockUntil = 0;  // 写命令后屏蔽查询的时�????????????????
+  uint32_t lastStatusTick = 0;   // 上次写命令时间
+  uint32_t blockUntil = 0;  // 写命令后屏蔽查询的时间
 
   for (;;)
   {
@@ -1554,12 +1565,12 @@ void LeftGripperTask(void* argument)
       if (osMessageQueueGet(leftGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&L_ModbusH, cmd.left.position, cmd.left.speed, cmd.left.torque, LEFT_GRIPPER);
-        // 写命令后屏蔽状�?�查�????????????????
+        // 写命令后屏蔽状态查询时间
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
     }
 
-    // 2. 状�?�查询，间隔控制 + 屏蔽控制
+    // 2. 状态查询，间隔控制 + 屏蔽控制
     if (now - lastStatusTick >= STATUS_QUERY_PERIOD_MS && now >= blockUntil)
     {
       if (osSemaphoreAcquire(semStatusLeftHandle, 0) == osOK)
@@ -2194,5 +2205,23 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
 
   return true;
 }
-/* USER CODE END Application */
 
+static void mqtt_subscribe_all(void)
+{
+  int rc;
+  if ((rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived)) == 0)
+    printf("Subscribed robot/gpio/cmd\r\n");
+  else
+    printf("Subscribe robot/gpio/cmd failed (%d)\r\n", rc);
+
+  if ((rc = MQTTSubscribe(&mqttClient, "robot/gripper/cmd", QOS0, messageArrived)) == 0)
+    printf("Subscribed robot/gripper/cmd\r\n");
+  else
+    printf("Subscribe robot/gripper/cmd failed (%d)\r\n", rc);
+
+  if ((rc = MQTTSubscribe(&mqttClient, "robot/servo/cmd", QOS0, messageArrived)) == 0)
+    printf("Subscribed robot/servo/cmd\r\n");
+  else
+    printf("Subscribe robot/servo/cmd failed (%d)\r\n", rc);
+}
+/* USER CODE END Application */

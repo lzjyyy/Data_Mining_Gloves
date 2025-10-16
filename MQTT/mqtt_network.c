@@ -1,8 +1,11 @@
 #include "mqtt_network.h"
 #include "w5500_port.h"
+#include "FreeRTOS.h"
+#include "task.h"
 #include <stdint.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define CONNECT_RETRY_MAX 3
 #define CONNECT_RETRY_DELAY_MS 200
@@ -79,6 +82,7 @@ void NetworkDisconnect(Network* n) {
 int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
 {
     uint8_t ip[4];
+    // 将以字符串形式（例如"192.168.1.100"）提供的IP地址，解析并转换为W5500库函数所需的uint8_t数组格式
     if (parse_ip(ip_str, ip) != 0)
         return -1; // IP 转换失败
 
@@ -89,6 +93,17 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
         printf("[NetworkConnect] attempt %d: opening socket...\r\n", attempt);
         close(n->sock);
 
+        // 等待 socket 真的关闭
+        TickType_t start = xTaskGetTickCount();
+        while (getSn_SR(n->sock) != SOCK_CLOSED) {
+            if ((xTaskGetTickCount() - start) > pdMS_TO_TICKS(500)) {
+                printf("Warning: socket %d close timeout, SR=0x%02X\r\n",
+                    n->sock, getSn_SR(n->sock));
+                break;
+            }
+            osDelay(10);
+        }
+
         if (socket(n->sock, Sn_MR_TCP, port, 0) != n->sock)
         {
             printf("[NetworkConnect] socket() failed\r\n");
@@ -98,8 +113,8 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
         printf("[NetworkConnect] connecting to %s:%d...\r\n", ip_str, port);
         int8_t conn_result = connect(n->sock, ip, port);
 
-        uint8_t sr = getSn_SR(n->sock);
-        uint8_t ir = getSn_IR(n->sock);
+        uint8_t sr = getSn_SR(n->sock); // 获取socket状态寄存器 (Socket Status Register)
+        uint8_t ir = getSn_IR(n->sock); // 获取socket中断寄存器 (Socket Interrupt Register)
         printf("[NetworkConnect] connect() result=%d, Sn_SR=0x%02X, Sn_IR=0x%02X\r\n",
             conn_result, sr, ir);
 
