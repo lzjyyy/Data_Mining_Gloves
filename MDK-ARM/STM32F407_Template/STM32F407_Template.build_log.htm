@@ -27,18 +27,104 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling can_canopen.c...
+compiling freertos.c...
+../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
+  #endif
+..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
+  uint16_t getTimeOut(); //!<get communication watch-dog timer value
+..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
+  bool getTimeOutState(); //!<get communication watch-dog timer state
+..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
+  #endif
+../Core/Inc/servo.h(83): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 79)
+  #define SWITCH_ON_DISABLED_FAILED -6
+../Core/Inc/servo.h(116): warning:  #1-D: last line of file ends without a newline
+  #endif
 ..\CANOpen\hardware\can_canopen.h(13): warning:  #1-D: last line of file ends without a newline
   #endif
-..\CANOpen\hardware\can_canopen.c(195): warning:  #1-D: last line of file ends without a newline
-  }
-..\CANOpen\hardware\can_canopen.c(188): warning:  #177-D: function "printCanMessage"  was declared but never referenced
-  static void printCanMessage(uint32_t id, uint8_t dlc, uint8_t* data, const char* prefix)
-..\CANOpen\hardware\can_canopen.c: 3 warnings, 0 errors
+../Core/Src/freertos.c(410): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    kincoCtrlTaskHandle = osThreadNew(StartKincoCtrlTask, NULL, &kincoCtrlTask_attributes);
+../Core/Src/freertos.c(412): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    zeroerrCtrlTaskHandle = osThreadNew(StartZeroErrCtrlTask, NULL, &zeroerrCtrlTask_attributes);
+../Core/Src/freertos.c(416): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
+../Core/Src/freertos.c(424): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
+    monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
+../Core/Src/freertos.c(468): warning:  #188-D: enumerated type mixed with another type
+    HAL_StatusTypeDef send_result = 0;
+../Core/Src/freertos.c(504): warning:  #188-D: enumerated type mixed with another type
+    HAL_StatusTypeDef send_result = 0;
+../Core/Src/freertos.c(508): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485A_CH, rs485a_test_msg, strlen((char*)rs485a_test_msg), 1000);
+../Core/Src/freertos.c(512): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
+../Core/Src/freertos.c(516): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
+      send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
+../Core/Src/freertos.c(798): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 16; // function code (this one is registers read)
+../Core/Src/freertos.c(839): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 6; // function code (this one is registers read)
+../Core/Src/freertos.c(882): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 16; // function code (this one is registers read)
+../Core/Src/freertos.c(922): warning:  #188-D: enumerated type mixed with another type
+      telegram[0].u8fct = 6; // function code (this one is registers read)
+../Core/Src/freertos.c(792): warning:  #177-D: variable "right_status"  was declared but never referenced
+    GripperStatus_t right_status;
+../Core/Src/freertos.c(1155): warning:  #177-D: label "main_loop"  was declared but never referenced
+  main_loop:
+../Core/Src/freertos.c(1461): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+../Core/Src/freertos.c(1468): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1476): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+../Core/Src/freertos.c(1500): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+../Core/Src/freertos.c(1515): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+../Core/Src/freertos.c(1521): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1543): warning:  #177-D: variable "status"  was declared but never referenced
+    GripperStatus_t status;
+../Core/Src/freertos.c(1595): warning:  #177-D: variable "status"  was declared but never referenced
+    GripperStatus_t status;
+../Core/Src/freertos.c(1667): warning:  #177-D: variable "notifyVal"  was declared but never referenced
+    uint32_t notifyVal;
+../Core/Src/freertos.c(1785): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1796): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1822): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1830): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1861): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1869): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1896): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1904): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1936): warning:  #188-D: enumerated type mixed with another type
+      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1945): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1972): warning:  #188-D: enumerated type mixed with another type
+      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+../Core/Src/freertos.c(1981): warning:  #68-D: integer conversion resulted in a change of sign
+      if (notifyVal != ERR_OK_QUERY) {
+../Core/Src/freertos.c(1641): warning:  #177-D: function "mqtt_publish_gripper_status"  was declared but never referenced
+  static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
+../Core/Src/freertos.c(2075): warning:  #177-D: function "mqtt_publish_gpio_status"  was declared but never referenced
+  static bool mqtt_publish_gpio_status(void)
+../Core/Src/freertos.c(2104): warning:  #177-D: function "mqtt_publish_servos_status"  was declared but never referenced
+  static bool mqtt_publish_servos_status(uint8_t type)
+../Core/Src/freertos.c: 46 warnings, 0 errors
 linking...
-Program Size: Code=75452 RO-data=2436 RW-data=3796 ZI-data=23612  
+Program Size: Code=75596 RO-data=2436 RW-data=3796 ZI-data=23612  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 3 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 46 Warning(s).
 
 <h2>Software Packages used:</h2>
 

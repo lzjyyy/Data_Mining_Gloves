@@ -3731,8 +3731,8 @@
       <Doc>
         <Name>../Drivers/STM32F4xx_HAL_Driver/Src/stm32f4xx_hal_spi.c</Name>
         <ColumnNumber>0</ColumnNumber>
-        <TopLine>1260</TopLine>
-        <CurrentLine>1267</CurrentLine>
+        <TopLine>1238</TopLine>
+        <CurrentLine>1260</CurrentLine>
         <Folding>1</Folding>
         <ContractedFolders></ContractedFolders>
         <PaneID>0</PaneID>

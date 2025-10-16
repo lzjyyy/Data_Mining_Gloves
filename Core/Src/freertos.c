@@ -590,24 +590,24 @@ void StartKincoCtrlTask(void const* argument)
 
   masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Start_Node);
 
-  int enable_result = 0;
-  for (int i = 0; i < 10; i++) {
-    enable_result = Kinco_Enable_PDO();
-    if (enable_result == ENABLE_OK)
-    {
-      break;
-    }
-    osDelay(10);
-  }
+  // int enable_result = 0;
+  // for (int i = 0; i < 10; i++) {
+  //   enable_result = Kinco_Enable_PDO();
+  //   if (enable_result == ENABLE_OK)
+  //   {
+  //     break;
+  //   }
+  //   osDelay(10);
+  // }
 
-  if (enable_result == ENABLE_OK)
-  {
-    printf("Kinco ENABLE_OK\r\n");
-  }
-  else
-  {
-    printf("Kinco ENABLE_FAILED\r\n");
-  }
+  // if (enable_result == ENABLE_OK)
+  // {
+  //   printf("Kinco ENABLE_OK\r\n");
+  // }
+  // else
+  // {
+  //   printf("Kinco ENABLE_FAILED\r\n");
+  // }
 
   ServoCmd_t cmd;
   TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
@@ -617,7 +617,25 @@ void StartKincoCtrlTask(void const* argument)
     if (osMessageQueueGet(kincoQueueHandle, &cmd, NULL, 0) == osOK) {
       if ((cmd.kinco.is_enable == 1) && (Get_Curr_Status(0) != OPERATION_ENABLED))
       {
-        Kinco_Enable_PDO();
+        // Kinco_Enable_PDO();
+        int enable_result = 0;
+        for (int i = 0; i < 10; i++) {
+          enable_result = Kinco_Enable_PDO();
+          if (enable_result == ENABLE_OK)
+          {
+            break;
+          }
+          osDelay(10);
+        }
+
+        if (enable_result == ENABLE_OK)
+        {
+          printf("Kinco ENABLE_OK\r\n");
+        }
+        else
+        {
+          printf("Kinco ENABLE_FAILED\r\n");
+        }
       }
 
       if (cmd.kinco.is_enable == 1)
@@ -638,7 +656,7 @@ void StartKincoCtrlTask(void const* argument)
 
     /* 每隔 50ms 读取kinco状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 50 == 0) {  // 系统tick=1ms
+    if (counter % 5 == 0) {  // 系统tick=1ms
       sendSYNC(&Kinco_Ctrl_Data);
       // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
       // kinco_status.status_word = Statusword;
@@ -648,9 +666,8 @@ void StartKincoCtrlTask(void const* argument)
     }
     counter++;
 
-    /* 精确定时，每次循环维持50ms周期 */
-    // vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(50));  // 1ms
-    osDelay(50);
+    /* 精确定时，每次循环维持10ms周期 */
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));  // 50ms
   }
 }
 
@@ -672,23 +689,23 @@ void StartZeroErrCtrlTask(void const* argument)
 
   masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Start_Node);
 
-  int enable_result = 0;
-  for (int i = 0; i < 10; i++) {
-    enable_result = ZeroErr_Enable_PDO();
-    if (enable_result == ENABLE_OK)
-    {
-      break;
-    }
-  }
+  // int enable_result = 0;
+  // for (int i = 0; i < 10; i++) {
+  //   enable_result = ZeroErr_Enable_PDO();
+  //   if (enable_result == ENABLE_OK)
+  //   {
+  //     break;
+  //   }
+  // }
 
-  if (enable_result == ENABLE_OK)
-  {
-    printf("ZeroErr ENABLE_OK\r\n");
-  }
-  else
-  {
-    printf("ZeroErr ENABLE_FAILED\r\n");
-  }
+  // if (enable_result == ENABLE_OK)
+  // {
+  //   printf("ZeroErr ENABLE_OK\r\n");
+  // }
+  // else
+  // {
+  //   printf("ZeroErr ENABLE_FAILED\r\n");
+  // }
 
   ServoCmd_t cmd;
   TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
@@ -698,7 +715,24 @@ void StartZeroErrCtrlTask(void const* argument)
       if ((cmd.zeroerr.is_enable == 1) && (Get_Curr_Status(1) != OPERATION_ENABLED))
       {
         // ZeroErr_QuickStop_Resume_SDO();
-        ZeroErr_Enable_PDO();
+        // ZeroErr_Enable_PDO();
+        int enable_result = 0;
+        for (int i = 0; i < 10; i++) {
+          enable_result = ZeroErr_Enable_PDO();
+          if (enable_result == ENABLE_OK)
+          {
+            break;
+          }
+        }
+
+        if (enable_result == ENABLE_OK)
+        {
+          printf("ZeroErr ENABLE_OK\r\n");
+        }
+        else
+        {
+          printf("ZeroErr ENABLE_FAILED\r\n");
+        }
       }
 
       if (cmd.zeroerr.velocity > 0 && cmd.zeroerr.velocity <= 30)
@@ -723,7 +757,7 @@ void StartZeroErrCtrlTask(void const* argument)
 
     /* 每隔 50ms 读取ZeroErr状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 50 == 0) {  // 系统tick=1ms
+    if (counter % 5 == 0) {  // 系统tick=1ms
       sendSYNC(&ZeroErr_Ctrl_Data);
       // printf("ZeroErr Status=0x%04X, Pos=%ld\r\n", status_word_zeroerr, pos_actual_val_zeroerr);
       // zeroerr_status.status_word = status_word_zeroerr;
@@ -734,8 +768,8 @@ void StartZeroErrCtrlTask(void const* argument)
     counter++;
 
     /* 精确定时，每次循环维持50ms周期 */
-    // vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(50));  // 1ms
-    osDelay(50);
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));  // 1ms
+    // osDelay(50);
   }
 }
 
@@ -1365,7 +1399,7 @@ void StartMonitorTask(void const* argument)
     if (gripper_err_cnt >= 10 || mqtt_err_cnt >= 50)
     {
       printf("System Reset due to errors!\r\n");
-      // system_reset();
+      system_reset();
     }
 
     osDelay(1000);
