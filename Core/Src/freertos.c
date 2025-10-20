@@ -77,7 +77,9 @@ typedef struct {
 
 typedef struct {
   uint16_t status_word;
+  uint16_t error_code;
   int32_t position;
+  int32_t velocity;
 } ServoStatus_t;
 
 typedef struct {
@@ -209,6 +211,12 @@ static uint32_t sys_run_cnt = 0;
 static uint16_t gripper_err_cnt = 0;
 static uint16_t mqtt_err_cnt = 0;
 static SysStatus_t sys_status;
+static uint16_t kinco_error_code = 0;
+static uint16_t zeroerr_error_code = 0;
+static int32_t kinco_actual_vel = 0;
+static uint32_t zeroerr_actual_vel = 0;
+static const char* sys_status_topic = "robot/status";
+static char sys_status_payload[512];  // 足够容纳 JSON
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -645,7 +653,7 @@ void StartKincoCtrlTask(void const* argument)
 
     /* 每隔 50ms 读取kinco状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 5 == 0) {  // 系统tick=1ms
+    if (counter % 5 == 0) {  // 系统tick=10ms
       sendSYNC(&Kinco_Ctrl_Data);
       // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
       // kinco_status.status_word = Statusword;
@@ -653,10 +661,32 @@ void StartKincoCtrlTask(void const* argument)
       sys_status.sys_kinco_status.status_word = Statusword;
       sys_status.sys_kinco_status.position = Position_actual_value;
     }
+
+    if (counter % 50 == 0) {
+      if (Kinco_Read_ActuclVel_SDO(&kinco_actual_vel) != 0)
+      {
+        kinco_actual_vel = 0xFFFF;
+      }
+      sys_status.sys_kinco_status.velocity = kinco_actual_vel;
+      // printf("Kinco actual_vel is:0x%x\r\n", kinco_actual_vel);
+    }
+
+    if (counter % 500 == 0) {
+      if (Kinco_Read_Error_SDO(&kinco_error_code) != 0)
+      {
+        kinco_error_code = 0xFFFF;
+      }
+      if (kinco_error_code != 0)
+      {
+        printf("Kinco error_code is:0x%x\r\n", kinco_error_code);
+      }
+      sys_status.sys_kinco_status.error_code = kinco_error_code;
+    }
+
     counter++;
 
     /* 精确定时，每次循环维持10ms周期 */
-    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));  // 50ms
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));
   }
 }
 
@@ -754,6 +784,28 @@ void StartZeroErrCtrlTask(void const* argument)
       sys_status.sys_zeroerr_status.status_word = status_word_zeroerr;
       sys_status.sys_zeroerr_status.position = pos_actual_val_zeroerr;
     }
+
+    if (counter % 50 == 0) {
+      if (ZeroErr_Read_ActuclVel_SDO(&zeroerr_actual_vel) != 0)
+      {
+        zeroerr_actual_vel = 0xFFFF;
+      }
+      // printf("Zeroerr actual_vel is:0x%x\r\n", zeroerr_actual_vel);
+      sys_status.sys_zeroerr_status.velocity = zeroerr_actual_vel;
+    }
+
+    if (counter % 500 == 0) {
+      if (ZeroErr_Read_Error_SDO(&zeroerr_error_code) != 0)
+      {
+        zeroerr_error_code = 0xFFFF;
+      }
+      if (zeroerr_error_code != 0)
+      {
+        printf("Zeroerr error_code is:0x%x\r\n", zeroerr_error_code);
+      }
+      sys_status.sys_zeroerr_status.error_code = zeroerr_error_code;
+    }
+
     counter++;
 
     /* 精确定时，每次循环维持50ms周期 */
@@ -2039,20 +2091,15 @@ static void system_reset(void)
 
 static bool mqtt_publish_sys_status(SysStatus_t* status)
 {
-  char topic[64];
-  char payload[256];  // 足够容纳 JSON
-
   if (!status) return false;
 
-  snprintf(topic, sizeof(topic), "robot/status");
-
   // 生成 JSON payload
-  int len = snprintf(payload, sizeof(payload),
+  int len = snprintf(sys_status_payload, sizeof(sys_status_payload),
     "{"
     "\"left_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
     "\"right_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
-    "\"sys_kinco\":{\"status_word\":%u,\"position\":%ld},"
-    "\"sys_zeroerr\":{\"status_word\":%u,\"position\":%ld},"
+    "\"sys_kinco\":{\"status_word\":%u,\"error_code\":%u,\"position\":%ld,\"velocity\":%ld},"
+    "\"sys_zeroerr\":{\"status_word\":%u,\"error_code\":%u,\"position\":%ld,\"velocity\":%ld},"
     "\"gpio_in\":[%d,%d,%d,%d,%d,%d]"
     "}",
     status->left_gripper_status.position,
@@ -2062,9 +2109,13 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
     status->right_gripper_status.reached,
     status->right_gripper_status.warning,
     status->sys_kinco_status.status_word,
+    status->sys_kinco_status.error_code,
     status->sys_kinco_status.position,
+    status->sys_kinco_status.velocity,
     status->sys_zeroerr_status.status_word,
+    status->sys_zeroerr_status.error_code,
     status->sys_zeroerr_status.position,
+    status->sys_zeroerr_status.velocity,
     status->gpio_in_status[0],
     status->gpio_in_status[1],
     status->gpio_in_status[2],
@@ -2073,7 +2124,7 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
     status->gpio_in_status[5]
   );
 
-  if (len < 0 || len >= sizeof(payload)) {
+  if (len < 0 || len >= sizeof(sys_status_payload)) {
     printf("MQTT JSON payload overflow!\r\n");
     return false;
   }
@@ -2082,10 +2133,10 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
   message.qos = QOS0;
   message.retained = 0;
   message.dup = 0;
-  message.payload = payload;
-  message.payloadlen = strlen(payload);
+  message.payload = sys_status_payload;
+  message.payloadlen = strlen(sys_status_payload);
 
-  int rc = MQTTPublish(&mqttClient, topic, &message);
+  int rc = MQTTPublish(&mqttClient, sys_status_topic, &message);
   if (rc != 0) {
     printf("MQTT publish SysStatus failed, rc=%d\r\n", rc);
     return false;

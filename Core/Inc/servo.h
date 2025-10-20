@@ -95,6 +95,8 @@ int Kinco_Enable_PDO(void);
 int Kinco_Disable_PDO(void);
 void Kinco_MovPos_PDO(uint32_t pos);
 void Kinco_SetVel_PDO(uint32_t vel);
+int Kinco_Read_Error_SDO(uint16_t* p_error_code);
+int Kinco_Read_ActuclVel_SDO(uint32_t* p_actual_vel);
 
 void ZeroErr_MasterNode_Init(void);
 void ZeroErr_Setup(void);
@@ -112,5 +114,7 @@ void ZeroErr_ShutDown_CWord_SDO(void);
 void ZeroErr_SwitchOn_CWord_SDO(void);
 void ZeroErr_EnOper_CWord_SDO(void);
 bool ZeroErr_Wait_Status(Servo_Status_t target_state);
+int ZeroErr_Read_Error_SDO(uint16_t* p_error_code);
+int ZeroErr_Read_ActuclVel_SDO(uint32_t* p_actual_vel);
 
 #endif

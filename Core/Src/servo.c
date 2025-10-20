@@ -5,6 +5,8 @@ static Servo_Status_t zeroerr_curr_status;
 static bool kinco_lock;
 static bool zeroerr_lock;
 
+#define SDO_READ_TIMEOUT_MS 500  // 500ms超时，可根据实际调整
+
 int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType)
 {
@@ -64,33 +66,20 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
     uint32_t abortCode = 0;
     uint8_t state = 0;
     uint32_t tmpData = 0;  // 临时变量用于 getReadResultNetworkDict
-
-    // for (int i = 0; i < 1000; i++)  // 最多等100ms
-    // {
-    //     state = getReadResultNetworkDict(d, nodeId, &tmpData, &expectedCount, &abortCode);
-    //     if (state == SDO_FINISHED)
-    //     {
-    //         // 根据 dataType 拷贝到用户提供的缓冲
-    //         switch (dataType)
-    //         {
-    //         case uint8:  *(uint8_t*)data = (uint8_t)tmpData; break;
-    //         case uint16: *(uint16_t*)data = (uint16_t)tmpData; break;
-    //         case uint32: *(uint32_t*)data = tmpData; break;
-    //         }
-    //         return SDO_OK;
-    //     }
-    //     else if (state != SDO_UPLOAD_IN_PROGRESS)
-    //     {
-    //         printf("SDO Read Error: 0x%08X\n", abortCode);
-    //         return SDO_ERR_ABORT;
-    //     }
-    //     osDelay(1);
-    // }
+    uint32_t timeout = 0;
     uint32_t cnt = 0;
+
     while (getReadResultNetworkDict(d, nodeId, &tmpData, &expectedCount, &abortCode) != SDO_FINISHED)
     {
         cnt++;
         osDelay(1);
+        timeout++;
+
+        if (timeout > SDO_READ_TIMEOUT_MS)
+        {
+            closeSDOtransfer(d, nodeId, SDO_CLIENT); // 🔸强制关闭SDO会话，防止状态机挂死
+            return SDO_ERR_TIMEOUT;
+        }
     }
     // printf("Read time:%d\r\n", cnt);
 
@@ -694,6 +683,36 @@ void Kinco_SetVel_PDO(uint32_t vel)
     sendPDOevent(&Kinco_Ctrl_Data);
     sendSYNC(&Kinco_Ctrl_Data);
     // print_can1_recv_msg();
+}
+
+int Kinco_Read_Error_SDO(uint16_t* p_error_code)
+{
+    uint16_t error_code = 0;
+    int result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, ERROR_CODE_INDEX, 0x00, &error_code, uint16);
+    if (result == SDO_OK)
+    {
+        *p_error_code = error_code;
+    }
+    else
+    {
+        printf("Kinco SDO read ERROR_CODE_INDEX Failed\r\n");
+    }
+    return result;
+}
+
+int Kinco_Read_ActuclVel_SDO(uint32_t* p_actual_vel)
+{
+    uint32_t vel = 0;
+    int result = SDO_ReadRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, ACTUAL_VELOCITY_INDEX, 0x00, &vel, uint32);
+    if (result == SDO_OK)
+    {
+        *p_actual_vel = vel;
+    }
+    else
+    {
+        printf("Kinco SDO read ACTUAL_VELOCITY_INDEX Failed\r\n");
+    }
+    return result;
 }
 
 void ZeroErr_MasterNode_Init(void)
@@ -1440,6 +1459,35 @@ bool ZeroErr_Wait_Status(Servo_Status_t target_state)
         osDelay(5);
     }
     return false;
+}
+
+int ZeroErr_Read_Error_SDO(uint16_t* p_error_code)
+{
+    uint16_t error_code = 0;
+    int result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, ERROR_CODE_INDEX, 0x00, &error_code, uint16);
+    if (result == SDO_OK)
+    {
+        *p_error_code = error_code;
+    }
+    else
+    {
+        printf("Zeroerr SDO read ERROR_CODE_INDEX Failed\r\n");
+    }
+}
+
+int ZeroErr_Read_ActuclVel_SDO(uint32_t* p_actual_vel)
+{
+    uint32_t vel = 0;
+    int result = SDO_ReadRequest(&ZeroErr_Ctrl_Data, KINCO_SLAVE_NODE_ID, ACTUAL_VELOCITY_INDEX, 0x00, &vel, uint32);
+    if (result == SDO_OK)
+    {
+        *p_actual_vel = vel;
+    }
+    else
+    {
+        printf("Zeroerr SDO read ACTUAL_VELOCITY_INDEX Failed\r\n");
+    }
+    return result;
 }
 
 void Get_Parse_StatusWord(uint8_t servo_type)
