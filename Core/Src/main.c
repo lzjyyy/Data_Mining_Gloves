@@ -54,11 +54,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-uint8_t W5500_Init_Status = 0;
-// modbusHandler_t ModbusH;
-// uint16_t ModbusDATA[8];
-// modbusHandler_t ModbusH2;
-// uint16_t ModbusDATA2[8];
+// extern uint8_t W5500_Init_Status;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -70,10 +66,6 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t get_w5500_init_status(void)
-{
-  return W5500_Init_Status;
-}
 extern void Start_USART3_DMA(void);
 extern void MX_Modbus_Init(void);
 /* USER CODE END 0 */
@@ -131,18 +123,26 @@ int main(void)
   //	ADC1_IN9_Init();
   //	ADC1_IN8_Init();
   // W5500 init
-  HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
-  int result = W5500_DriverInit();
+  // HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
+  // int result = W5500_DriverInit();
+  // if (result != 0) {
+  //   printf("W5500 init failed,result is:%d\r\n", result);
+  // }
+  // else
+  // {
+  //   printf("W5500 init successfully.\r\n");
+  //   W5500_Init_Status = 1;
+  //   W5500_NetInfo_SetStatic();
+  //   W5500_PrintNetInfo();
+  //   W5500_RaiseSpiSpeed();
+  // }
+  int result = W5500_Init();
   if (result != 0) {
     printf("W5500 init failed,result is:%d\r\n", result);
   }
   else
   {
     printf("W5500 init successfully.\r\n");
-    W5500_Init_Status = 1;
-    W5500_NetInfo_SetStatic();
-    W5500_PrintNetInfo();
-    W5500_RaiseSpiSpeed();
   }
 
   MX_Modbus_Init(); // grippers modbus ctrl init

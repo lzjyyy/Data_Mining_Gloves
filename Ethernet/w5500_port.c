@@ -18,6 +18,8 @@
 /* SPI 互斥量 */
 SemaphoreHandle_t spiMutex;
 
+uint8_t W5500_Init_Status = 0;
+
 /* ========== 片选/复位辅助 ========== */
 static inline void W5500_Select(void)
 {
@@ -356,4 +358,28 @@ int W5500_WaitForLink(void)
         osDelay(200);
     }
     return 0;
+}
+
+int W5500_Init(void)
+{
+    W5500_Init_Status = 0;
+    HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
+    int result = W5500_DriverInit();
+    if (result != 0) {
+        printf("W5500 init failed,result is:%d\r\n", result);
+    }
+    else
+    {
+        printf("W5500 init successfully.\r\n");
+        W5500_Init_Status = 1;
+        W5500_NetInfo_SetStatic();
+        W5500_PrintNetInfo();
+        W5500_RaiseSpiSpeed();
+    }
+    return result;
+}
+
+uint8_t get_w5500_init_status(void)
+{
+    return W5500_Init_Status;
 }

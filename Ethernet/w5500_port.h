@@ -32,6 +32,8 @@ extern "C"
     uint8_t W5500_Get_PHYCFGR(void);
     void W5500_SoftReset(void);
     int W5500_WaitForLink(void);
+    int W5500_Init(void);
+    uint8_t get_w5500_init_status(void);
 #ifdef __cplusplus
 }
 #endif

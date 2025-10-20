@@ -1024,6 +1024,14 @@ reconnect:
   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
     printf("MQTT Network connect failed, retry in 1s\r\n");
     mqtt_err_cnt += 10;
+    int result = W5500_Init();
+    if (result != 0) {
+      printf("W5500 init failed,result is:%d\r\n", result);
+    }
+    else
+    {
+      printf("W5500 init successfully.\r\n");
+    }
     osDelay(1000);
     goto reconnect;
   }
@@ -1149,126 +1157,6 @@ main_loop:
   }
 }
 
-void StartMqttTask_update(void const* argument)
-{
-  int rc;
-
-reconnect:
-
-  // Step 1. 确保 socket 彻底关闭
-  ForceCloseSocket(mqttNet.sock);
-
-  // Step 2. 检查 PHY Link
-  if (W5500_WaitForLink() != 0) {
-    printf("No PHY Link, retry in 1s...\r\n");
-    osDelay(1000);
-    goto reconnect;
-  }
-
-  // Step 3. 建立 TCP 连接
-  if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-    printf("MQTT Network connect failed, retry in 1s\r\n");
-    mqtt_err_cnt++;
-    if (mqtt_err_cnt > 5) {
-      W5500_SoftReset();
-      mqtt_err_cnt = 0;
-    }
-    osDelay(1000);
-    goto reconnect;
-  }
-
-  // Step 4. 初始化 MQTT
-  MQTTClientInit(&mqttClient, &mqttNet, 2000, mqttSendBuf, sizeof(mqttSendBuf),
-    mqttReadBuf, sizeof(mqttReadBuf));
-
-  MQTTPacket_connectData data = MQTTPacket_connectData_initializer;
-  data.MQTTVersion = 4;
-  data.clientID.cstring = "STM32_Client";
-  data.keepAliveInterval = 60;
-  data.cleansession = 1;
-
-  rc = MQTTConnect(&mqttClient, &data);
-  if (rc != 0) {
-    printf("MQTT Connect failed, rc=%d, retry 1s\r\n", rc);
-    mqtt_err_cnt++;
-    goto reconnect;
-  }
-
-  mqtt_connected = 1;
-  mqtt_err_cnt = 0;
-  printf("MQTT Connected successfully!\r\n");
-
-  mqtt_subscribe_all();
-
-  TickType_t last_success_yield = xTaskGetTickCount();
-  const TickType_t yield_timeout_ticks = pdMS_TO_TICKS(120000); // 2倍 keepalive
-
-  int publish_fail_cnt = 0;
-  const int publish_fail_threshold = 3;
-
-main_loop:
-  for (;;) {
-    // 1️⃣ PHY link 检查
-    if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-      printf("PHY Link Down, reconnecting...\r\n");
-      MQTTDisconnect(&mqttClient);
-      NetworkDisconnect(&mqttNet);
-      goto reconnect;
-    }
-
-    // 2️⃣ Socket 状态检查
-    uint8_t sock_status = getSn_SR(mqttNet.sock);
-    if (sock_status != SOCK_ESTABLISHED) {
-      printf("Socket lost (0x%02X), reconnecting...\r\n", sock_status);
-      MQTTDisconnect(&mqttClient);
-      NetworkDisconnect(&mqttNet);
-      goto reconnect;
-    }
-
-    // 3️⃣ MQTT 收发循环
-    rc = MQTTYield(&mqttClient, 100);
-    if (rc < 0) {
-      printf("MQTTYield rc=%d, reconnecting...\r\n", rc);
-      mqtt_err_cnt++;
-      MQTTDisconnect(&mqttClient);
-      NetworkDisconnect(&mqttNet);
-      goto reconnect;
-    }
-    else {
-      last_success_yield = xTaskGetTickCount();
-    }
-
-    if (!MQTTIsConnected(&mqttClient)) {
-      printf("MQTTIsConnected=false, reconnecting...\r\n");
-      goto reconnect;
-    }
-
-    if ((xTaskGetTickCount() - last_success_yield) > yield_timeout_ticks) {
-      printf("No MQTTYield for too long, reconnecting...\r\n");
-      goto reconnect;
-    }
-
-    // 4️⃣ 发布状态
-    if (!mqtt_publish_sys_status(&sys_status)) {
-      publish_fail_cnt++;
-      printf("Publish sys status failed %d\r\n", publish_fail_cnt);
-    }
-    else {
-      publish_fail_cnt = 0;
-    }
-
-    if (publish_fail_cnt >= publish_fail_threshold) {
-      printf("Publish failed %d times, reconnecting...\r\n", publish_fail_cnt);
-      publish_fail_cnt = 0;
-      MQTTDisconnect(&mqttClient);
-      NetworkDisconnect(&mqttNet);
-      goto reconnect;
-    }
-
-    osDelay(10);
-  }
-}
-
 void messageArrived(MessageData* data)
 {
   // printf("Message arrived on topic %.*s\r\n",
@@ -1368,7 +1256,7 @@ void StartMonitorTask(void const* argument)
 
     // 打印定时器任务剩余栈
     UBaseType_t timer_stack_remain = uxTaskGetStackHighWaterMark(xTimerGetTimerDaemonTaskHandle());
-    printf("Timer task stack remaining: %lu\r\n", (unsigned long)timer_stack_remain);
+    // printf("Timer task stack remaining: %lu\r\n", (unsigned long)timer_stack_remain);
 
     // 检查 Timer 守护任务是否卡死
     static uint32_t timer_task_counter = 0;
