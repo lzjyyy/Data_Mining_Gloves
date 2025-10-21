@@ -143,6 +143,7 @@ typedef struct {
 extern uint8_t W5500_Init_Status;
 extern uint8_t g_uart_rx_buf[UART_RECV_LEN];
 extern uint16_t g_uart_rx_sta;
+extern IWDG_HandleTypeDef hiwdg;
 static const char recv_msg[] = "RS232 received msg:\r\n";
 static const char end_msg[] = "\r\n";
 char rs485a_test_msg[] = "RS485A transmit test.\r\n";
@@ -1316,6 +1317,9 @@ void StartMonitorTask(void const* argument)
       printf("System Reset due to errors!\r\n");
       system_reset();
     }
+
+    // 看门狗喂狗
+    HAL_IWDG_Refresh(&hiwdg);
 
     osDelay(1000);
   }

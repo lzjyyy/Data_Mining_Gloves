@@ -60,14 +60,16 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
+static void IWDG_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-extern void Start_USART3_DMA(void);
+// extern void Start_USART3_DMA(void);
 extern void MX_Modbus_Init(void);
+IWDG_HandleTypeDef hiwdg;
 /* USER CODE END 0 */
 
 /**
@@ -146,6 +148,8 @@ int main(void)
   }
 
   MX_Modbus_Init(); // grippers modbus ctrl init
+
+  IWDG_Init();
   /* USER CODE END 2 */
 
   /* Init scheduler */
@@ -210,7 +214,16 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void IWDG_Init(void)
+{
+  hiwdg.Instance = IWDG;
+  hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
+  hiwdg.Init.Reload = 374;   // 看门狗大约 3 秒超时
+  if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
+  {
+    Error_Handler();
+  }
+}
 /* USER CODE END 4 */
 
 /**
