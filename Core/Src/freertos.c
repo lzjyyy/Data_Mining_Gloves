@@ -587,25 +587,6 @@ void StartKincoCtrlTask(void const* argument)
 
   masterSendNMTstateChange(&Kinco_Ctrl_Data, 0x01, NMT_Start_Node);
 
-  // int enable_result = 0;
-  // for (int i = 0; i < 10; i++) {
-  //   enable_result = Kinco_Enable_PDO();
-  //   if (enable_result == ENABLE_OK)
-  //   {
-  //     break;
-  //   }
-  //   osDelay(10);
-  // }
-
-  // if (enable_result == ENABLE_OK)
-  // {
-  //   printf("Kinco ENABLE_OK\r\n");
-  // }
-  // else
-  // {
-  //   printf("Kinco ENABLE_FAILED\r\n");
-  // }
-
   ServoCmd_t cmd;
   TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
 
@@ -635,7 +616,7 @@ void StartKincoCtrlTask(void const* argument)
         }
       }
 
-      if (cmd.kinco.is_enable == 1)
+      if ((cmd.kinco.is_enable == 1) && (cmd.kinco.position != 0xFFFF))
       {
         Kinco_MovPos_PDO(cmd.kinco.position);
       }
@@ -647,6 +628,7 @@ void StartKincoCtrlTask(void const* argument)
 
       if ((cmd.kinco.is_enable == 0) && (Get_Curr_Status(0) == OPERATION_ENABLED))
       {
+        printf("Disable kinco\r\n");
         Kinco_Disable_PDO();
       }
     }
@@ -708,24 +690,6 @@ void StartZeroErrCtrlTask(void const* argument)
 
   masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Start_Node);
 
-  // int enable_result = 0;
-  // for (int i = 0; i < 10; i++) {
-  //   enable_result = ZeroErr_Enable_PDO();
-  //   if (enable_result == ENABLE_OK)
-  //   {
-  //     break;
-  //   }
-  // }
-
-  // if (enable_result == ENABLE_OK)
-  // {
-  //   printf("ZeroErr ENABLE_OK\r\n");
-  // }
-  // else
-  // {
-  //   printf("ZeroErr ENABLE_FAILED\r\n");
-  // }
-
   ServoCmd_t cmd;
   TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
   for (;;)
@@ -760,7 +724,7 @@ void StartZeroErrCtrlTask(void const* argument)
         ZeroErr_SetVel_PDO(cmd.zeroerr.velocity);
       }
 
-      if (cmd.zeroerr.is_enable == 1)
+      if ((cmd.zeroerr.is_enable == 1) && (cmd.zeroerr.position != 0xFFFF))
       {
         ZeroErr_MovPos_PDO(cmd.zeroerr.position);
       }

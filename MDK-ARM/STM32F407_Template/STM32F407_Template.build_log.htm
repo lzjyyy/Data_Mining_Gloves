@@ -27,108 +27,58 @@ Project File Date:  09/28/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling freertos.c...
-../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
-  #endif
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
+compiling servo.c...
 ..\CANOpen\hardware\timer5.h(11): warning:  #1-D: last line of file ends without a newline
   #endif
 ../Core/Inc/servo.h(83): warning:  #47-D: incompatible redefinition of macro "SWITCH_ON_DISABLED_FAILED"  (declared at line 79)
   #define SWITCH_ON_DISABLED_FAILED -6
 ../Core/Inc/servo.h(120): warning:  #1-D: last line of file ends without a newline
   #endif
-..\CANOpen\hardware\can_canopen.h(13): warning:  #1-D: last line of file ends without a newline
-  #endif
-../Core/Src/freertos.c(407): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    kincoCtrlTaskHandle = osThreadNew(StartKincoCtrlTask, NULL, &kincoCtrlTask_attributes);
-../Core/Src/freertos.c(409): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    zeroerrCtrlTaskHandle = osThreadNew(StartZeroErrCtrlTask, NULL, &zeroerrCtrlTask_attributes);
-../Core/Src/freertos.c(413): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    mqttTaskHandle = osThreadNew(StartMqttTask, NULL, &mqttTask_attributes);
-../Core/Src/freertos.c(421): warning:  #167-D: argument of type "void (*)(const void *)" is incompatible with parameter of type "osThreadFunc_t"
-    monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
-../Core/Src/freertos.c(465): warning:  #188-D: enumerated type mixed with another type
-    HAL_StatusTypeDef send_result = 0;
-../Core/Src/freertos.c(501): warning:  #188-D: enumerated type mixed with another type
-    HAL_StatusTypeDef send_result = 0;
-../Core/Src/freertos.c(505): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485A_CH, rs485a_test_msg, strlen((char*)rs485a_test_msg), 1000);
-../Core/Src/freertos.c(509): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
-../Core/Src/freertos.c(513): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
-      send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
-../Core/Src/freertos.c(666): warning:  #167-D: argument of type "int32_t *" is incompatible with parameter of type "uint32_t *"
-        if (Kinco_Read_ActuclVel_SDO(&kinco_actual_vel) != 0)
-../Core/Src/freertos.c(839): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(880): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(923): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(963): warning:  #188-D: enumerated type mixed with another type
-      telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(833): warning:  #177-D: variable "right_status"  was declared but never referenced
-    GripperStatus_t right_status;
-../Core/Src/freertos.c(1138): warning:  #177-D: label "main_loop"  was declared but never referenced
-  main_loop:
-../Core/Src/freertos.c(1412): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1419): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1427): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1451): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1466): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1472): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1494): warning:  #177-D: variable "status"  was declared but never referenced
-    GripperStatus_t status;
-../Core/Src/freertos.c(1546): warning:  #177-D: variable "status"  was declared but never referenced
-    GripperStatus_t status;
-../Core/Src/freertos.c(1618): warning:  #177-D: variable "notifyVal"  was declared but never referenced
-    uint32_t notifyVal;
-../Core/Src/freertos.c(1736): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1747): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1773): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1781): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1812): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1820): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1847): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1855): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1887): warning:  #188-D: enumerated type mixed with another type
-      LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1896): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1923): warning:  #188-D: enumerated type mixed with another type
-      RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1932): warning:  #68-D: integer conversion resulted in a change of sign
-      if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1592): warning:  #177-D: function "mqtt_publish_gripper_status"  was declared but never referenced
-  static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
-../Core/Src/freertos.c(2026): warning:  #177-D: function "mqtt_publish_gpio_status"  was declared but never referenced
-  static bool mqtt_publish_gpio_status(void)
-../Core/Src/freertos.c(2055): warning:  #177-D: function "mqtt_publish_servos_status"  was declared but never referenced
-  static bool mqtt_publish_servos_status(uint8_t type)
-../Core/Src/freertos.c(2148): warning:  #177-D: function "mqtt_subscribe_all"  was declared but never referenced
-  static void mqtt_subscribe_all(void)
-../Core/Src/freertos.c: 48 warnings, 0 errors
+..\Core\Src\servo.c(45): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(25): warning:  #177-D: variable "state"  was declared but never referenced
+      uint8_t state = 0;
+..\Core\Src\servo.c(75): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(95): warning:  #111-D: statement is unreachable
+      return SDO_ERR_TIMEOUT;
+..\Core\Src\servo.c(67): warning:  #177-D: variable "state"  was declared but never referenced
+      uint8_t state = 0;
+..\Core\Src\servo.c(111): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(200); // 等待200ms，保证从站复位完�?
+..\Core\Src\servo.c(556): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(617): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(50);
+..\Core\Src\servo.c(632): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(672): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(729): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(200); // 等待200ms，保证从站复位完�?
+..\Core\Src\servo.c(1188): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1248): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(50);
+..\Core\Src\servo.c(1263): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1319): warning:  #223-D: function "osDelay" declared implicitly
+      osDelay(5);
+..\Core\Src\servo.c(1415): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(10);
+..\Core\Src\servo.c(1459): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(5);
+..\Core\Src\servo.c(1476): warning:  #940-D: missing return statement at end of non-void function "ZeroErr_Read_Error_SDO" 
+  }
+..\Core\Src\servo.c(1498): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c(1536): warning:  #223-D: function "osDelay" declared implicitly
+          osDelay(1);
+..\Core\Src\servo.c: 23 warnings, 0 errors
 linking...
-Program Size: Code=76600 RO-data=2516 RW-data=3808 ZI-data=24640  
+Program Size: Code=75352 RO-data=2448 RW-data=3808 ZI-data=24640  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 48 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 23 Warning(s).
 
 <h2>Software Packages used:</h2>
 

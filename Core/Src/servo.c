@@ -527,7 +527,7 @@ int Kinco_Enable_PDO(void)
         return GET_STATUS_FAILED;
     }
     else if (kinco_curr_status == SWITCH_ON_DISABLED) {
-        printf("Kinco current status is SWITCH_ON_DISABLED, continue...\r\n");
+        // printf("Kinco current status is SWITCH_ON_DISABLED, continue...\r\n");
     }
 
     uint32_t size;
@@ -550,9 +550,9 @@ int Kinco_Enable_PDO(void)
         kinco_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
-    else {
-        printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word = 0x07;
@@ -572,9 +572,9 @@ int Kinco_Enable_PDO(void)
         kinco_lock = false;
         return SWITCHED_ON_FAILED;
     }
-    else {
-        printf("Kinco current status is SWITCHED_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("Kinco current status is SWITCHED_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word = 0x0F;
@@ -626,9 +626,9 @@ int  Kinco_Disable_PDO(void)
         kinco_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
-    else {
-        printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("Kinco current status is READY_TO_SWITCH_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word = 0x00;
@@ -1154,7 +1154,7 @@ int ZeroErr_Enable_PDO(void)
         return GET_STATUS_FAILED;
     }
     else if (zeroerr_curr_status == SWITCH_ON_DISABLED) {
-        printf("ZeroErr current status is SWITCH_ON_DISABLED, continue...\r\n");
+        // printf("ZeroErr current status is SWITCH_ON_DISABLED, continue...\r\n");
     }
     else if (zeroerr_curr_status == OPERATION_ENABLED)
     {
@@ -1182,9 +1182,9 @@ int ZeroErr_Enable_PDO(void)
         zeroerr_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
-    else {
-        printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word_zeroerr = 0x07;
@@ -1204,9 +1204,9 @@ int ZeroErr_Enable_PDO(void)
         zeroerr_lock = false;
         return SWITCHED_ON_FAILED;
     }
-    else {
-        printf("ZeroErr current status is SWITCHED_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("ZeroErr current status is SWITCHED_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word_zeroerr = 0x0F;
@@ -1257,9 +1257,9 @@ int ZeroErr_Disable_PDO(void)
         zeroerr_lock = false;
         return READY_SWITCH_ON_FAILED;
     }
-    else {
-        printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
-    }
+    // else {
+    //     printf("ZeroErr current status is READY_TO_SWITCH_ON, continue...\r\n");
+    // }
     osDelay(5);
 
     ctrl_word_zeroerr = 0x00;
@@ -1354,7 +1354,7 @@ void ZeroErr_QuickStop_SDO(void)
     if (result == SDO_OK)
     {
         // print_can2_recv_msg();
-        printf("Zeroerr SDO read SERVO_CTRL_WORD_INDEX Success,cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
+        // printf("Zeroerr SDO read SERVO_CTRL_WORD_INDEX Success,cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
     }
     else
     {
@@ -1362,12 +1362,12 @@ void ZeroErr_QuickStop_SDO(void)
     }
 
     cur_ctrl_word &= ~(1 << 2);
-    printf("cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
+    // printf("cur_ctrl_word:0x%x\r\n", cur_ctrl_word);
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, SERVO_CTRL_WORD_INDEX, 0x00, &cur_ctrl_word, uint16);
     if (result == SDO_OK)
     {
         // print_can2_recv_msg();
-        printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Success\r\n");
+        // printf("ZeroErr SDO Write SERVO_CTRL_WORD_INDEX Success\r\n");
     }
     else
     {
@@ -1497,35 +1497,35 @@ void Get_Parse_StatusWord(uint8_t servo_type)
         // print_can1_recv_msg();
         osDelay(1);
         if ((Statusword & 0x004F) == 0x0000) {
-            printf("Kinco State: Not ready to switch on\r\n");
+            // printf("Kinco State: Not ready to switch on\r\n");
             kinco_curr_status = NOT_READY_TO_SWITCH_ON;
         }
         else if ((Statusword & 0x004F) == 0x0040) {
-            printf("Kinco State: Switch on disabled\r\n");
+            // printf("Kinco State: Switch on disabled\r\n");
             kinco_curr_status = SWITCH_ON_DISABLED;
         }
         else if ((Statusword & 0x006F) == 0x0021) {
-            printf("Kinco State: Ready to switch on\r\n");
+            // printf("Kinco State: Ready to switch on\r\n");
             kinco_curr_status = READY_TO_SWITCH_ON;
         }
         else if ((Statusword & 0x006F) == 0x0023) {
-            printf("Kinco State: Switched on\r\n");
+            // printf("Kinco State: Switched on\r\n");
             kinco_curr_status = SWITCHED_ON;
         }
         else if ((Statusword & 0x006F) == 0x0027) {
-            printf("Kinco State: Operation enabled\r\n");
+            // printf("Kinco State: Operation enabled\r\n");
             kinco_curr_status = OPERATION_ENABLED;
         }
         else if ((Statusword & 0x006F) == 0x0007) {
-            printf("Kinco State: Quick stop active\r\n");
+            // printf("Kinco State: Quick stop active\r\n");
             kinco_curr_status = QUICK_STOP_ACT;
         }
         else if ((Statusword & 0x004F) == 0x000F) {
-            printf("Kinco State: Fault reaction active\r\n");
+            // printf("Kinco State: Fault reaction active\r\n");
             kinco_curr_status = FAULT_REACTION_ACT;
         }
         else if ((Statusword & 0x004F) == 0x0008) {
-            printf("Kinco State: Fault\r\n");
+            // printf("Kinco State: Fault\r\n");
             kinco_curr_status = FAULT;
         }
     }
@@ -1535,35 +1535,35 @@ void Get_Parse_StatusWord(uint8_t servo_type)
         // print_can2_recv_msg();
         osDelay(1);
         if ((status_word_zeroerr & 0x004F) == 0x0000) {
-            printf("ZeroErr State: Not ready to switch on\r\n");
+            // printf("ZeroErr State: Not ready to switch on\r\n");
             zeroerr_curr_status = NOT_READY_TO_SWITCH_ON;
         }
         else if ((status_word_zeroerr & 0x004F) == 0x0040) {
-            printf("ZeroErr State: Switch on disabled\r\n");
+            // printf("ZeroErr State: Switch on disabled\r\n");
             zeroerr_curr_status = SWITCH_ON_DISABLED;
         }
         else if ((status_word_zeroerr & 0x006F) == 0x0021) {
-            printf("ZeroErr State: Ready to switch on\r\n");
+            // printf("ZeroErr State: Ready to switch on\r\n");
             zeroerr_curr_status = READY_TO_SWITCH_ON;
         }
         else if ((status_word_zeroerr & 0x006F) == 0x0023) {
-            printf("ZeroErr State: Switched on\r\n");
+            // printf("ZeroErr State: Switched on\r\n");
             zeroerr_curr_status = SWITCHED_ON;
         }
         else if ((status_word_zeroerr & 0x006F) == 0x0027) {
-            printf("ZeroErr State: Operation enabled\r\n");
+            // printf("ZeroErr State: Operation enabled\r\n");
             zeroerr_curr_status = OPERATION_ENABLED;
         }
         else if ((status_word_zeroerr & 0x006F) == 0x0007) {
-            printf("ZeroErr State: Quick stop active\r\n");
+            // printf("ZeroErr State: Quick stop active\r\n");
             zeroerr_curr_status = QUICK_STOP_ACT;
         }
         else if ((status_word_zeroerr & 0x004F) == 0x000F) {
-            printf("ZeroErr State: Fault reaction active\r\n");
+            // printf("ZeroErr State: Fault reaction active\r\n");
             zeroerr_curr_status = FAULT_REACTION_ACT;
         }
         else if ((status_word_zeroerr & 0x004F) == 0x0008) {
-            printf("ZeroErr: Fault\r\n");
+            // printf("ZeroErr: Fault\r\n");
             zeroerr_curr_status = FAULT;
         }
     }

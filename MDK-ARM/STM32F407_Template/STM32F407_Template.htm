@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F407_Template\STM32F407_Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F407_Template\STM32F407_Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Mon Oct 20 15:38:28 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Tue Oct 21 16:32:09 2025
 <BR><P>
 <H3>Maximum Stack Usage =        448 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1003,12 +1003,11 @@ Global Symbols
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartKincoCtrlTask
 </UL>
 
-<P><STRONG><a name="[ea]"></a>Get_Parse_StatusWord</STRONG> (Thumb, 332 bytes, Stack size 40 bytes, servo.o(i.Get_Parse_StatusWord))
+<P><STRONG><a name="[ea]"></a>Get_Parse_StatusWord</STRONG> (Thumb, 232 bytes, Stack size 40 bytes, servo.o(i.Get_Parse_StatusWord))
 <BR><BR>[Stack]<UL><LI>Max Depth = 288<LI>Call Chain = Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[eb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sendSYNC
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
-<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1f6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ZeroErr_Enable_PDO
 <LI><a href="#[1fa]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ZeroErr_Disable_PDO
@@ -1736,7 +1735,7 @@ Global Symbols
 <P><STRONG><a name="[a]"></a>Kinco_Ctrl_valueRangeTest</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, kinco_ctrl.o(i.Kinco_Ctrl_valueRangeTest))
 <BR>[Address Reference Count : 1]<UL><LI> kinco_ctrl.o(.data)
 </UL>
-<P><STRONG><a name="[154]"></a>Kinco_Disable_PDO</STRONG> (Thumb, 184 bytes, Stack size 48 bytes, servo.o(i.Kinco_Disable_PDO))
+<P><STRONG><a name="[154]"></a>Kinco_Disable_PDO</STRONG> (Thumb, 178 bytes, Stack size 48 bytes, servo.o(i.Kinco_Disable_PDO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 336<LI>Call Chain = Kinco_Disable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -1748,7 +1747,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartKincoCtrlTask
 </UL>
 
-<P><STRONG><a name="[157]"></a>Kinco_Enable_PDO</STRONG> (Thumb, 352 bytes, Stack size 56 bytes, servo.o(i.Kinco_Enable_PDO))
+<P><STRONG><a name="[157]"></a>Kinco_Enable_PDO</STRONG> (Thumb, 328 bytes, Stack size 56 bytes, servo.o(i.Kinco_Enable_PDO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = Kinco_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2588,7 +2587,7 @@ Global Symbols
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OnHeartbeatProducerUpdate
 </UL>
 
-<P><STRONG><a name="[86]"></a>StartKincoCtrlTask</STRONG> (Thumb, 296 bytes, Stack size 32 bytes, freertos.o(i.StartKincoCtrlTask))
+<P><STRONG><a name="[86]"></a>StartKincoCtrlTask</STRONG> (Thumb, 306 bytes, Stack size 32 bytes, freertos.o(i.StartKincoCtrlTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376<LI>Call Chain = StartKincoCtrlTask &rArr; Kinco_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
@@ -2682,7 +2681,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> modbus.o(i.ModbusInit)
 </UL>
-<P><STRONG><a name="[87]"></a>StartZeroErrCtrlTask</STRONG> (Thumb, 300 bytes, Stack size 32 bytes, freertos.o(i.StartZeroErrCtrlTask))
+<P><STRONG><a name="[87]"></a>StartZeroErrCtrlTask</STRONG> (Thumb, 306 bytes, Stack size 32 bytes, freertos.o(i.StartZeroErrCtrlTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 376<LI>Call Chain = StartZeroErrCtrlTask &rArr; ZeroErr_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
@@ -3076,7 +3075,7 @@ Global Symbols
 <P><STRONG><a name="[18]"></a>ZeroErr_Ctrl_valueRangeTest</STRONG> (Thumb, 16 bytes, Stack size 0 bytes, zeroerr_ctrl.o(i.ZeroErr_Ctrl_valueRangeTest))
 <BR>[Address Reference Count : 1]<UL><LI> zeroerr_ctrl.o(.data)
 </UL>
-<P><STRONG><a name="[1fa]"></a>ZeroErr_Disable_PDO</STRONG> (Thumb, 190 bytes, Stack size 48 bytes, servo.o(i.ZeroErr_Disable_PDO))
+<P><STRONG><a name="[1fa]"></a>ZeroErr_Disable_PDO</STRONG> (Thumb, 184 bytes, Stack size 48 bytes, servo.o(i.ZeroErr_Disable_PDO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 336<LI>Call Chain = ZeroErr_Disable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -3088,7 +3087,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartZeroErrCtrlTask
 </UL>
 
-<P><STRONG><a name="[1f6]"></a>ZeroErr_Enable_PDO</STRONG> (Thumb, 360 bytes, Stack size 56 bytes, servo.o(i.ZeroErr_Enable_PDO))
+<P><STRONG><a name="[1f6]"></a>ZeroErr_Enable_PDO</STRONG> (Thumb, 342 bytes, Stack size 56 bytes, servo.o(i.ZeroErr_Enable_PDO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = ZeroErr_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; buildPDO &rArr; _getODentry
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -3122,7 +3121,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartZeroErrCtrlTask
 </UL>
 
-<P><STRONG><a name="[1f9]"></a>ZeroErr_QuickStop_SDO</STRONG> (Thumb, 106 bytes, Stack size 32 bytes, servo.o(i.ZeroErr_QuickStop_SDO))
+<P><STRONG><a name="[1f9]"></a>ZeroErr_QuickStop_SDO</STRONG> (Thumb, 80 bytes, Stack size 32 bytes, servo.o(i.ZeroErr_QuickStop_SDO))
 <BR><BR>[Stack]<UL><LI>Max Depth = 284<LI>Call Chain = ZeroErr_QuickStop_SDO &rArr; SDO_WriteRequest &rArr; writeNetworkDict &rArr; _writeNetworkDict &rArr; resetSDOline &rArr; initSDOline &rArr; SetAlarm &rArr; setTimer
 </UL>
 <BR>[Calls]<UL><LI><a href="#[162]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SDO_WriteRequest
@@ -3217,7 +3216,6 @@ Global Symbols
 <LI><a href="#[8a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RightGripperTask
 <LI><a href="#[89]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;LeftGripperTask
 <LI><a href="#[8b]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;GpioTask
-<LI><a href="#[ea]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Get_Parse_StatusWord
 <LI><a href="#[1c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;canSend
 <LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cycle
 <LI><a href="#[20f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_PrintNetInfo
