@@ -211,6 +211,7 @@ static ServoStatus_t zeroerr_status;
 static uint32_t sys_run_cnt = 0;
 static uint16_t gripper_err_cnt = 0;
 static uint16_t mqtt_err_cnt = 0;
+static uint16_t servo_error_cnt = 0;
 static SysStatus_t sys_status;
 static uint16_t kinco_error_code = 0;
 static uint16_t zeroerr_error_code = 0;
@@ -245,13 +246,13 @@ const osThreadAttr_t mqttTask_attributes = {
 
 const osThreadAttr_t leftGripperTask_attributes = {
   .name = "leftGripperTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t)osPriorityAboveNormal,
 };
 
 const osThreadAttr_t rightGripperTask_attributes = {
   .name = "rightGripperTask",
-  .stack_size = 128 * 4,
+  .stack_size = 256 * 4,
   .priority = (osPriority_t)osPriorityAboveNormal,
 };
 
@@ -297,6 +298,7 @@ void StartKincoCtrlTask(void const* argument);
 void StartZeroErrCtrlTask(void const* argument);
 void StartMqttTask(void const* argument);
 void StartMonitorTask(void const* argument);
+void StartMonitorUpdateTask(void* argument);
 void StartModbusMasterTestTask(void* argument);
 
 void MX_Modbus_Init(void);
@@ -419,7 +421,8 @@ void MX_FREERTOS_Init(void) {
 
   gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
 
-  monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
+  // monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
+  monitorTaskHandle = osThreadNew(StartMonitorUpdateTask, NULL, &monitorTask_attributes);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -649,6 +652,7 @@ void StartKincoCtrlTask(void const* argument)
       if (Kinco_Read_ActuclVel_SDO(&kinco_actual_vel) != 0)
       {
         kinco_actual_vel = 0xFFFF;
+        servo_error_cnt++;
       }
       sys_status.sys_kinco_status.velocity = kinco_actual_vel;
       // printf("Kinco actual_vel is:0x%x\r\n", kinco_actual_vel);
@@ -754,6 +758,7 @@ void StartZeroErrCtrlTask(void const* argument)
       if (ZeroErr_Read_ActuclVel_SDO(&zeroerr_actual_vel) != 0)
       {
         zeroerr_actual_vel = 0xFFFF;
+        servo_error_cnt++;
       }
       // printf("Zeroerr actual_vel is:0x%x\r\n", zeroerr_actual_vel);
       sys_status.sys_zeroerr_status.velocity = zeroerr_actual_vel;
@@ -2130,5 +2135,82 @@ static void mqtt_subscribe_all(void)
     printf("Subscribed robot/servo/cmd\r\n");
   else
     printf("Subscribe robot/servo/cmd failed (%d)\r\n", rc);
+}
+
+#define STACK_LOW_THRESHOLD 50   // 堆栈剩余低于此值报警
+#define MONITOR_INTERVAL_MS 1000 // 监控周期
+void StartMonitorUpdateTask(void* argument)
+{
+  const TaskHandle_t monitoredTasks[] = {
+      kincoCtrlTaskHandle,
+      zeroerrCtrlTaskHandle,
+      mqttTaskHandle,
+      leftGripperTaskHandle,
+      L_ModbusH.myTaskModbusAHandle,
+      rightGripperTaskHandle,
+      R_ModbusH.myTaskModbusAHandle,
+      gpioTaskHandle,
+      xTimerGetTimerDaemonTaskHandle()  // Timer 守护任务
+  };
+  const char* taskNames[] = {
+      "KC",
+      "ZC",
+      "M",
+      "LG",
+      "LG1",
+      "RG",
+      "RG1",
+      "G",
+      "T"
+  };
+  const size_t taskCount = sizeof(monitoredTasks) / sizeof(monitoredTasks[0]);
+
+  for (;;)
+  {
+    sys_run_cnt++;
+
+    // 打印系统运行时间与错误统计
+    printf("t: %lu s, e0: %d, e1: %d, e2: %d\r\n",
+      sys_run_cnt, gripper_err_cnt, mqtt_err_cnt, servo_error_cnt);
+    for (size_t i = 0; i < taskCount; i++)
+    {
+      TaskHandle_t t = monitoredTasks[i];
+      eTaskState state = eTaskGetState(t);
+      UBaseType_t stackRemain = uxTaskGetStackHighWaterMark(t);
+
+      printf("%s: s=%d, r=%lu\r\n", taskNames[i], state, stackRemain);
+
+      // 阻塞任务正常，不判定卡死
+      if (state != eBlocked)
+      {
+        // 非阻塞状态，堆栈严重低则判定异常
+        if (stackRemain < STACK_LOW_THRESHOLD)
+        {
+          printf("Error: %s may be stuck! stackRemain=%lu\r\n", taskNames[i], stackRemain);
+          system_reset(); // 根据需求选择复位或报警
+        }
+      }
+      else
+      {
+        // 阻塞任务，只做堆栈低报警，不复位
+        if (stackRemain < STACK_LOW_THRESHOLD)
+        {
+          printf("Warning: %s stack low: %lu\r\n", taskNames[i], stackRemain);
+        }
+      }
+    }
+
+    // 其他错误检测
+    if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50 || servo_error_cnt >= 50)
+    {
+      printf("System Reset due to errors!\r\n");
+      system_reset();
+    }
+
+    // 喂看门狗
+    HAL_IWDG_Refresh(&hiwdg);
+
+    osDelay(MONITOR_INTERVAL_MS);
+  }
 }
 /* USER CODE END Application */

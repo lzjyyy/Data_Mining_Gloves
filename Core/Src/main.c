@@ -218,7 +218,7 @@ void IWDG_Init(void)
 {
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-  hiwdg.Init.Reload = 374;   // 看门狗大约 3 秒超时
+  hiwdg.Init.Reload = 624;   // 看门狗大约 5 秒超时
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
