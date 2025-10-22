@@ -79,7 +79,7 @@ IWDG_HandleTypeDef hiwdg;
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+  uint32_t flags = RCC->CSR;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -110,6 +110,21 @@ int main(void)
   MX_UART4_Init();
   MX_UART5_Init();
 
+  if (flags & RCC_CSR_IWDGRSTF) {
+    printf("IWDG reset\r\n");
+  }
+  if (flags & RCC_CSR_PORRSTF) {
+    printf("Power-on reset\r\n");
+  }
+  if (flags & RCC_CSR_SFTRSTF) {
+    printf("Software reset\r\n");
+  }
+  if (flags & RCC_CSR_LPWRRSTF) {
+    printf("Low-power reset\r\n");
+  }
+
+  RCC->CSR |= RCC_CSR_RMVF;
+
   MX_CAN1_Init();
 
   MX_SPI2_Init();
@@ -124,20 +139,6 @@ int main(void)
   Board_Pwr_Sequence_Enable(); // enable 5v,12v,19v,24v output
   //	ADC1_IN9_Init();
   //	ADC1_IN8_Init();
-  // W5500 init
-  // HAL_GPIO_WritePin(W5500_CS_GPIO_Port, W5500_CS_Pin, GPIO_PIN_SET);
-  // int result = W5500_DriverInit();
-  // if (result != 0) {
-  //   printf("W5500 init failed,result is:%d\r\n", result);
-  // }
-  // else
-  // {
-  //   printf("W5500 init successfully.\r\n");
-  //   W5500_Init_Status = 1;
-  //   W5500_NetInfo_SetStatic();
-  //   W5500_PrintNetInfo();
-  //   W5500_RaiseSpiSpeed();
-  // }
   int result = W5500_Init();
   if (result != 0) {
     printf("W5500 init failed,result is:%d\r\n", result);
@@ -218,7 +219,7 @@ void IWDG_Init(void)
 {
   hiwdg.Instance = IWDG;
   hiwdg.Init.Prescaler = IWDG_PRESCALER_256;
-  hiwdg.Init.Reload = 624;   // 看门狗大约 5 秒超时
+  hiwdg.Init.Reload = 1250;   // 看门狗大约 10 秒超时
   if (HAL_IWDG_Init(&hiwdg) != HAL_OK)
   {
     Error_Handler();
@@ -227,30 +228,9 @@ void IWDG_Init(void)
 /* USER CODE END 4 */
 
 /**
-  * @brief  Period elapsed callback in non blocking mode
-  * @note   This function is called  when TIM6 interrupt took place, inside
-  * HAL_TIM_IRQHandler(). It makes a direct call to HAL_IncTick() to increment
-  * a global variable "uwTick" used as application time base.
-  * @param  htim : TIM handle
+  * @brief  This function is executed in case of error occurrence.
   * @retval None
   */
-  // void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
-  // {
-  //   /* USER CODE BEGIN Callback 0 */
-
-  //   /* USER CODE END Callback 0 */
-  //   if (htim->Instance == TIM6) {
-  //     HAL_IncTick();
-  //   }
-  //   /* USER CODE BEGIN Callback 1 */
-
-  //   /* USER CODE END Callback 1 */
-  // }
-
-  /**
-    * @brief  This function is executed in case of error occurrence.
-    * @retval None
-    */
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */

@@ -219,6 +219,8 @@ static int32_t kinco_actual_vel = 0;
 static uint32_t zeroerr_actual_vel = 0;
 static const char* sys_status_topic = "robot/status";
 static char sys_status_payload[512];  // 足够容纳 JSON
+volatile uint32_t idle_counter = 0; // 负载监控用
+volatile uint32_t idle_counter_max = 0; // 负载监控用
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -1039,6 +1041,7 @@ reconnect:
   // 等待 PHY link
   while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
     printf("Waiting for PHY Link...\r\n");
+    mqtt_err_cnt++;
     osDelay(500);
   }
 
@@ -2137,69 +2140,18 @@ static void mqtt_subscribe_all(void)
     printf("Subscribe robot/servo/cmd failed (%d)\r\n", rc);
 }
 
-#define STACK_LOW_THRESHOLD 50   // 堆栈剩余低于此值报警
 #define MONITOR_INTERVAL_MS 1000 // 监控周期
 void StartMonitorUpdateTask(void* argument)
 {
-  const TaskHandle_t monitoredTasks[] = {
-      kincoCtrlTaskHandle,
-      zeroerrCtrlTaskHandle,
-      mqttTaskHandle,
-      leftGripperTaskHandle,
-      L_ModbusH.myTaskModbusAHandle,
-      rightGripperTaskHandle,
-      R_ModbusH.myTaskModbusAHandle,
-      gpioTaskHandle,
-      xTimerGetTimerDaemonTaskHandle()  // Timer 守护任务
-  };
-  const char* taskNames[] = {
-      "KC",
-      "ZC",
-      "M",
-      "LG",
-      "LG1",
-      "RG",
-      "RG1",
-      "G",
-      "T"
-  };
-  const size_t taskCount = sizeof(monitoredTasks) / sizeof(monitoredTasks[0]);
-
   for (;;)
   {
+    // 喂看门狗
+    HAL_IWDG_Refresh(&hiwdg);
     sys_run_cnt++;
 
     // 打印系统运行时间与错误统计
-    printf("t: %lu s, e0: %d, e1: %d, e2: %d\r\n",
+    printf("t:%lu s, e0:%d, e1:%d, e2:%d\r\n",
       sys_run_cnt, gripper_err_cnt, mqtt_err_cnt, servo_error_cnt);
-    for (size_t i = 0; i < taskCount; i++)
-    {
-      TaskHandle_t t = monitoredTasks[i];
-      eTaskState state = eTaskGetState(t);
-      UBaseType_t stackRemain = uxTaskGetStackHighWaterMark(t);
-
-      printf("%s: s=%d, r=%lu\r\n", taskNames[i], state, stackRemain);
-
-      // 阻塞任务正常，不判定卡死
-      if (state != eBlocked)
-      {
-        // 非阻塞状态，堆栈严重低则判定异常
-        if (stackRemain < STACK_LOW_THRESHOLD)
-        {
-          printf("Error: %s may be stuck! stackRemain=%lu\r\n", taskNames[i], stackRemain);
-          system_reset(); // 根据需求选择复位或报警
-        }
-      }
-      else
-      {
-        // 阻塞任务，只做堆栈低报警，不复位
-        if (stackRemain < STACK_LOW_THRESHOLD)
-        {
-          printf("Warning: %s stack low: %lu\r\n", taskNames[i], stackRemain);
-        }
-      }
-    }
-
     // 其他错误检测
     if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50 || servo_error_cnt >= 50)
     {
@@ -2207,10 +2159,8 @@ void StartMonitorUpdateTask(void* argument)
       system_reset();
     }
 
-    // 喂看门狗
-    HAL_IWDG_Refresh(&hiwdg);
-
     osDelay(MONITOR_INTERVAL_MS);
   }
 }
+
 /* USER CODE END Application */
