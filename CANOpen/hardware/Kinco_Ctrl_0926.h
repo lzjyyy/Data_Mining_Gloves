@@ -18,7 +18,6 @@ extern UNS32 target_vel;		/* Mapped at index 0x2002, subindex 0x00*/
 extern UNS16 Controlword;		/* Mapped at index 0x6040, subindex 0x00*/
 extern UNS16 Statusword;		/* Mapped at index 0x6041, subindex 0x00*/
 extern INTEGER32 Position_actual_value;		/* Mapped at index 0x6064, subindex 0x00*/
-extern INTEGER32 Velocity_actual_value;		/* Mapped at index 0x606C, subindex 0x00*/
 extern INTEGER16 Current_actual_value;		/* Mapped at index 0x6078, subindex 0x00*/
 extern INTEGER32 Target_position;		/* Mapped at index 0x607A, subindex 0x00*/
 extern UNS32 Profile_velocity;		/* Mapped at index 0x6081, subindex 0x00*/

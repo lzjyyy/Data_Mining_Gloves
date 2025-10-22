@@ -380,8 +380,8 @@ void MX_FREERTOS_Init(void) {
   rightGripperQueueHandle = osMessageQueueNew(10, sizeof(GripperCmd_t), NULL);
   statusQueueHandle = osMessageQueueNew(10, sizeof(GripperStatus_t), NULL);
 
-  kincoQueueHandle = osMessageQueueNew(10, sizeof(ServoCmd_t), NULL);
-  zeroerrQueueHanle = osMessageQueueNew(10, sizeof(ServoCmd_t), NULL);
+  kincoQueueHandle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
+  zeroerrQueueHanle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
 
   gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
@@ -639,25 +639,14 @@ void StartKincoCtrlTask(void const* argument)
       }
     }
 
-    /* 每隔 50ms 读取kinco状态和位置 */
+    /* 每隔 100ms 读取kinco状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 5 == 0) {  // 系统tick=10ms
+    if (counter % 10 == 0) {  // 系统tick=10ms
       sendSYNC(&Kinco_Ctrl_Data);
       // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
-      // kinco_status.status_word = Statusword;
-      // kinco_status.position = Position_actual_value;
       sys_status.sys_kinco_status.status_word = Statusword;
       sys_status.sys_kinco_status.position = Position_actual_value;
-    }
-
-    if (counter % 50 == 0) {
-      if (Kinco_Read_ActuclVel_SDO(&kinco_actual_vel) != 0)
-      {
-        kinco_actual_vel = 0xFFFF;
-        servo_error_cnt++;
-      }
-      sys_status.sys_kinco_status.velocity = kinco_actual_vel;
-      // printf("Kinco actual_vel is:0x%x\r\n", kinco_actual_vel);
+      sys_status.sys_kinco_status.velocity = Velocity_actual_value;
     }
 
     if (counter % 500 == 0) {
@@ -742,28 +731,16 @@ void StartZeroErrCtrlTask(void const* argument)
         ZeroErr_QuickStop_SDO();
         ZeroErr_Disable_PDO();
       }
-
     }
 
     /* 每隔 50ms 读取ZeroErr状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 5 == 0) {  // 系统tick=1ms
+    if (counter % 10 == 0) {  // 系统tick=1ms
       sendSYNC(&ZeroErr_Ctrl_Data);
       // printf("ZeroErr Status=0x%04X, Pos=%ld\r\n", status_word_zeroerr, pos_actual_val_zeroerr);
-      // zeroerr_status.status_word = status_word_zeroerr;
-      // zeroerr_status.position = pos_actual_val_zeroerr;
       sys_status.sys_zeroerr_status.status_word = status_word_zeroerr;
       sys_status.sys_zeroerr_status.position = pos_actual_val_zeroerr;
-    }
-
-    if (counter % 50 == 0) {
-      if (ZeroErr_Read_ActuclVel_SDO(&zeroerr_actual_vel) != 0)
-      {
-        zeroerr_actual_vel = 0xFFFF;
-        servo_error_cnt++;
-      }
-      // printf("Zeroerr actual_vel is:0x%x\r\n", zeroerr_actual_vel);
-      sys_status.sys_zeroerr_status.velocity = zeroerr_actual_vel;
+      sys_status.sys_zeroerr_status.velocity = velocity_actual_value;
     }
 
     if (counter % 500 == 0) {
@@ -781,8 +758,7 @@ void StartZeroErrCtrlTask(void const* argument)
     counter++;
 
     /* 精确定时，每次循环维持50ms周期 */
-    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));  // 1ms
-    // osDelay(50);
+    vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(10));  // 10ms
   }
 }
 

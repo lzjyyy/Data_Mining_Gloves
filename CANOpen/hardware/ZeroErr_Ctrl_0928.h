@@ -7,7 +7,7 @@
 #include "data.h"
 
 /* Prototypes of function provided by object dictionnary */
-UNS32 ZeroErr_Ctrl_valueRangeTest (UNS8 typeValue, void * value);
+UNS32 ZeroErr_Ctrl_valueRangeTest(UNS8 typeValue, void* value);
 const indextable* ZeroErr_Ctrl_scanIndexOD(CO_Data* d, UNS16 wIndex, UNS32* errorCode);
 
 /* Master node data struct */
@@ -17,6 +17,5 @@ extern UNS32 target_pos_zeroerr;		/* Mapped at index 0x2001, subindex 0x00*/
 extern UNS32 target_vel_zeroerr;		/* Mapped at index 0x2002, subindex 0x00*/
 extern UNS16 status_word_zeroerr;		/* Mapped at index 0x6041, subindex 0x00*/
 extern INTEGER32 pos_actual_val_zeroerr;		/* Mapped at index 0x6064, subindex 0x00*/
-extern INTEGER32 velocity_actual_value;		/* Mapped at index 0x606C, subindex 0x00*/
 
 #endif // ZEROERR_CTRL_H

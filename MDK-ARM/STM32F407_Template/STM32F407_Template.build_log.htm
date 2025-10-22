@@ -27,104 +27,6 @@ Project File Date:  10/21/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_Template'
-compiling croutine.c...
-compiling list.c...
-compiling event_groups.c...
-compiling timers.c...
-compiling mqtt_timer.c...
-..\MQTT\mqtt_timer.c(6): warning:  #223-D: function "xTaskGetTickCount" declared implicitly
-      t->start_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
-..\MQTT\mqtt_timer.c(12): warning:  #223-D: function "xTaskGetTickCount" declared implicitly
-      uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
-..\MQTT\mqtt_timer.c(18): warning:  #223-D: function "xTaskGetTickCount" declared implicitly
-      t->start_ms = xTaskGetTickCount() * portTICK_PERIOD_MS;
-..\MQTT\mqtt_timer.c(29): warning:  #223-D: function "xTaskGetTickCount" declared implicitly
-      uint32_t now = xTaskGetTickCount() * portTICK_PERIOD_MS;
-..\MQTT\mqtt_timer.c: 4 warnings, 0 errors
-compiling queue.c...
-compiling heap_4.c...
-compiling stream_buffer.c...
-compiling port.c...
-compiling tasks.c...
-compiling w5500_port.c...
-..\Ethernet\w5500_port.c(15): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RTR"  (declared at line 12)
-  #define Sn_TX_RTR 0x001D   // 8-bit寄存器，TCP重试时间单位 100μs
-..\Ethernet\w5500_port.c(16): warning:  #47-D: incompatible redefinition of macro "Sn_TX_RCR"  (declared at line 14)
-  #define Sn_TX_RCR 0x001E   // 8-bit寄存器，SYN重试次数
-..\Ethernet\w5500_port.c(346): warning:  #223-D: function "osDelay" declared implicitly
-      osDelay(100);
-..\Ethernet\w5500_port.c(358): warning:  #223-D: function "osDelay" declared implicitly
-          osDelay(200);
-..\Ethernet\w5500_port.c(385): warning:  #1-D: last line of file ends without a newline
-  }
-..\Ethernet\w5500_port.c(115): warning:  #177-D: function "setSn_TX_RTR"  was declared but never referenced
-  static void setSn_TX_RTR(uint8_t sock, uint8_t value)
-..\Ethernet\w5500_port.c(120): warning:  #177-D: function "setSn_TX_RCR"  was declared but never referenced
-  static void setSn_TX_RCR(uint8_t sock, uint8_t value)
-..\Ethernet\w5500_port.c: 7 warnings, 0 errors
-compiling mqtt_network.c...
-..\MQTT\mqtt_network.c(104): warning:  #223-D: function "osDelay" declared implicitly
-              osDelay(10);
-..\MQTT\mqtt_network.c: 1 warning, 0 errors
-compiling UARTCallback.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-..\MODBUS-LIB\Src\UARTCallback.c: 2 warnings, 0 errors
-compiling Modbus.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-..\MODBUS-LIB\Src\Modbus.c(499): warning:  #68-D: integer conversion resulted in a change of sign
-  			xTaskNotify(mHandlers[i]->myTaskModbusAHandle, ERR_TIME_OUT, eSetValueWithOverwrite);
-..\MODBUS-LIB\Src\Modbus.c(670): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(742): warning:  #514-D: pointless comparison of unsigned integer with a negative constant
-  			if (u8exception != ERR_TIME_OUT)
-..\MODBUS-LIB\Src\Modbus.c(747): warning:  #188-D: enumerated type mixed with another type
-  			modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(753): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(864): warning:  #68-D: integer conversion resulted in a change of sign
-  	if (modH->u8id != 0) error = ERR_NOT_MASTER;
-..\MODBUS-LIB\Src\Modbus.c(865): warning:  #68-D: integer conversion resulted in a change of sign
-  	if (modH->i8state != COM_IDLE) error = ERR_POLLING;
-..\MODBUS-LIB\Src\Modbus.c(866): warning:  #68-D: integer conversion resulted in a change of sign
-  	if ((telegram.u8id == 0) || (telegram.u8id > 247)) error = ERR_BAD_SLAVE_ID;
-..\MODBUS-LIB\Src\Modbus.c(871): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = error;
-..\MODBUS-LIB\Src\Modbus.c(957): warning:  #188-D: enumerated type mixed with another type
-  	modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(1123): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(1167): warning:  #188-D: enumerated type mixed with another type
-  			modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(1172): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(1205): warning:  #68-D: integer conversion resulted in a change of sign
-  			xTaskNotify((TaskHandle_t)telegram.u32CurrentTask, ERR_OK_QUERY, eSetValueWithOverwrite);
-..\MODBUS-LIB\Src\Modbus.c(1283): warning:  #550-D: variable "u8byte"  was set but never used
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1283): warning:  #177-D: variable "i"  was declared but never referenced
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1302): warning:  #550-D: variable "u8byte"  was set but never used
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1302): warning:  #177-D: variable "i"  was declared but never referenced
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1335): warning:  #68-D: integer conversion resulted in a change of sign
-  			return ERR_BAD_CRC;
-..\MODBUS-LIB\Src\Modbus.c(1346): warning:  #68-D: integer conversion resulted in a change of sign
-  		return ERR_EXCEPTION;
-..\MODBUS-LIB\Src\Modbus.c(1443): warning:  #68-D: integer conversion resulted in a change of sign
-  		return ERR_BAD_CRC;
-..\MODBUS-LIB\Src\Modbus.c(37): warning:  #177-D: variable "is_fc3_processed"  was declared but never referenced
-  static bool is_fc3_processed = false;
-..\MODBUS-LIB\Src\Modbus.c(38): warning:  #177-D: variable "recvRawData"  was declared but never referenced
-  static modbusRecvRawData_t recvRawData;
-..\MODBUS-LIB\Src\Modbus.c: 25 warnings, 0 errors
-compiling cmsis_os2.c...
 compiling main.c...
 ../Core/Inc/rs485.h(30): warning:  #1-D: last line of file ends without a newline
   #endif
@@ -164,75 +66,77 @@ compiling freertos.c...
       send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
 ../Core/Src/freertos.c(519): warning:  #167-D: argument of type "char *" is incompatible with parameter of type "uint8_t *"
       send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
-../Core/Src/freertos.c(654): warning:  #167-D: argument of type "int32_t *" is incompatible with parameter of type "uint32_t *"
-        if (Kinco_Read_ActuclVel_SDO(&kinco_actual_vel) != 0)
-../Core/Src/freertos.c(811): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(787): warning:  #188-D: enumerated type mixed with another type
       telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(852): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(828): warning:  #188-D: enumerated type mixed with another type
       telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(895): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(871): warning:  #188-D: enumerated type mixed with another type
       telegram[0].u8fct = 16; // function code (this one is registers read)
-../Core/Src/freertos.c(935): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(911): warning:  #188-D: enumerated type mixed with another type
       telegram[0].u8fct = 6; // function code (this one is registers read)
-../Core/Src/freertos.c(805): warning:  #177-D: variable "right_status"  was declared but never referenced
+../Core/Src/freertos.c(781): warning:  #177-D: variable "right_status"  was declared but never referenced
     GripperStatus_t right_status;
-../Core/Src/freertos.c(1111): warning:  #177-D: label "main_loop"  was declared but never referenced
+../Core/Src/freertos.c(1087): warning:  #177-D: label "main_loop"  was declared but never referenced
   main_loop:
-../Core/Src/freertos.c(1388): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1364): warning:  #188-D: enumerated type mixed with another type
       LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1395): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1371): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1403): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1379): warning:  #188-D: enumerated type mixed with another type
       LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1427): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1403): warning:  #188-D: enumerated type mixed with another type
       RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
-../Core/Src/freertos.c(1442): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1418): warning:  #188-D: enumerated type mixed with another type
       RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
-../Core/Src/freertos.c(1448): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1424): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1470): warning:  #177-D: variable "status"  was declared but never referenced
+../Core/Src/freertos.c(1446): warning:  #177-D: variable "status"  was declared but never referenced
     GripperStatus_t status;
-../Core/Src/freertos.c(1522): warning:  #177-D: variable "status"  was declared but never referenced
+../Core/Src/freertos.c(1498): warning:  #177-D: variable "status"  was declared but never referenced
     GripperStatus_t status;
-../Core/Src/freertos.c(1594): warning:  #177-D: variable "notifyVal"  was declared but never referenced
+../Core/Src/freertos.c(1570): warning:  #177-D: variable "notifyVal"  was declared but never referenced
     uint32_t notifyVal;
-../Core/Src/freertos.c(1712): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1688): warning:  #188-D: enumerated type mixed with another type
       LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1723): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1699): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1749): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1725): warning:  #188-D: enumerated type mixed with another type
       RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1757): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1733): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1788): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1764): warning:  #188-D: enumerated type mixed with another type
       LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1796): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1772): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1823): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1799): warning:  #188-D: enumerated type mixed with another type
       RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1831): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1807): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1863): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1839): warning:  #188-D: enumerated type mixed with another type
       LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1872): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1848): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1899): warning:  #188-D: enumerated type mixed with another type
+../Core/Src/freertos.c(1875): warning:  #188-D: enumerated type mixed with another type
       RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
-../Core/Src/freertos.c(1908): warning:  #68-D: integer conversion resulted in a change of sign
+../Core/Src/freertos.c(1884): warning:  #68-D: integer conversion resulted in a change of sign
       if (notifyVal != ERR_OK_QUERY) {
-../Core/Src/freertos.c(1568): warning:  #177-D: function "mqtt_publish_gripper_status"  was declared but never referenced
+../Core/Src/freertos.c(218): warning:  #177-D: variable "kinco_actual_vel"  was declared but never referenced
+  static int32_t kinco_actual_vel = 0;
+../Core/Src/freertos.c(219): warning:  #177-D: variable "zeroerr_actual_vel"  was declared but never referenced
+  static uint32_t zeroerr_actual_vel = 0;
+../Core/Src/freertos.c(1544): warning:  #177-D: function "mqtt_publish_gripper_status"  was declared but never referenced
   static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
-../Core/Src/freertos.c(2002): warning:  #177-D: function "mqtt_publish_gpio_status"  was declared but never referenced
+../Core/Src/freertos.c(1978): warning:  #177-D: function "mqtt_publish_gpio_status"  was declared but never referenced
   static bool mqtt_publish_gpio_status(void)
-../Core/Src/freertos.c(2031): warning:  #177-D: function "mqtt_publish_servos_status"  was declared but never referenced
+../Core/Src/freertos.c(2007): warning:  #177-D: function "mqtt_publish_servos_status"  was declared but never referenced
   static bool mqtt_publish_servos_status(uint8_t type)
-../Core/Src/freertos.c(2124): warning:  #177-D: function "mqtt_subscribe_all"  was declared but never referenced
+../Core/Src/freertos.c(2100): warning:  #177-D: function "mqtt_subscribe_all"  was declared but never referenced
   static void mqtt_subscribe_all(void)
-../Core/Src/freertos.c: 47 warnings, 0 errors
+../Core/Src/freertos.c: 48 warnings, 0 errors
 linking...
-Program Size: Code=75296 RO-data=2448 RW-data=3812 ZI-data=33868  
+Program Size: Code=75656 RO-data=2496 RW-data=4168 ZI-data=33872  
 FromELF: creating hex file...
-"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 89 Warning(s).
+"STM32F407_Template\STM32F407_Template.axf" - 0 Error(s), 51 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -254,7 +158,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:07
+Build Time Elapsed:  00:00:06
 </pre>
 </body>
 </html>

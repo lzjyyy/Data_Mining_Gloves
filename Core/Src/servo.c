@@ -468,19 +468,19 @@ void Kinco_Setup(void)
         printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
     }
 
-    set_val_u32 = 0x60780010;
-    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x03, &set_val_u32, uint32);
-    if (result == SDO_OK)
-    {
-        // print_can1_recv_msg();
-        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
-    }
-    else
-    {
-        printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
-    }
+    // set_val_u32 = 0x60780010;
+    // result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x03, &set_val_u32, uint32);
+    // if (result == SDO_OK)
+    // {
+    //     // print_can1_recv_msg();
+    //     // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    // }
+    // else
+    // {
+    //     printf("Kinco SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
+    // }
 
-    set_val_u8 = 0x03;
+    set_val_u8 = 0x02;
     result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO1_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
     if (result == SDO_OK)
     {
@@ -502,6 +502,78 @@ void Kinco_Setup(void)
     else
     {
         printf("Kinco SDO Write TPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x80000181 + KINCO_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x02, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x00;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x606C0020;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    set_val_u32 = 0x00000181 + KINCO_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&Kinco_Ctrl_Data, KINCO_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can1_recv_msg();
+        // printf("Kinco SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("Kinco SDO Write TPDO2_PARAM_INDEX Failed\r\n");
     }
 }
 
@@ -964,8 +1036,86 @@ void ZeroErr_Setup(void)
         printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Failed\r\n");
     }
 
-    set_val_u32 = 0x00000180 + KINCO_SLAVE_NODE_ID;
+    set_val_u32 = 0x00000180 + ZEROERR_SLAVE_NODE_ID;
     result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO1_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Failed\r\n");
+    }
+
+    // 禁用 TPDO2
+    set_val_u32 = 0x80000181 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    // 设置传输类型 = 1（同步发送）
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x02, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_PARAM_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO2_PARAM_INDEX Failed\r\n");
+    }
+
+    // 清空映射
+    set_val_u8 = 0x00;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    // 映射第1个对象：0x606C:00（32-bit）
+    set_val_u32 = 0x606C0020;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x01, &set_val_u32, uint32);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    // 映射条目数 = 1
+    set_val_u8 = 0x01;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_MAPPING_INDEX, 0x00, &set_val_u8, uint8);
+    if (result == SDO_OK)
+    {
+        // print_can2_recv_msg();
+        // printf("ZeroErr SDO Write TPDO1_MAPPING_INDEX Success\r\n");
+    }
+    else
+    {
+        printf("ZeroErr SDO Write TPDO2_MAPPING_INDEX Failed\r\n");
+    }
+
+    // 重新启用 TPDO2（COB-ID = 0x181 + NodeID）
+    set_val_u32 = 0x00000181 + ZEROERR_SLAVE_NODE_ID;
+    result = SDO_WriteRequest(&ZeroErr_Ctrl_Data, ZEROERR_SLAVE_NODE_ID, TPDO2_PARAM_INDEX, 0x01, &set_val_u32, uint32);
     if (result == SDO_OK)
     {
         // print_can2_recv_msg();

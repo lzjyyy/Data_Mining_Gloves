@@ -6,13 +6,12 @@
 /**************************************************************************/
 /* Declaration of mapped variables                                        */
 /**************************************************************************/
-UNS16 ctrl_word = 0xFF;		/* Mapped at index 0x2000, subindex 0x00 */
+UNS16 ctrl_word = 0x00;		/* Mapped at index 0x2000, subindex 0x00 */
 UNS32 target_pos = 0x0;		/* Mapped at index 0x2001, subindex 0x00 */
 UNS32 target_vel = 0x0;		/* Mapped at index 0x2002, subindex 0x00 */
 UNS16 Controlword = 0x0;		/* Mapped at index 0x6040, subindex 0x00 */
 UNS16 Statusword = 0x0;		/* Mapped at index 0x6041, subindex 0x00 */
 INTEGER32 Position_actual_value = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
-INTEGER32 Velocity_actual_value = 0x0;		/* Mapped at index 0x606C, subindex 0x00 */
 INTEGER16 Current_actual_value = 0x0;		/* Mapped at index 0x6078, subindex 0x00 */
 INTEGER32 Target_position = 0x0;		/* Mapped at index 0x607A, subindex 0x00 */
 UNS32 Profile_velocity = 0x0;		/* Mapped at index 0x6081, subindex 0x00 */
@@ -181,49 +180,20 @@ subindex Kinco_Ctrl_Index1400[] =
   { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_obj1400_SYNC_start_value }
 };
 
-/* index 0x1401 :   Receive PDO 2 Parameter. */
-UNS8 Kinco_Ctrl_highestSubIndex_obj1401 = 6; /* number of subindex - 1*/
-UNS32 Kinco_Ctrl_obj1401_COB_ID_used_by_PDO = 0x182;	/* 386 */
-UNS8 Kinco_Ctrl_obj1401_Transmission_Type = 0x0;	/* 0 */
-UNS16 Kinco_Ctrl_obj1401_Inhibit_Time = 0x0;	/* 0 */
-UNS8 Kinco_Ctrl_obj1401_Compatibility_Entry = 0x0;	/* 0 */
-UNS16 Kinco_Ctrl_obj1401_Event_Timer = 0x0;	/* 0 */
-UNS8 Kinco_Ctrl_obj1401_SYNC_start_value = 0x0;	/* 0 */
-subindex Kinco_Ctrl_Index1401[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_highestSubIndex_obj1401 },
-  { RW, uint32, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1401_COB_ID_used_by_PDO },
-  { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_obj1401_Transmission_Type },
-  { RW, uint16, sizeof(UNS16), (void*)&Kinco_Ctrl_obj1401_Inhibit_Time },
-  { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_obj1401_Compatibility_Entry },
-  { RW, uint16, sizeof(UNS16), (void*)&Kinco_Ctrl_obj1401_Event_Timer },
-  { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_obj1401_SYNC_start_value }
-};
-
 /* index 0x1600 :   Receive PDO 1 Mapping. */
-UNS8 Kinco_Ctrl_highestSubIndex_obj1600 = 2; /* number of subindex - 1*/
+UNS8 Kinco_Ctrl_highestSubIndex_obj1600 = 3; /* number of subindex - 1*/
 UNS32 Kinco_Ctrl_obj1600[] =
 {
   0x60410010,	/* 1614872592 */
-  0x60640020	/* 1617166368 */
+  0x60640020,	/* 1617166368 */
+  0x60780010	/* 1618477072 */
 };
 subindex Kinco_Ctrl_Index1600[] =
 {
   { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_highestSubIndex_obj1600 },
   { RW, uint16, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1600[0] },
-  { RW, uint32, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1600[1] }
-};
-
-/* index 0x1601 :   Receive PDO 2 Mapping. */
-UNS8 Kinco_Ctrl_highestSubIndex_obj1601 = 1; /* number of subindex - 1*/
-UNS32 Kinco_Ctrl_obj1601[] =
-{
-  0x606C0020	/* 1617690656 */
-};
-subindex Kinco_Ctrl_Index1601[] =
-{
-  { RW, uint8, sizeof(UNS8), (void*)&Kinco_Ctrl_highestSubIndex_obj1601 },
-  { RW, uint32, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1601[0] }
+  { RW, uint32, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1600[1] },
+  { RW, uint16, sizeof(UNS32), (void*)&Kinco_Ctrl_obj1600[2] }
 };
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
@@ -346,12 +316,6 @@ subindex Kinco_Ctrl_Index6064[] =
   { RO, int32, sizeof(INTEGER32), (void*)&Position_actual_value }
 };
 
-/* index 0x606C :   Mapped variable Velocity actual value */
-subindex Kinco_Ctrl_Index606C[] =
-{
-  { RO, int32, sizeof(INTEGER32), (void*)&Velocity_actual_value }
-};
-
 /* index 0x6078 :   Mapped variable Current actual value */
 subindex Kinco_Ctrl_Index6078[] =
 {
@@ -391,9 +355,7 @@ const indextable Kinco_Ctrl_objdict[] =
   { (subindex*)Kinco_Ctrl_Index1018,sizeof(Kinco_Ctrl_Index1018) / sizeof(Kinco_Ctrl_Index1018[0]), 0x1018},
   { (subindex*)Kinco_Ctrl_Index1280,sizeof(Kinco_Ctrl_Index1280) / sizeof(Kinco_Ctrl_Index1280[0]), 0x1280},
   { (subindex*)Kinco_Ctrl_Index1400,sizeof(Kinco_Ctrl_Index1400) / sizeof(Kinco_Ctrl_Index1400[0]), 0x1400},
-  { (subindex*)Kinco_Ctrl_Index1401,sizeof(Kinco_Ctrl_Index1401) / sizeof(Kinco_Ctrl_Index1401[0]), 0x1401},
   { (subindex*)Kinco_Ctrl_Index1600,sizeof(Kinco_Ctrl_Index1600) / sizeof(Kinco_Ctrl_Index1600[0]), 0x1600},
-  { (subindex*)Kinco_Ctrl_Index1601,sizeof(Kinco_Ctrl_Index1601) / sizeof(Kinco_Ctrl_Index1601[0]), 0x1601},
   { (subindex*)Kinco_Ctrl_Index1800,sizeof(Kinco_Ctrl_Index1800) / sizeof(Kinco_Ctrl_Index1800[0]), 0x1800},
   { (subindex*)Kinco_Ctrl_Index1801,sizeof(Kinco_Ctrl_Index1801) / sizeof(Kinco_Ctrl_Index1801[0]), 0x1801},
   { (subindex*)Kinco_Ctrl_Index1A00,sizeof(Kinco_Ctrl_Index1A00) / sizeof(Kinco_Ctrl_Index1A00[0]), 0x1A00},
@@ -404,7 +366,6 @@ const indextable Kinco_Ctrl_objdict[] =
   { (subindex*)Kinco_Ctrl_Index6040,sizeof(Kinco_Ctrl_Index6040) / sizeof(Kinco_Ctrl_Index6040[0]), 0x6040},
   { (subindex*)Kinco_Ctrl_Index6041,sizeof(Kinco_Ctrl_Index6041) / sizeof(Kinco_Ctrl_Index6041[0]), 0x6041},
   { (subindex*)Kinco_Ctrl_Index6064,sizeof(Kinco_Ctrl_Index6064) / sizeof(Kinco_Ctrl_Index6064[0]), 0x6064},
-  { (subindex*)Kinco_Ctrl_Index606C,sizeof(Kinco_Ctrl_Index606C) / sizeof(Kinco_Ctrl_Index606C[0]), 0x606C},
   { (subindex*)Kinco_Ctrl_Index6078,sizeof(Kinco_Ctrl_Index6078) / sizeof(Kinco_Ctrl_Index6078[0]), 0x6078},
   { (subindex*)Kinco_Ctrl_Index607A,sizeof(Kinco_Ctrl_Index607A) / sizeof(Kinco_Ctrl_Index607A[0]), 0x607A},
   { (subindex*)Kinco_Ctrl_Index6081,sizeof(Kinco_Ctrl_Index6081) / sizeof(Kinco_Ctrl_Index6081[0]), 0x6081},
@@ -415,6 +376,7 @@ const indextable* Kinco_Ctrl_scanIndexOD(CO_Data* d, UNS16 wIndex, UNS32* errorC
 {
   (void)d;
   int i;
+  // printf("wIndex = 0x%x\r\n", wIndex);
   switch (wIndex) {
   case 0x1000: i = 0;break;
   case 0x1001: i = 1;break;
@@ -425,24 +387,21 @@ const indextable* Kinco_Ctrl_scanIndexOD(CO_Data* d, UNS16 wIndex, UNS32* errorC
   case 0x1018: i = 6;break;
   case 0x1280: i = 7;break;
   case 0x1400: i = 8;break;
-  case 0x1401: i = 9;break;
-  case 0x1600: i = 10;break;
-  case 0x1601: i = 11;break;
-  case 0x1800: i = 12;break;
-  case 0x1801: i = 13;break;
-  case 0x1A00: i = 14;break;
-  case 0x1A01: i = 15;break;
-  case 0x2000: i = 16;break;
-  case 0x2001: i = 17;break;
-  case 0x2002: i = 18;break;
-  case 0x6040: i = 19;break;
-  case 0x6041: i = 20;break;
-  case 0x6064: i = 21;break;
-  case 0x606C: i = 22;break;
-  case 0x6078: i = 23;break;
-  case 0x607A: i = 24;break;
-  case 0x6081: i = 25;break;
-  case 0x60FF: i = 26;break;
+  case 0x1600: i = 9;break;
+  case 0x1800: i = 10;break;
+  case 0x1801: i = 11;break;
+  case 0x1A00: i = 12;break;
+  case 0x1A01: i = 13;break;
+  case 0x2000: i = 14;break;
+  case 0x2001: i = 15;break;
+  case 0x2002: i = 16;break;
+  case 0x6040: i = 17;break;
+  case 0x6041: i = 18;break;
+  case 0x6064: i = 19;break;
+  case 0x6078: i = 20;break;
+  case 0x607A: i = 21;break;
+  case 0x6081: i = 22;break;
+  case 0x60FF: i = 23;break;
   default:
     *errorCode = OD_NO_SUCH_OBJECT;
     return NULL;
@@ -462,18 +421,18 @@ const quick_index Kinco_Ctrl_firstIndex = {
   0, /* SDO_SVR */
   7, /* SDO_CLT */
   8, /* PDO_RCV */
-  10, /* PDO_RCV_MAP */
-  12, /* PDO_TRS */
-  14 /* PDO_TRS_MAP */
+  9, /* PDO_RCV_MAP */
+  10, /* PDO_TRS */
+  12 /* PDO_TRS_MAP */
 };
 
 const quick_index Kinco_Ctrl_lastIndex = {
   0, /* SDO_SVR */
   7, /* SDO_CLT */
-  9, /* PDO_RCV */
-  11, /* PDO_RCV_MAP */
-  13, /* PDO_TRS */
-  15 /* PDO_TRS_MAP */
+  8, /* PDO_RCV */
+  9, /* PDO_RCV_MAP */
+  11, /* PDO_TRS */
+  13 /* PDO_TRS_MAP */
 };
 
 const UNS16 Kinco_Ctrl_ObjdictSize = sizeof(Kinco_Ctrl_objdict) / sizeof(Kinco_Ctrl_objdict[0]);

@@ -11,18 +11,19 @@ UNS32 target_pos_zeroerr = 0x0;		/* Mapped at index 0x2001, subindex 0x00 */
 UNS32 target_vel_zeroerr = 0x0;		/* Mapped at index 0x2002, subindex 0x00 */
 UNS16 status_word_zeroerr = 0x0;		/* Mapped at index 0x6041, subindex 0x00 */
 INTEGER32 pos_actual_val_zeroerr = 0x0;		/* Mapped at index 0x6064, subindex 0x00 */
+INTEGER32 velocity_actual_value = 0x0;		/* Mapped at index 0x606C, subindex 0x00 */
 
 /**************************************************************************/
 /* Declaration of value range types                                       */
 /**************************************************************************/
 
 #define valueRange_EMC 0x9F /* Type for index 0x1003 subindex 0x00 (only set of value 0 is possible) */
-UNS32 ZeroErr_Ctrl_valueRangeTest(UNS8 typeValue, void* value)
+UNS32 ZeroErr_Ctrl_valueRangeTest (UNS8 typeValue, void * value)
 {
   switch (typeValue) {
-  case valueRange_EMC:
-    if (*(UNS8*)value != (UNS8)0) return OD_VALUE_RANGE_EXCEEDED;
-    break;
+    case valueRange_EMC:
+      if (*(UNS8*)value != (UNS8)0) return OD_VALUE_RANGE_EXCEEDED;
+      break;
   }
   return 0;
 }
@@ -49,344 +50,387 @@ $$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 */
 
 /* index 0x1000 :   Device Type. */
-UNS32 ZeroErr_Ctrl_obj1000 = 0x0;	/* 0 */
-subindex ZeroErr_Ctrl_Index1000[] =
-{
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1000 }
-};
+                    UNS32 ZeroErr_Ctrl_obj1000 = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1000[] = 
+                     {
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1000 }
+                     };
 
 /* index 0x1001 :   Error Register. */
-UNS8 ZeroErr_Ctrl_obj1001 = 0x0;	/* 0 */
-subindex ZeroErr_Ctrl_Index1001[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1001 }
-};
+                    UNS8 ZeroErr_Ctrl_obj1001 = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1001[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1001 }
+                     };
 
 /* index 0x1003 :   Pre-defined Error Field */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1003 = 0; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1003[] =
-{
-  0x0	/* 0 */
-};
-ODCallback_t ZeroErr_Ctrl_Index1003_callbacks[] =
-{
-  NULL,
-  NULL,
-};
-subindex ZeroErr_Ctrl_Index1003[] =
-{
-  { RW, valueRange_EMC, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1003 },
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1003[0] }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1003 = 0; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1003[] = 
+                    {
+                      0x0	/* 0 */
+                    };
+                    ODCallback_t ZeroErr_Ctrl_Index1003_callbacks[] = 
+                     {
+                       NULL,
+                       NULL,
+                     };
+                    subindex ZeroErr_Ctrl_Index1003[] = 
+                     {
+                       { RW, valueRange_EMC, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1003 },
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1003[0] }
+                     };
 
 /* index 0x1005 :   SYNC COB ID. */
-UNS32 ZeroErr_Ctrl_obj1005 = 0x40000080;	/* 1073741952 */
-ODCallback_t ZeroErr_Ctrl_Index1005_callbacks[] =
-{
-  NULL,
-};
-subindex ZeroErr_Ctrl_Index1005[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1005 }
-};
+                    UNS32 ZeroErr_Ctrl_obj1005 = 0x40000080;	/* 1073741952 */
+                    ODCallback_t ZeroErr_Ctrl_Index1005_callbacks[] = 
+                     {
+                       NULL,
+                     };
+                    subindex ZeroErr_Ctrl_Index1005[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1005 }
+                     };
 
 /* index 0x1006 :   Communication / Cycle Period. */
-UNS32 ZeroErr_Ctrl_obj1006 = 0xF4240;	/* 1000000 */
-ODCallback_t ZeroErr_Ctrl_Index1006_callbacks[] =
-{
-  NULL,
-};
-subindex ZeroErr_Ctrl_Index1006[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1006 }
-};
+                    UNS32 ZeroErr_Ctrl_obj1006 = 0xF4240;	/* 1000000 */
+                    ODCallback_t ZeroErr_Ctrl_Index1006_callbacks[] = 
+                     {
+                       NULL,
+                     };
+                    subindex ZeroErr_Ctrl_Index1006[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1006 }
+                     };
 
 /* index 0x1007 :   Synchronous Window Length. */
-UNS32 ZeroErr_Ctrl_obj1007 = 0x0;	/* 0 */
-subindex ZeroErr_Ctrl_Index1007[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1007 }
-};
+                    UNS32 ZeroErr_Ctrl_obj1007 = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1007[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1007 }
+                     };
 
-/* index 0x100C :   Guard Time */
-UNS16 ZeroErr_Ctrl_obj100C = 0x0;   /* 0 */
+/* index 0x100C :   Guard Time */ 
+                    UNS16 ZeroErr_Ctrl_obj100C = 0x0;   /* 0 */
 
-/* index 0x100D :   Life Time Factor */
-UNS8 ZeroErr_Ctrl_obj100D = 0x0;   /* 0 */
+/* index 0x100D :   Life Time Factor */ 
+                    UNS8 ZeroErr_Ctrl_obj100D = 0x0;   /* 0 */
 
 /* index 0x1014 :   Emergency COB ID. */
-UNS32 ZeroErr_Ctrl_obj1014 = 0x81;	/* 129 */
-subindex ZeroErr_Ctrl_Index1014[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1014 }
-};
+                    UNS32 ZeroErr_Ctrl_obj1014 = 0x81;	/* 129 */
+                    subindex ZeroErr_Ctrl_Index1014[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1014 }
+                     };
 
 /* index 0x1016 :   Consumer Heartbeat Time */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1016 = 0;
-UNS32 ZeroErr_Ctrl_obj1016[] = { 0 };
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1016 = 0;
+                    UNS32 ZeroErr_Ctrl_obj1016[]={0};
 
-/* index 0x1017 :   Producer Heartbeat Time */
-UNS16 ZeroErr_Ctrl_obj1017 = 0x0;   /* 0 */
+/* index 0x1017 :   Producer Heartbeat Time */ 
+                    UNS16 ZeroErr_Ctrl_obj1017 = 0x0;   /* 0 */
 
 /* index 0x1018 :   Identity. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1018 = 4; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1018_Vendor_ID = 0x0;	/* 0 */
-UNS32 ZeroErr_Ctrl_obj1018_Product_Code = 0x0;	/* 0 */
-UNS32 ZeroErr_Ctrl_obj1018_Revision_Number = 0x0;	/* 0 */
-UNS32 ZeroErr_Ctrl_obj1018_Serial_Number = 0x0;	/* 0 */
-subindex ZeroErr_Ctrl_Index1018[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1018 },
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1018_Vendor_ID },
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1018_Product_Code },
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1018_Revision_Number },
-  { RO, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1018_Serial_Number }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1018 = 4; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1018_Vendor_ID = 0x0;	/* 0 */
+                    UNS32 ZeroErr_Ctrl_obj1018_Product_Code = 0x0;	/* 0 */
+                    UNS32 ZeroErr_Ctrl_obj1018_Revision_Number = 0x0;	/* 0 */
+                    UNS32 ZeroErr_Ctrl_obj1018_Serial_Number = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1018[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1018 },
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1018_Vendor_ID },
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1018_Product_Code },
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1018_Revision_Number },
+                       { RO, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1018_Serial_Number }
+                     };
 
 /* index 0x1280 :   Client SDO 1 Parameter. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x601;	/* 1537 */
-UNS32 ZeroErr_Ctrl_obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x581;	/* 1409 */
-UNS8 ZeroErr_Ctrl_obj1280_Node_ID_of_the_SDO_Server = 0x1;	/* 1 */
-subindex ZeroErr_Ctrl_Index1280[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1280 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1280_COB_ID_Client_to_Server_Transmit_SDO },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1280_COB_ID_Server_to_Client_Receive_SDO },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1280_Node_ID_of_the_SDO_Server }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1280 = 3; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1280_COB_ID_Client_to_Server_Transmit_SDO = 0x601;	/* 1537 */
+                    UNS32 ZeroErr_Ctrl_obj1280_COB_ID_Server_to_Client_Receive_SDO = 0x581;	/* 1409 */
+                    UNS8 ZeroErr_Ctrl_obj1280_Node_ID_of_the_SDO_Server = 0x1;	/* 1 */
+                    subindex ZeroErr_Ctrl_Index1280[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1280 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1280_COB_ID_Client_to_Server_Transmit_SDO },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1280_COB_ID_Server_to_Client_Receive_SDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1280_Node_ID_of_the_SDO_Server }
+                     };
 
 /* index 0x1400 :   Receive PDO 1 Parameter. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1400 = 6; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1400_COB_ID_used_by_PDO = 0x181;	/* 385 */
-UNS8 ZeroErr_Ctrl_obj1400_Transmission_Type = 0x0;	/* 0 */
-UNS16 ZeroErr_Ctrl_obj1400_Inhibit_Time = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1400_Compatibility_Entry = 0x0;	/* 0 */
-UNS16 ZeroErr_Ctrl_obj1400_Event_Timer = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1400_SYNC_start_value = 0x0;	/* 0 */
-subindex ZeroErr_Ctrl_Index1400[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1400 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1400_COB_ID_used_by_PDO },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1400_Transmission_Type },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1400_Inhibit_Time },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1400_Compatibility_Entry },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1400_Event_Timer },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1400_SYNC_start_value }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1400 = 6; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1400_COB_ID_used_by_PDO = 0x181;	/* 385 */
+                    UNS8 ZeroErr_Ctrl_obj1400_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1400_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1400_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1400_Event_Timer = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1400_SYNC_start_value = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1400[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1400 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1400_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1400_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1400_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1400_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1400_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1400_SYNC_start_value }
+                     };
+
+/* index 0x1401 :   Receive PDO 2 Parameter. */
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1401 = 6; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1401_COB_ID_used_by_PDO = 0x182;	/* 386 */
+                    UNS8 ZeroErr_Ctrl_obj1401_Transmission_Type = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1401_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1401_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1401_Event_Timer = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1401_SYNC_start_value = 0x0;	/* 0 */
+                    subindex ZeroErr_Ctrl_Index1401[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1401 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1401_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1401_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1401_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1401_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1401_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1401_SYNC_start_value }
+                     };
 
 /* index 0x1600 :   Receive PDO 1 Mapping. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1600 = 2; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1600[] =
-{
-  0x60410010,	/* 1614872592 */
-  0x60640020	/* 1617166368 */
-};
-subindex ZeroErr_Ctrl_Index1600[] =
-{
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1600 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1600[0] },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1600[1] }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1600 = 2; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1600[] = 
+                    {
+                      0x60410010,	/* 1614872592 */
+                      0x60640020	/* 1617166368 */
+                    };
+                    subindex ZeroErr_Ctrl_Index1600[] = 
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1600 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1600[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1600[1] }
+                     };
+
+/* index 0x1601 :   Receive PDO 2 Mapping. */
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1601 = 1; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1601[] = 
+                    {
+                      0x606C0020	/* 1617690656 */
+                    };
+                    subindex ZeroErr_Ctrl_Index1601[] = 
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1601 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1601[0] }
+                     };
 
 /* index 0x1800 :   Transmit PDO 1 Parameter. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1800 = 6; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1800_COB_ID_used_by_PDO = 0x201;	/* 513 */
-UNS8 ZeroErr_Ctrl_obj1800_Transmission_Type = 0xFF;	/* 255 */
-UNS16 ZeroErr_Ctrl_obj1800_Inhibit_Time = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1800_Compatibility_Entry = 0x0;	/* 0 */
-UNS16 ZeroErr_Ctrl_obj1800_Event_Timer = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1800_SYNC_start_value = 0x0;	/* 0 */
-ODCallback_t ZeroErr_Ctrl_Index1800_callbacks[] =
-{
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-};
-subindex ZeroErr_Ctrl_Index1800[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1800 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1800_COB_ID_used_by_PDO },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1800_Transmission_Type },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1800_Inhibit_Time },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1800_Compatibility_Entry },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1800_Event_Timer },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1800_SYNC_start_value }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1800 = 6; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1800_COB_ID_used_by_PDO = 0x201;	/* 513 */
+                    UNS8 ZeroErr_Ctrl_obj1800_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 ZeroErr_Ctrl_obj1800_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1800_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1800_Event_Timer = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1800_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t ZeroErr_Ctrl_Index1800_callbacks[] = 
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex ZeroErr_Ctrl_Index1800[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1800 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1800_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1800_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1800_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1800_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1800_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1800_SYNC_start_value }
+                     };
 
 /* index 0x1801 :   Transmit PDO 2 Parameter. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1801 = 6; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1801_COB_ID_used_by_PDO = 0x202;	/* 514 */
-UNS8 ZeroErr_Ctrl_obj1801_Transmission_Type = 0xFF;	/* 255 */
-UNS16 ZeroErr_Ctrl_obj1801_Inhibit_Time = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1801_Compatibility_Entry = 0x0;	/* 0 */
-UNS16 ZeroErr_Ctrl_obj1801_Event_Timer = 0x0;	/* 0 */
-UNS8 ZeroErr_Ctrl_obj1801_SYNC_start_value = 0x0;	/* 0 */
-ODCallback_t ZeroErr_Ctrl_Index1801_callbacks[] =
-{
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-  NULL,
-};
-subindex ZeroErr_Ctrl_Index1801[] =
-{
-  { RO, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1801 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1801_COB_ID_used_by_PDO },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1801_Transmission_Type },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1801_Inhibit_Time },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1801_Compatibility_Entry },
-  { RW, uint16, sizeof(UNS16), (void*)&ZeroErr_Ctrl_obj1801_Event_Timer },
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_obj1801_SYNC_start_value }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1801 = 6; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1801_COB_ID_used_by_PDO = 0x202;	/* 514 */
+                    UNS8 ZeroErr_Ctrl_obj1801_Transmission_Type = 0xFF;	/* 255 */
+                    UNS16 ZeroErr_Ctrl_obj1801_Inhibit_Time = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1801_Compatibility_Entry = 0x0;	/* 0 */
+                    UNS16 ZeroErr_Ctrl_obj1801_Event_Timer = 0x0;	/* 0 */
+                    UNS8 ZeroErr_Ctrl_obj1801_SYNC_start_value = 0x0;	/* 0 */
+                    ODCallback_t ZeroErr_Ctrl_Index1801_callbacks[] = 
+                     {
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                       NULL,
+                     };
+                    subindex ZeroErr_Ctrl_Index1801[] = 
+                     {
+                       { RO, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1801 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1801_COB_ID_used_by_PDO },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1801_Transmission_Type },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1801_Inhibit_Time },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1801_Compatibility_Entry },
+                       { RW, uint16, sizeof (UNS16), (void*)&ZeroErr_Ctrl_obj1801_Event_Timer },
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_obj1801_SYNC_start_value }
+                     };
 
 /* index 0x1A00 :   Transmit PDO 1 Mapping. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1A00 = 2; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1A00[] =
-{
-  0x20000010,	/* 536870928 */
-  0x20010020	/* 536936480 */
-};
-subindex ZeroErr_Ctrl_Index1A00[] =
-{
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1A00 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1A00[0] },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1A00[1] }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1A00 = 2; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1A00[] = 
+                    {
+                      0x20000010,	/* 536870928 */
+                      0x20010020	/* 536936480 */
+                    };
+                    subindex ZeroErr_Ctrl_Index1A00[] = 
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1A00 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1A00[0] },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1A00[1] }
+                     };
 
 /* index 0x1A01 :   Transmit PDO 2 Mapping. */
-UNS8 ZeroErr_Ctrl_highestSubIndex_obj1A01 = 1; /* number of subindex - 1*/
-UNS32 ZeroErr_Ctrl_obj1A01[] =
-{
-  0x20020020	/* 537002016 */
-};
-subindex ZeroErr_Ctrl_Index1A01[] =
-{
-  { RW, uint8, sizeof(UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1A01 },
-  { RW, uint32, sizeof(UNS32), (void*)&ZeroErr_Ctrl_obj1A01[0] }
-};
+                    UNS8 ZeroErr_Ctrl_highestSubIndex_obj1A01 = 1; /* number of subindex - 1*/
+                    UNS32 ZeroErr_Ctrl_obj1A01[] = 
+                    {
+                      0x20020020	/* 537002016 */
+                    };
+                    subindex ZeroErr_Ctrl_Index1A01[] = 
+                     {
+                       { RW, uint8, sizeof (UNS8), (void*)&ZeroErr_Ctrl_highestSubIndex_obj1A01 },
+                       { RW, uint32, sizeof (UNS32), (void*)&ZeroErr_Ctrl_obj1A01[0] }
+                     };
 
 /* index 0x2000 :   Mapped variable ctrl_word_zeroerr */
-subindex ZeroErr_Ctrl_Index2000[] =
-{
-  { RW, uint16, sizeof(UNS16), (void*)&ctrl_word_zeroerr }
-};
+                    subindex ZeroErr_Ctrl_Index2000[] = 
+                     {
+                       { RW, uint16, sizeof (UNS16), (void*)&ctrl_word_zeroerr }
+                     };
 
 /* index 0x2001 :   Mapped variable target_pos_zeroerr */
-subindex ZeroErr_Ctrl_Index2001[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&target_pos_zeroerr }
-};
+                    subindex ZeroErr_Ctrl_Index2001[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&target_pos_zeroerr }
+                     };
 
 /* index 0x2002 :   Mapped variable target_vel_zeroerr */
-subindex ZeroErr_Ctrl_Index2002[] =
-{
-  { RW, uint32, sizeof(UNS32), (void*)&target_vel_zeroerr }
-};
+                    subindex ZeroErr_Ctrl_Index2002[] = 
+                     {
+                       { RW, uint32, sizeof (UNS32), (void*)&target_vel_zeroerr }
+                     };
 
-/* index 0x6041 :   Mapped variable status_word_zeroerr */
-subindex ZeroErr_Ctrl_Index6041[] =
-{
+/* index 0x6041 :   Mapped variable Statusword */
+                    subindex ZeroErr_Ctrl_Index6041[] = 
+                     {
   { RO, uint16, sizeof(UNS16), (void*)&status_word_zeroerr }
-};
+                     };
 
 /* index 0x6064 :   Mapped variable Position actual value */
-subindex ZeroErr_Ctrl_Index6064[] =
-{
+                    subindex ZeroErr_Ctrl_Index6064[] = 
+                     {
   { RO, int32, sizeof(INTEGER32), (void*)&pos_actual_val_zeroerr }
-};
+                     };
+
+/* index 0x606C :   Mapped variable Velocity actual value */
+                    subindex ZeroErr_Ctrl_Index606C[] = 
+                     {
+                       { RO, int32, sizeof (INTEGER32), (void*)&velocity_actual_value }
+                     };
 
 /**************************************************************************/
 /* Declaration of pointed variables                                       */
 /**************************************************************************/
 
-const indextable ZeroErr_Ctrl_objdict[] =
+const indextable ZeroErr_Ctrl_objdict[] = 
 {
-  { (subindex*)ZeroErr_Ctrl_Index1000,sizeof(ZeroErr_Ctrl_Index1000) / sizeof(ZeroErr_Ctrl_Index1000[0]), 0x1000},
-  { (subindex*)ZeroErr_Ctrl_Index1001,sizeof(ZeroErr_Ctrl_Index1001) / sizeof(ZeroErr_Ctrl_Index1001[0]), 0x1001},
-  { (subindex*)ZeroErr_Ctrl_Index1005,sizeof(ZeroErr_Ctrl_Index1005) / sizeof(ZeroErr_Ctrl_Index1005[0]), 0x1005},
-  { (subindex*)ZeroErr_Ctrl_Index1006,sizeof(ZeroErr_Ctrl_Index1006) / sizeof(ZeroErr_Ctrl_Index1006[0]), 0x1006},
-  { (subindex*)ZeroErr_Ctrl_Index1007,sizeof(ZeroErr_Ctrl_Index1007) / sizeof(ZeroErr_Ctrl_Index1007[0]), 0x1007},
-  { (subindex*)ZeroErr_Ctrl_Index1014,sizeof(ZeroErr_Ctrl_Index1014) / sizeof(ZeroErr_Ctrl_Index1014[0]), 0x1014},
-  { (subindex*)ZeroErr_Ctrl_Index1018,sizeof(ZeroErr_Ctrl_Index1018) / sizeof(ZeroErr_Ctrl_Index1018[0]), 0x1018},
-  { (subindex*)ZeroErr_Ctrl_Index1280,sizeof(ZeroErr_Ctrl_Index1280) / sizeof(ZeroErr_Ctrl_Index1280[0]), 0x1280},
-  { (subindex*)ZeroErr_Ctrl_Index1400,sizeof(ZeroErr_Ctrl_Index1400) / sizeof(ZeroErr_Ctrl_Index1400[0]), 0x1400},
-  { (subindex*)ZeroErr_Ctrl_Index1600,sizeof(ZeroErr_Ctrl_Index1600) / sizeof(ZeroErr_Ctrl_Index1600[0]), 0x1600},
-  { (subindex*)ZeroErr_Ctrl_Index1800,sizeof(ZeroErr_Ctrl_Index1800) / sizeof(ZeroErr_Ctrl_Index1800[0]), 0x1800},
-  { (subindex*)ZeroErr_Ctrl_Index1801,sizeof(ZeroErr_Ctrl_Index1801) / sizeof(ZeroErr_Ctrl_Index1801[0]), 0x1801},
-  { (subindex*)ZeroErr_Ctrl_Index1A00,sizeof(ZeroErr_Ctrl_Index1A00) / sizeof(ZeroErr_Ctrl_Index1A00[0]), 0x1A00},
-  { (subindex*)ZeroErr_Ctrl_Index1A01,sizeof(ZeroErr_Ctrl_Index1A01) / sizeof(ZeroErr_Ctrl_Index1A01[0]), 0x1A01},
-  { (subindex*)ZeroErr_Ctrl_Index2000,sizeof(ZeroErr_Ctrl_Index2000) / sizeof(ZeroErr_Ctrl_Index2000[0]), 0x2000},
-  { (subindex*)ZeroErr_Ctrl_Index2001,sizeof(ZeroErr_Ctrl_Index2001) / sizeof(ZeroErr_Ctrl_Index2001[0]), 0x2001},
-  { (subindex*)ZeroErr_Ctrl_Index2002,sizeof(ZeroErr_Ctrl_Index2002) / sizeof(ZeroErr_Ctrl_Index2002[0]), 0x2002},
-  { (subindex*)ZeroErr_Ctrl_Index6041,sizeof(ZeroErr_Ctrl_Index6041) / sizeof(ZeroErr_Ctrl_Index6041[0]), 0x6041},
-  { (subindex*)ZeroErr_Ctrl_Index6064,sizeof(ZeroErr_Ctrl_Index6064) / sizeof(ZeroErr_Ctrl_Index6064[0]), 0x6064},
+  { (subindex*)ZeroErr_Ctrl_Index1000,sizeof(ZeroErr_Ctrl_Index1000)/sizeof(ZeroErr_Ctrl_Index1000[0]), 0x1000},
+  { (subindex*)ZeroErr_Ctrl_Index1001,sizeof(ZeroErr_Ctrl_Index1001)/sizeof(ZeroErr_Ctrl_Index1001[0]), 0x1001},
+  { (subindex*)ZeroErr_Ctrl_Index1005,sizeof(ZeroErr_Ctrl_Index1005)/sizeof(ZeroErr_Ctrl_Index1005[0]), 0x1005},
+  { (subindex*)ZeroErr_Ctrl_Index1006,sizeof(ZeroErr_Ctrl_Index1006)/sizeof(ZeroErr_Ctrl_Index1006[0]), 0x1006},
+  { (subindex*)ZeroErr_Ctrl_Index1007,sizeof(ZeroErr_Ctrl_Index1007)/sizeof(ZeroErr_Ctrl_Index1007[0]), 0x1007},
+  { (subindex*)ZeroErr_Ctrl_Index1014,sizeof(ZeroErr_Ctrl_Index1014)/sizeof(ZeroErr_Ctrl_Index1014[0]), 0x1014},
+  { (subindex*)ZeroErr_Ctrl_Index1018,sizeof(ZeroErr_Ctrl_Index1018)/sizeof(ZeroErr_Ctrl_Index1018[0]), 0x1018},
+  { (subindex*)ZeroErr_Ctrl_Index1280,sizeof(ZeroErr_Ctrl_Index1280)/sizeof(ZeroErr_Ctrl_Index1280[0]), 0x1280},
+  { (subindex*)ZeroErr_Ctrl_Index1400,sizeof(ZeroErr_Ctrl_Index1400)/sizeof(ZeroErr_Ctrl_Index1400[0]), 0x1400},
+  { (subindex*)ZeroErr_Ctrl_Index1401,sizeof(ZeroErr_Ctrl_Index1401)/sizeof(ZeroErr_Ctrl_Index1401[0]), 0x1401},
+  { (subindex*)ZeroErr_Ctrl_Index1600,sizeof(ZeroErr_Ctrl_Index1600)/sizeof(ZeroErr_Ctrl_Index1600[0]), 0x1600},
+  { (subindex*)ZeroErr_Ctrl_Index1601,sizeof(ZeroErr_Ctrl_Index1601)/sizeof(ZeroErr_Ctrl_Index1601[0]), 0x1601},
+  { (subindex*)ZeroErr_Ctrl_Index1800,sizeof(ZeroErr_Ctrl_Index1800)/sizeof(ZeroErr_Ctrl_Index1800[0]), 0x1800},
+  { (subindex*)ZeroErr_Ctrl_Index1801,sizeof(ZeroErr_Ctrl_Index1801)/sizeof(ZeroErr_Ctrl_Index1801[0]), 0x1801},
+  { (subindex*)ZeroErr_Ctrl_Index1A00,sizeof(ZeroErr_Ctrl_Index1A00)/sizeof(ZeroErr_Ctrl_Index1A00[0]), 0x1A00},
+  { (subindex*)ZeroErr_Ctrl_Index1A01,sizeof(ZeroErr_Ctrl_Index1A01)/sizeof(ZeroErr_Ctrl_Index1A01[0]), 0x1A01},
+  { (subindex*)ZeroErr_Ctrl_Index2000,sizeof(ZeroErr_Ctrl_Index2000)/sizeof(ZeroErr_Ctrl_Index2000[0]), 0x2000},
+  { (subindex*)ZeroErr_Ctrl_Index2001,sizeof(ZeroErr_Ctrl_Index2001)/sizeof(ZeroErr_Ctrl_Index2001[0]), 0x2001},
+  { (subindex*)ZeroErr_Ctrl_Index2002,sizeof(ZeroErr_Ctrl_Index2002)/sizeof(ZeroErr_Ctrl_Index2002[0]), 0x2002},
+  { (subindex*)ZeroErr_Ctrl_Index6041,sizeof(ZeroErr_Ctrl_Index6041)/sizeof(ZeroErr_Ctrl_Index6041[0]), 0x6041},
+  { (subindex*)ZeroErr_Ctrl_Index6064,sizeof(ZeroErr_Ctrl_Index6064)/sizeof(ZeroErr_Ctrl_Index6064[0]), 0x6064},
+  { (subindex*)ZeroErr_Ctrl_Index606C,sizeof(ZeroErr_Ctrl_Index606C)/sizeof(ZeroErr_Ctrl_Index606C[0]), 0x606C},
 };
 
 const indextable* ZeroErr_Ctrl_scanIndexOD(CO_Data* d, UNS16 wIndex, UNS32* errorCode)
 {
   int i;
-  switch (wIndex) {
-  case 0x1000: i = 0;break;
-  case 0x1001: i = 1;break;
-  case 0x1005: i = 2; break;
-  case 0x1006: i = 3; break;
-  case 0x1007: i = 4;break;
-  case 0x1014: i = 5;break;
-  case 0x1018: i = 6;break;
-  case 0x1280: i = 7;break;
-  case 0x1400: i = 8;break;
-  case 0x1600: i = 9;break;
-  case 0x1800: i = 10;break;
-  case 0x1801: i = 11;break;
-  case 0x1A00: i = 12;break;
-  case 0x1A01: i = 13;break;
-  case 0x2000: i = 14;break;
-  case 0x2001: i = 15;break;
-  case 0x2002: i = 16;break;
-  case 0x6041: i = 17;break;
-  case 0x6064: i = 18;break;
-  default:
-    *errorCode = OD_NO_SUCH_OBJECT;
-    return NULL;
-  }
-  *errorCode = OD_SUCCESSFUL;
-  return &ZeroErr_Ctrl_objdict[i];
+	switch(wIndex){
+		case 0x1000: i = 0;break;
+		case 0x1001: i = 1;break;
+		case 0x1005: i = 2; break;
+		case 0x1006: i = 3; break;
+		case 0x1007: i = 4;break;
+		case 0x1014: i = 5;break;
+		case 0x1018: i = 6;break;
+		case 0x1280: i = 7;break;
+		case 0x1400: i = 8;break;
+		case 0x1401: i = 9;break;
+		case 0x1600: i = 10;break;
+		case 0x1601: i = 11;break;
+		case 0x1800: i = 12; break;
+		case 0x1801: i = 13; break;
+		case 0x1A00: i = 14;break;
+		case 0x1A01: i = 15;break;
+		case 0x2000: i = 16;break;
+		case 0x2001: i = 17;break;
+		case 0x2002: i = 18;break;
+		case 0x6041: i = 19;break;
+		case 0x6064: i = 20;break;
+		case 0x606C: i = 21;break;
+		default:
+			*errorCode = OD_NO_SUCH_OBJECT;
+			return NULL;
+	}
+	*errorCode = OD_SUCCESSFUL;
+	return &ZeroErr_Ctrl_objdict[i];
 }
 
-/*
+/* 
  * To count at which received SYNC a PDO must be sent.
  * Even if no pdoTransmit are defined, at least one entry is computed
  * for compilations issues.
  */
-s_PDO_status ZeroErr_Ctrl_PDO_status[2] = { s_PDO_status_Initializer,s_PDO_status_Initializer };
+s_PDO_status ZeroErr_Ctrl_PDO_status[2] = {s_PDO_status_Initializer,s_PDO_status_Initializer};
 
 const quick_index ZeroErr_Ctrl_firstIndex = {
   0, /* SDO_SVR */
   7, /* SDO_CLT */
   8, /* PDO_RCV */
-  9, /* PDO_RCV_MAP */
-  10, /* PDO_TRS */
-  12 /* PDO_TRS_MAP */
+  10, /* PDO_RCV_MAP */
+  12, /* PDO_TRS */
+  14 /* PDO_TRS_MAP */
 };
 
 const quick_index ZeroErr_Ctrl_lastIndex = {
   0, /* SDO_SVR */
   7, /* SDO_CLT */
-  8, /* PDO_RCV */
-  9, /* PDO_RCV_MAP */
-  11, /* PDO_TRS */
-  13 /* PDO_TRS_MAP */
+  9, /* PDO_RCV */
+  11, /* PDO_RCV_MAP */
+  13, /* PDO_TRS */
+  15 /* PDO_TRS_MAP */
 };
 
-const UNS16 ZeroErr_Ctrl_ObjdictSize = sizeof(ZeroErr_Ctrl_objdict) / sizeof(ZeroErr_Ctrl_objdict[0]);
+const UNS16 ZeroErr_Ctrl_ObjdictSize = sizeof(ZeroErr_Ctrl_objdict)/sizeof(ZeroErr_Ctrl_objdict[0]); 
 
 CO_Data ZeroErr_Ctrl_Data = CANOPEN_NODE_DATA_INITIALIZER(ZeroErr_Ctrl);
 
