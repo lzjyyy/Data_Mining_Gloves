@@ -1085,6 +1085,7 @@ main_loop:
       printf("Socket lost (status=0x%02X), reconnecting...\r\n", sock_status);
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
+
       goto reconnect;
     }
 
@@ -2110,8 +2111,8 @@ void StartMonitorUpdateTask(void* argument)
     sys_run_cnt++;
 
     // 打印系统运行时间与错误统计
-    printf("t:%lu s, e0:%d, e1:%d, e2:%d\r\n",
-      sys_run_cnt, gripper_err_cnt, mqtt_err_cnt, servo_error_cnt);
+    printf("t:%lu s e:%d %d %d %lu\r\n",
+      sys_run_cnt, gripper_err_cnt, mqtt_err_cnt, servo_error_cnt, xTaskGetTickCount());
     // 其他错误检测
     if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50 || servo_error_cnt >= 50)
     {

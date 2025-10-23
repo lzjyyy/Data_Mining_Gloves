@@ -12,7 +12,9 @@
     "kinco_ctrl.h": "c",
     "servo.h": "c",
     "can1.h": "c",
-    "can_canopen.h": "c"
+    "can_canopen.h": "c",
+    "socket.h": "c",
+    "wizchip_conf.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

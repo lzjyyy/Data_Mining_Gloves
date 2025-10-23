@@ -54,6 +54,7 @@
 //
 //*****************************************************************************
 #include "socket.h"
+#include "cmsis_os.h"
 
 //M20150401 : Typing Error
 //#define SOCK_ANY_PORT_NUM  0xC000;
@@ -294,15 +295,52 @@ int8_t connect(uint8_t sn, uint8_t* addr, uint16_t port)
    return SOCK_OK;
 }
 
+// int8_t disconnect(uint8_t sn)
+// {
+//    CHECK_SOCKNUM();
+//    CHECK_SOCKMODE(Sn_MR_TCP);
+//    setSn_CR(sn, Sn_CR_DISCON);
+//    /* wait to process the command... */
+//    while (getSn_CR(sn));
+//    sock_is_sending &= ~(1 << sn);
+//    if (sock_io_mode & (1 << sn)) return SOCK_BUSY;
+//    while (getSn_SR(sn) != SOCK_CLOSED)
+//    {
+//       if (getSn_IR(sn) & Sn_IR_TIMEOUT)
+//       {
+//          close(sn);
+//          return SOCKERR_TIMEOUT;
+//       }
+//    }
+//    return SOCK_OK;
+// }
+
+// disconnect改成非阻塞版本
 int8_t disconnect(uint8_t sn)
 {
+   uint32_t start_tick;
+
    CHECK_SOCKNUM();
    CHECK_SOCKMODE(Sn_MR_TCP);
+
    setSn_CR(sn, Sn_CR_DISCON);
-   /* wait to process the command... */
-   while (getSn_CR(sn));
+
+   /* 等待命令被 W5500 处理，加入超时保护 */
+   start_tick = HAL_GetTick();
+   while (getSn_CR(sn))
+   {
+      if ((HAL_GetTick() - start_tick) > 200)  // 200ms 超时可调
+      {
+         printf("disconnect: Sn_CR timeout\r\n");
+         break;
+      }
+   }
+
    sock_is_sending &= ~(1 << sn);
    if (sock_io_mode & (1 << sn)) return SOCK_BUSY;
+
+   /* 等待 socket 关闭，加入超时保护 */
+   start_tick = HAL_GetTick();
    while (getSn_SR(sn) != SOCK_CLOSED)
    {
       if (getSn_IR(sn) & Sn_IR_TIMEOUT)
@@ -310,9 +348,18 @@ int8_t disconnect(uint8_t sn)
          close(sn);
          return SOCKERR_TIMEOUT;
       }
+
+      if ((HAL_GetTick() - start_tick) > 500)  // 500ms 超时可调
+      {
+         printf("disconnect: SOCK_CLOSED timeout, force close\r\n");
+         close(sn);
+         return SOCKERR_TIMEOUT;
+      }
    }
+
    return SOCK_OK;
 }
+
 
 // 增加了发送超时检测
 int32_t send(uint8_t sn, uint8_t* buf, uint16_t len)
@@ -442,7 +489,7 @@ int32_t recv(uint8_t sn, uint8_t* buf, uint16_t len)
          if (recvsize != 0) break;
       };
 #if _WIZCHIP_ == 5300
-}
+   }
 #endif
 
    //A20150601 : For integrating with W5300
@@ -682,10 +729,10 @@ int32_t recvfrom(uint8_t sn, uint8_t* buf, uint16_t len, uint8_t* addr, uint16_t
             sock_remained_size[sn] = head[6];
             sock_remained_size[sn] = (sock_remained_size[sn] << 8) + head[7];
 #if _WIZCHIP_ == 5300
-      }
+         }
 #endif
          sock_pack_info[sn] = PACK_FIRST;
-   }
+      }
       if (len < sock_remained_size[sn]) pack_len = len;
       else pack_len = sock_remained_size[sn];
       //A20150601 : For W5300
@@ -759,7 +806,7 @@ int32_t recvfrom(uint8_t sn, uint8_t* buf, uint16_t len, uint8_t* addr, uint16_t
       wiz_recv_ignore(sn, pack_len); // data copy.
       sock_remained_size[sn] = pack_len;
       break;
-}
+   }
    setSn_CR(sn, Sn_CR_RECV);
    /* wait to process the command... */
    while (getSn_CR(sn));

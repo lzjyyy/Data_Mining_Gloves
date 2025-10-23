@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F407_Template\STM32F407_Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F407_Template\STM32F407_Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Oct 23 09:34:42 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Oct 23 11:06:50 2025
 <BR><P>
 <H3>Maximum Stack Usage =        448 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -1314,6 +1314,7 @@ Global Symbols
 <LI><a href="#[1d5]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;SPI_WaitFlagStateUntilTimeout
 <LI><a href="#[10f]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_CAN_Start
 <LI><a href="#[211]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;send
+<LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disconnect
 <LI><a href="#[1c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;canSend
 </UL>
 
@@ -2388,7 +2389,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[1bf]"></a>NetworkDisconnect</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, mqtt_network.o(i.NetworkDisconnect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = NetworkDisconnect &rArr; disconnect &rArr; close &rArr; WIZCHIP_WRITE
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = NetworkDisconnect &rArr; disconnect &rArr; close &rArr; WIZCHIP_WRITE
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disconnect
 </UL>
@@ -2610,10 +2611,11 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
-<P><STRONG><a name="[8c]"></a>StartMonitorUpdateTask</STRONG> (Thumb, 70 bytes, Stack size 8 bytes, freertos.o(i.StartMonitorUpdateTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 80<LI>Call Chain = StartMonitorUpdateTask &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
+<P><STRONG><a name="[8c]"></a>StartMonitorUpdateTask</STRONG> (Thumb, 78 bytes, Stack size 16 bytes, freertos.o(i.StartMonitorUpdateTask))
+<BR><BR>[Stack]<UL><LI>Max Depth = 88<LI>Call Chain = StartMonitorUpdateTask &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1e0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;system_reset
+<LI><a href="#[1bc]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;xTaskGetTickCount
 <LI><a href="#[e7]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
 <LI><a href="#[1df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_IWDG_Refresh
 <LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
@@ -2958,7 +2960,7 @@ Global Symbols
 </UL>
 
 <P><STRONG><a name="[93]"></a>W5500_close</STRONG> (Thumb, 6 bytes, Stack size 0 bytes, mqtt_network.o(i.W5500_close))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = W5500_close &rArr; disconnect &rArr; close &rArr; WIZCHIP_WRITE
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = W5500_close &rArr; disconnect &rArr; close &rArr; WIZCHIP_WRITE
 </UL>
 <BR>[Calls]<UL><LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disconnect
 </UL>
@@ -3205,6 +3207,7 @@ Global Symbols
 <LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_DriverInit
 <LI><a href="#[209]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_WriteByte
 <LI><a href="#[20a]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_ReadByte
+<LI><a href="#[1c0]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;disconnect
 <LI><a href="#[1c9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;canSend
 </UL>
 
@@ -3616,11 +3619,13 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[197]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;cycle
 </UL>
 
-<P><STRONG><a name="[1c0]"></a>disconnect</STRONG> (Thumb, 134 bytes, Stack size 16 bytes, socket.o(i.disconnect))
-<BR><BR>[Stack]<UL><LI>Max Depth = 56<LI>Call Chain = disconnect &rArr; close &rArr; WIZCHIP_WRITE
+<P><STRONG><a name="[1c0]"></a>disconnect</STRONG> (Thumb, 196 bytes, Stack size 32 bytes, socket.o(i.disconnect))
+<BR><BR>[Stack]<UL><LI>Max Depth = 72<LI>Call Chain = disconnect &rArr; close &rArr; WIZCHIP_WRITE
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WIZCHIP_WRITE
 <LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;WIZCHIP_READ
+<LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
+<LI><a href="#[e9]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;__2printf
 <LI><a href="#[1bb]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;close
 </UL>
 <BR>[Called By]<UL><LI><a href="#[1bf]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NetworkDisconnect
@@ -5222,6 +5227,7 @@ Global Symbols
 <LI><a href="#[1ba]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;NetworkConnect
 <LI><a href="#[87]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartZeroErrCtrlTask
 <LI><a href="#[88]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartMqttTask
+<LI><a href="#[8c]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartMonitorUpdateTask
 <LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartKincoCtrlTask
 <LI><a href="#[297]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;prvSampleTimeNow
 <LI><a href="#[1d8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sendTxBuffer
