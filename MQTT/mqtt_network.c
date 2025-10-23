@@ -127,7 +127,7 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
         {
             printf("[NetworkConnect] Socket %d connection failed, closing...\r\n", n->sock);
             close(n->sock);
-            HAL_Delay(200); // 等待重试
+            osDelay(200); // 等待重试
         }
     }
 

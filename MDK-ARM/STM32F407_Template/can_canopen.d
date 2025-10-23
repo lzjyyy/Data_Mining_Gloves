@@ -59,3 +59,14 @@ stm32f407_template\can_canopen.o: ..\CANOpen\inc\sync.h
 stm32f407_template\can_canopen.o: ..\CANOpen\inc\nmtSlave.h
 stm32f407_template\can_canopen.o: ..\CANOpen\inc\nmtMaster.h
 stm32f407_template\can_canopen.o: ..\CANOpen\inc\emcy.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+stm32f407_template\can_canopen.o: ../Core/Inc/FreeRTOSConfig.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+stm32f407_template\can_canopen.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h

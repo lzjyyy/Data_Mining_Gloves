@@ -1,4 +1,5 @@
 #include "can_canopen.h"
+#include "cmsis_os.h"
 
 extern CAN_HandleTypeDef hcan1;
 extern CAN_HandleTypeDef hcan2;
@@ -101,7 +102,7 @@ bool can2Init(CO_Data* d, uint32_t bitrate)
 //         return 0;       // successful
 //     }
 // }
-// Send a CAN message passed from the CANopen stack
+
 // Send a CAN message passed from the CANopen stack
 unsigned char canSend(CAN_PORT canHandle, Message* m)
 {
@@ -136,7 +137,8 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
                 hal_status, HAL_CAN_GetError(&hcan1), hcan1.Instance->TSR);
             return 1;   // error
         }
-        HAL_Delay(10);
+        // HAL_Delay(10);
+        osDelay(10);
         return 0;       // successful
     }
     else if (ZeroErr_Ctrl_Data.canHandle == canHandle)
@@ -170,7 +172,8 @@ unsigned char canSend(CAN_PORT canHandle, Message* m)
                 hal_status, HAL_CAN_GetError(&hcan2), hcan2.Instance->TSR);
             return 1;   // error
         }
-        HAL_Delay(10);
+        // HAL_Delay(10);
+        osDelay(10);
         return 0;       // successful
     }
 

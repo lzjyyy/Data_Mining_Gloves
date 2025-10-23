@@ -11,7 +11,8 @@
     "kinco.h": "c",
     "kinco_ctrl.h": "c",
     "servo.h": "c",
-    "can1.h": "c"
+    "can1.h": "c",
+    "can_canopen.h": "c"
   },
   "C_Cpp.errorSquiggles": "disabled"
 }

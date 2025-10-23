@@ -998,22 +998,6 @@ reconnect:
   // 初次进入或重连前，确保 socket 被彻底关闭
   ForceCloseSocket(mqttNet.sock);
 
-  // // 等待 socket 变为 CLOSED（避免资源忙）
-  // {
-  //   const TickType_t wait_start = xTaskGetTickCount();
-  //   const TickType_t wait_timeout = pdMS_TO_TICKS(2000); // 最多等 2s
-  //   while (getSn_SR(mqttNet.sock) != SOCK_CLOSED) {
-  //     if ((xTaskGetTickCount() - wait_start) > wait_timeout) {
-  //       // 超时仍未关闭，继续，但打印警告
-  //       printf("Warning: socket not closed after 2s, continue to reconnect.\r\n");
-  //       break;
-  //     }
-  //     osDelay(50);
-  //   }
-  //   // 等一小段时间，给 W5500 状态稳定的机会
-  //   osDelay(50);
-  // }
-
   // 等待 PHY link
   while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
     printf("Waiting for PHY Link...\r\n");
