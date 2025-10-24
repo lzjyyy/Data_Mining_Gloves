@@ -7,6 +7,7 @@
 #include "Kinco_Ctrl.h"
 #include "ZeroErr_Ctrl.h"
 #include "can.h"
+#include "cmsis_os.h"
 
 typedef enum {
     INVALID,
@@ -80,7 +81,6 @@ typedef enum {
 #define READY_SWITCH_ON_FAILED    -3
 #define SWITCHED_ON_FAILED        -4
 #define OPERATION_ENABLED_FAILED  -5
-#define SWITCH_ON_DISABLED_FAILED -6
 
 int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex,
     void* data, uint8_t dataType);

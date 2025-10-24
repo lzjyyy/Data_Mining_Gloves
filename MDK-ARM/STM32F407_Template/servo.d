@@ -64,3 +64,14 @@ stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_ti
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
 stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
+stm32f407_template\servo.o: ../Core/Inc/FreeRTOSConfig.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/deprecated_definitions.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/portable/RVDS/ARM_CM4F/portmacro.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
+stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h

@@ -1,5 +1,6 @@
 #include "timer5.h"
 #include "tim.h"
+#include "timer.h"
 
 TIMEVAL last_counter_val = 0;
 TIMEVAL elapsed_time = 0;
@@ -60,4 +61,5 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef* htim)
 		    HAL_IncTick();
 	}
 }
+
 		

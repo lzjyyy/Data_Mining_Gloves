@@ -22,7 +22,7 @@ int SDO_WriteRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subInde
         return SDO_ERR_SEND;  // 写请求发送失败
 
     uint32_t abortCode = 0;
-    uint8_t state = 0;
+    // uint8_t state = 0;
 
     // for (int i = 0; i < 1000; i++)   // 最多等100ms
     // {
@@ -64,7 +64,7 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
         return SDO_ERR_SEND;  // 读请求发送失败
 
     uint32_t abortCode = 0;
-    uint8_t state = 0;
+    // uint8_t state = 0;
     uint32_t tmpData = 0;  // 临时变量用于 getReadResultNetworkDict
     uint32_t timeout = 0;
     uint32_t cnt = 0;
@@ -90,9 +90,6 @@ int SDO_ReadRequest(CO_Data* d, uint8_t nodeId, uint16_t index, uint8_t subIndex
     case uint32: *(uint32_t*)data = tmpData; break;
     }
     return SDO_OK;
-
-
-    return SDO_ERR_TIMEOUT;
 }
 
 void Kinco_MasterNode_Init(void)
@@ -1622,7 +1619,9 @@ int ZeroErr_Read_Error_SDO(uint16_t* p_error_code)
     else
     {
         printf("Zeroerr SDO read ERROR_CODE_INDEX Failed\r\n");
+        return SDO_ERR_SEND;
     }
+    return SDO_OK;
 }
 
 int ZeroErr_Read_ActuclVel_SDO(uint32_t* p_actual_vel)

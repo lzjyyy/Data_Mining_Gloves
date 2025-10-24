@@ -54,15 +54,14 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-// extern uint8_t W5500_Init_Status;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
-static void IWDG_Init(void);
-/* USER CODE BEGIN PFP */
 
+/* USER CODE BEGIN PFP */
+static void IWDG_Init(void);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/

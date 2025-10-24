@@ -215,8 +215,6 @@ static uint16_t servo_error_cnt = 0;
 static SysStatus_t sys_status;
 static uint16_t kinco_error_code = 0;
 static uint16_t zeroerr_error_code = 0;
-static int32_t kinco_actual_vel = 0;
-static uint32_t zeroerr_actual_vel = 0;
 static const char* sys_status_topic = "robot/status";
 static char sys_status_payload[512];  // 足够容纳 JSON
 volatile uint32_t idle_counter = 0; // 负载监控用
@@ -295,11 +293,11 @@ const osThreadAttr_t RS485TestTask_attributes = {
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-void StartMQTTTestTask(void const* argument);
-void StartKincoCtrlTask(void const* argument);
-void StartZeroErrCtrlTask(void const* argument);
-void StartMqttTask(void const* argument);
-void StartMonitorTask(void const* argument);
+void StartMQTTTestTask(void* argument);
+void StartKincoCtrlTask(void* argument);
+void StartZeroErrCtrlTask(void* argument);
+void StartMqttTask(void* argument);
+void StartMonitorTask(void* argument);
 void StartMonitorUpdateTask(void* argument);
 void StartModbusMasterTestTask(void* argument);
 
@@ -439,11 +437,8 @@ void MX_FREERTOS_Init(void) {
   * @param  argument: Not used
   * @retval None
   */
-#define ECHO_SOCK 0
-#define ECHO_PORT 5000
-#define ECHO_BUF_SIZE 1024
   /* USER CODE END Header_StartDefaultTask */
-void StartDefaultTask(void* argument)
+__attribute__((unused)) void StartDefaultTask(void* argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
 
@@ -464,11 +459,11 @@ void StartDefaultTask(void* argument)
 * @retval None
 */
 /* USER CODE END Header_StartRS232TestTask */
-void StartRS232TestTask(void* argument)
+__attribute__((unused)) void StartRS232TestTask(void* argument)
 {
   /* USER CODE BEGIN StartRS232TestTask */
   uint8_t len = 0;
-  HAL_StatusTypeDef send_result = 0;
+  HAL_StatusTypeDef send_result = HAL_OK;
   /* Infinite loop */
   for (;;)
   {
@@ -500,23 +495,23 @@ void StartRS232TestTask(void* argument)
 * @retval None
 */
 /* USER CODE END Header_StartRS485TestTask */
-void StartRS485TestTask(void* argument)
+__attribute__((unused)) void StartRS485TestTask(void* argument)
 {
   /* USER CODE BEGIN StartRS485TestTask */
   /* Infinite loop */
-  HAL_StatusTypeDef send_result = 0;
+  HAL_StatusTypeDef send_result = HAL_OK;
   for (;;)
   {
     printf("RS485 task is running...\r\n");
-    send_result = RS485_Send(RS485A_CH, rs485a_test_msg, strlen((char*)rs485a_test_msg), 1000);
+    send_result = RS485_Send(RS485A_CH, (uint8_t*)rs485a_test_msg, (uint16_t)strlen(rs485a_test_msg), 1000);
     if (send_result == HAL_OK) {
       printf("RS485A_CH send OK!\r\n");
     }
-    send_result = RS485_Send(RS485B_CH, rs485b_test_msg, strlen((char*)rs485b_test_msg), 1000);
+    send_result = RS485_Send(RS485B_CH, (uint8_t*)rs485b_test_msg, (uint16_t)strlen(rs485b_test_msg), 1000);
     if (send_result == HAL_OK) {
       printf("RS485B_CH send OK!\r\n");
     }
-    send_result = RS485_Send(RS485C_CH, rs485c_test_msg, strlen((char*)rs485c_test_msg), 1000);
+    send_result = RS485_Send(RS485C_CH, (uint8_t*)rs485c_test_msg, (uint16_t)strlen(rs485c_test_msg), 1000);
     if (send_result == HAL_OK) {
       printf("RS485C_CH send OK!\r\n");
     }
@@ -527,23 +522,13 @@ void StartRS485TestTask(void* argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-void StartMQTTTestTask(void const* argument)
+__attribute__((unused)) void StartMQTTTestTask(void* argument)
 {
   Network n;
   MQTTClient c;
   unsigned char sendbuf[128], readbuf[128];
   int rc;
 
-  // uint8_t broker_ip[4] = { 192,168,1,100 };
-  // uint16_t broker_port = 1883;
-  // int ret = W5500_TCP_Connect_Debug(0, broker_ip, broker_port, 5000);
-
-  // if (ret == 0) {
-  //   printf("Connected to broker!\r\n");
-  // }
-  // else {
-  //   printf("Failed to connect, ret=%d\r\n", ret);
-  // }
   if (get_w5500_init_status() != 1)
   {
     printf("W5500 init failed,stop StartMQTTTestTask.\r\n");
@@ -577,7 +562,7 @@ void StartMQTTTestTask(void const* argument)
   }
 }
 
-void StartKincoCtrlTask(void const* argument)
+void StartKincoCtrlTask(void* argument)
 {
   if (can1Init(&Kinco_Ctrl_Data, 500000) != true)
   {
@@ -668,7 +653,7 @@ void StartKincoCtrlTask(void const* argument)
   }
 }
 
-void StartZeroErrCtrlTask(void const* argument)
+void StartZeroErrCtrlTask(void* argument)
 {
   if (can2Init(&ZeroErr_Ctrl_Data, 1000000) != true)
   {
@@ -769,7 +754,7 @@ void StartZeroErrCtrlTask(void const* argument)
 * @retval None
 */
 /* USER CODE END Header_StartTaskMaster */
-void StartModbusMasterTestTask(void* argument)
+__attribute__((unused)) void StartModbusMasterTestTask(void* argument)
 {
   /* USER CODE BEGIN StartTaskMaster */
   /* Infinite loop */
@@ -784,7 +769,7 @@ void StartModbusMasterTestTask(void* argument)
   {
     pos = 9000;
     telegram[0].u8id = 1; // slave address
-    telegram[0].u8fct = 16; // function code (this one is registers read)
+    telegram[0].u8fct = MB_FC_WRITE_MULTIPLE_REGISTERS; // function code (this one is registers read)
     telegram[0].u16RegAdd = REG_POS_HIGH; // start address in slave
     telegram[0].u16CoilsNo = 4; // number of elements (coils or registers) to read
 
@@ -825,7 +810,7 @@ void StartModbusMasterTestTask(void* argument)
     // }
 
     telegram[0].u8id = 1; // slave address
-    telegram[0].u8fct = 6; // function code (this one is registers read)
+    telegram[0].u8fct = MB_FC_WRITE_REGISTER; // function code (this one is registers read)
     telegram[0].u16RegAdd = REG_TRIGGER; // start address in slave
     telegram[0].u16CoilsNo = 1; // number of elements (coils or registers) to read
     ModbusDATA[0] = 1;
@@ -863,12 +848,12 @@ void StartModbusMasterTestTask(void* argument)
 
     gripper_get_status(&R_ModbusH, &left_status, LEFT_GRIPPER);
 
-    // gripper_get_status(&R_ModbusH, &right_status, RIGHT_GRIPPER);
+    gripper_get_status(&R_ModbusH, &right_status, RIGHT_GRIPPER);
 
     osDelay(50);
 
     telegram[0].u8id = 1; // slave address
-    telegram[0].u8fct = 16; // function code (this one is registers read)
+    telegram[0].u8fct = MB_FC_WRITE_MULTIPLE_REGISTERS; // function code (this one is registers read)
     telegram[0].u16RegAdd = REG_POS_HIGH; // start address in slave
     telegram[0].u16CoilsNo = 4; // number of elements (coils or registers) to read
     pos = 0; // open gripper
@@ -908,7 +893,7 @@ void StartModbusMasterTestTask(void* argument)
     // }
 
     telegram[0].u8id = 1; // slave address
-    telegram[0].u8fct = 6; // function code (this one is registers read)
+    telegram[0].u8fct = MB_FC_WRITE_REGISTER; // function code (this one is registers read)
     telegram[0].u16RegAdd = REG_TRIGGER; // start address in slave
     telegram[0].u16CoilsNo = 1; // number of elements (coils or registers) to read
     ModbusDATA[0] = 1;
@@ -984,7 +969,7 @@ static void ForceCloseSocket(uint8_t sn)
 }
 
 
-void StartMqttTask(void const* argument) {
+void StartMqttTask(void* argument) {
   int rc;
 
   if (get_w5500_init_status() != 1) {
@@ -1005,9 +990,9 @@ reconnect:
     osDelay(500);
   }
 
-  // 网络连接（阻塞重试）
+  // 网络连接，建立TCP连接socket
   if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
-    printf("MQTT Network connect failed, retry in 1s\r\n");
+    printf("MQTT Network connect failed, retry W5500 init\r\n");
     mqtt_err_cnt += 10;
     int result = W5500_Init();
     if (result != 0) {
@@ -1037,6 +1022,7 @@ reconnect:
     goto reconnect;
   }
   printf("MQTT Connected!\r\n");
+  mqtt_err_cnt = 0;
 
   // 订阅主题：逐条检查，便于定位哪条订阅失败
   if ((rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived)) != 0) {
@@ -1068,7 +1054,6 @@ reconnect:
   int publish_fail_cnt = 0;
   const int publish_fail_threshold = 3;
 
-main_loop:
   for (;;) {
     // 1. 检测 PHY link
     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
@@ -1227,7 +1212,7 @@ void messageArrived(MessageData* data)
 
 /* Monitor Task */
 /* Monitor Task - System Health Check */
-void StartMonitorTask(void const* argument)
+void StartMonitorTask(void* argument)
 {
   static uint32_t last_timer_task_counter = 0;
   static uint32_t timer_stuck_counter = 0;
@@ -1338,7 +1323,7 @@ void MX_Modbus_Init(void)
 
 static void gripper_execute(modbusHandler_t* h, int position, int speed, int torque, uint8_t select_gripper)
 {
-  uint32_t notifyVal;
+  int32_t notifyVal;
   if (select_gripper == LEFT_GRIPPER) {
     LeftGripperCmdData[0] = (uint16_t)((position >> 16) & 0xFFFF);
     LeftGripperCmdData[1] = (uint16_t)(position & 0xFFFF);
@@ -1346,7 +1331,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     LeftGripperCmdData[3] = torque;
 
     LeftGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTERS;
     LeftGripperTelegram.u16RegAdd = REG_POS_HIGH;
     LeftGripperTelegram.u16CoilsNo = 4;
     LeftGripperTelegram.u16reg = LeftGripperCmdData;
@@ -1361,7 +1346,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     }
 
     LeftGripperCmdData[0] = 1;
-    LeftGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTER;
     LeftGripperTelegram.u16RegAdd = REG_TRIGGER;
     LeftGripperTelegram.u16CoilsNo = 1;
     LeftGripperTelegram.u16reg = LeftGripperCmdData;
@@ -1385,7 +1370,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     RightGripperCmdData[3] = torque;
 
     RightGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTERS;
+    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTERS;
     RightGripperTelegram.u16RegAdd = REG_POS_HIGH;
     RightGripperTelegram.u16CoilsNo = 4;
     RightGripperTelegram.u16reg = RightGripperCmdData;
@@ -1400,7 +1385,7 @@ static void gripper_execute(modbusHandler_t* h, int position, int speed, int tor
     }
 
     RightGripperCmdData[0] = 1;
-    RightGripperTelegram.u8fct = MODBUS_FUN_WRITE_REGISTER;
+    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTER;
     RightGripperTelegram.u16RegAdd = REG_TRIGGER;
     RightGripperTelegram.u16CoilsNo = 1;
     RightGripperTelegram.u16reg = RightGripperCmdData;
@@ -1428,7 +1413,7 @@ void LeftGripperTask(void* argument)
     vTaskDelete(NULL);
   }
   GripperCmd_t cmd;
-  GripperStatus_t status;
+  // GripperStatus_t status;
   uint32_t lastStatusTick = 0;   // 上次写命令时间
   uint32_t blockUntil = 0;  // 写命令后屏蔽查询的时间
 
@@ -1456,7 +1441,6 @@ void LeftGripperTask(void* argument)
         // gripper_get_status(&L_ModbusH, &status, LEFT_GRIPPER);
         gripper_get_status(&L_ModbusH, &sys_status.left_gripper_status, LEFT_GRIPPER);
         // is_left_get_status = false;
-        // 发布�???????????????? MQTT
         // mqtt_publish_gripper_status(&status, LEFT_GRIPPER);
         // status.side = LEFT_GRIPPER;
         // osMessageQueuePut(statusQueueHandle, &status, 0, 0);
@@ -1480,7 +1464,7 @@ void RightGripperTask(void* argument)
     vTaskDelete(NULL);
   }
   GripperCmd_t cmd;
-  GripperStatus_t status;
+  // GripperStatus_t status;
   uint32_t lastStatusTick = 0;
   uint32_t blockUntil = 0;
 
@@ -1494,12 +1478,12 @@ void RightGripperTask(void* argument)
       if (osMessageQueueGet(rightGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&R_ModbusH, cmd.right.position, cmd.right.speed, cmd.right.torque, RIGHT_GRIPPER);
-        // 写命令后屏蔽状�?�查�????????????????
+        // 写命令后屏蔽状态查询
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
     }
 
-    // 2. 状�?�查询，间隔控制 + 屏蔽控制
+    // 2. 状态查询，间隔控制 + 屏蔽控制
     if (now - lastStatusTick >= STATUS_QUERY_PERIOD_MS && now >= blockUntil)
     {
       if (osSemaphoreAcquire(semStatusRightHandle, 0) == osOK)
@@ -1525,8 +1509,7 @@ void RightGripperTask(void* argument)
   }
 }
 
-
-static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
+__attribute__((unused)) static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
 {
   char topic[64];
   char payload[128];
@@ -1552,7 +1535,6 @@ static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side)
 
 void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t side)
 {
-  uint32_t notifyVal;
   bool result = false;
   uint32_t pos = 0;
   uint16_t reached = 0;
@@ -1665,12 +1647,12 @@ static void Timer200msRight_Callback(void* argument)
 
 static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
 {
-  uint32_t notifyVal = 0;
+  int32_t notifyVal = 0;
   if (side == LEFT_GRIPPER) {
     // printf("Read left REG_REALTIME_POS:\r\n");
     // acquire actual position
     LeftGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     LeftGripperTelegram.u16RegAdd = REG_REALTIME_POS_HIGH;
     LeftGripperTelegram.u16CoilsNo = 2;
 
@@ -1707,7 +1689,7 @@ static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
     // printf("Read right REG_REALTIME_POS:\r\n");
     // acquire actual position
     RightGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     RightGripperTelegram.u16RegAdd = REG_REALTIME_POS_HIGH;
     RightGripperTelegram.u16CoilsNo = 2;
 
@@ -1741,12 +1723,12 @@ static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
 
 static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
 {
-  uint32_t notifyVal;
+  int32_t notifyVal;
   if (side == LEFT_GRIPPER)
   {
     // printf("Read left REG_POS_REACHED:\r\n");
     LeftGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     LeftGripperTelegram.u16RegAdd = REG_POS_REACHED;
     LeftGripperTelegram.u16CoilsNo = 1;
     reset_is_fc3_processed(h);
@@ -1781,7 +1763,7 @@ static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
   {
     // printf("Read right REG_POS_REACHED:\r\n");
     RightGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     RightGripperTelegram.u16RegAdd = REG_POS_REACHED;
     RightGripperTelegram.u16CoilsNo = 1;
 
@@ -1816,12 +1798,12 @@ static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
 
 static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side)
 {
-  uint32_t notifyVal;
+  int32_t notifyVal;
   if (side == LEFT_GRIPPER)
   {
     // printf("Read left REG_POS_REACHED:\r\n");
     LeftGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    LeftGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     LeftGripperTelegram.u16RegAdd = REG_WARNING_INFO;
     LeftGripperTelegram.u16CoilsNo = 1;
 
@@ -1857,7 +1839,7 @@ static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t si
   {
     // printf("Read right REG_POS_REACHED:\r\n");
     RightGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    RightGripperTelegram.u8fct = MODBUS_FUN_READ_REGISTER;
+    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_READ_REGISTER;
     RightGripperTelegram.u16RegAdd = REG_WARNING_INFO;
     RightGripperTelegram.u16CoilsNo = 1;
 
@@ -1960,7 +1942,7 @@ void GpioTask(void* argument)
   }
 }
 
-static bool mqtt_publish_gpio_status(void)
+__attribute__((unused)) static bool mqtt_publish_gpio_status(void)
 {
   char payload[128];
   snprintf(payload, sizeof(payload),
@@ -1989,7 +1971,7 @@ static bool mqtt_publish_gpio_status(void)
   }
 }
 
-static bool mqtt_publish_servos_status(uint8_t type)
+__attribute__((unused)) static bool mqtt_publish_servos_status(uint8_t type)
 {
   char topic[64];
   char payload[128];
@@ -2082,7 +2064,7 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
   return true;
 }
 
-static void mqtt_subscribe_all(void)
+__attribute__((unused)) static void mqtt_subscribe_all(void)
 {
   int rc;
   if ((rc = MQTTSubscribe(&mqttClient, "robot/gpio/cmd", QOS0, messageArrived)) == 0)
@@ -2108,11 +2090,11 @@ void StartMonitorUpdateTask(void* argument)
   {
     // 喂看门狗
     HAL_IWDG_Refresh(&hiwdg);
-    sys_run_cnt++;
+    // sys_run_cnt++;
 
     // 打印系统运行时间与错误统计
-    printf("t:%lu s e:%d %d %d %lu\r\n",
-      sys_run_cnt, gripper_err_cnt, mqtt_err_cnt, servo_error_cnt, xTaskGetTickCount());
+    printf("t:%lu s e:%d %d %d\r\n",
+      xTaskGetTickCount(), gripper_err_cnt, mqtt_err_cnt, servo_error_cnt);
     // 其他错误检测
     if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50 || servo_error_cnt >= 50)
     {
