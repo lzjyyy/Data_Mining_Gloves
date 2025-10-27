@@ -2093,7 +2093,7 @@ void StartMonitorUpdateTask(void* argument)
     // sys_run_cnt++;
 
     // 打印系统运行时间与错误统计
-    printf("t:%lu s e:%d %d %d\r\n",
+    printf("t:%lu ms e:%d %d %d\r\n",
       xTaskGetTickCount(), gripper_err_cnt, mqtt_err_cnt, servo_error_cnt);
     // 其他错误检测
     if (gripper_err_cnt >= 30 || mqtt_err_cnt >= 50 || servo_error_cnt >= 50)

@@ -16,9 +16,9 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+  /* USER CODE END Header */
 
-/* Includes ------------------------------------------------------------------*/
+  /* Includes ------------------------------------------------------------------*/
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
@@ -42,19 +42,26 @@
 void MX_GPIO_Init(void)
 {
 
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  GPIO_InitTypeDef GPIO_InitStruct = { 0 };
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
+  __HAL_RCC_GPIOA_CLK_ENABLE();
   __HAL_RCC_GPIOB_CLK_ENABLE();
   __HAL_RCC_GPIOD_CLK_ENABLE();
-  __HAL_RCC_GPIOA_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOE, Pwr_3V3_Ctrl_Pin|Pwr_24V_Ctrl_Pin|Pwr_19V_Ctrl_Pin|Pwr_12V_Ctrl_Pin
-                          |Pwr_5V_Ctrl_Pin|Led1_Pin|Led0_Pin|NET1_INT_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOE, Pwr_3V3_Ctrl_Pin | Relay_Ctrl_0_Pin | Pwr_24V_Ctrl_Pin | Pwr_19V_Ctrl_Pin
+    | Pwr_12V_Ctrl_Pin | Pwr_5V_Ctrl_Pin | Led1_Pin | Led0_Pin
+    | NET1_INT_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOA, Relay_Ctrl_5_Pin | Relay_Ctrl_4_Pin | Relay_Ctrl_3_Pin | Lift_Ctrl_0_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOC, Relay_Ctrl_2_Pin | Relay_Ctrl_1_Pin | Warning_Light_Pin | Lift_Ctrl_1_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(NET1_RST_GPIO_Port, NET1_RST_Pin, GPIO_PIN_RESET);
@@ -63,25 +70,33 @@ void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(NET1_CS_GPIO_Port, NET1_CS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, Warning_Light_Pin|Lift_Ctrl_1_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(Lift_Ctrl_0_GPIO_Port, Lift_Ctrl_0_Pin, GPIO_PIN_RESET);
-
-  /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RS485C_DIR_GPIO_Port, RS485C_DIR_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pins : PEPin PEPin PEPin PEPin
-                           PEPin */
-  GPIO_InitStruct.Pin = Pwr_3V3_Ctrl_Pin|Pwr_24V_Ctrl_Pin|Pwr_19V_Ctrl_Pin|Pwr_12V_Ctrl_Pin
-                          |Pwr_5V_Ctrl_Pin;
+                           PEPin PEPin */
+  GPIO_InitStruct.Pin = Pwr_3V3_Ctrl_Pin | Relay_Ctrl_0_Pin | Pwr_24V_Ctrl_Pin | Pwr_19V_Ctrl_Pin
+    | Pwr_12V_Ctrl_Pin | Pwr_5V_Ctrl_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOE, &GPIO_InitStruct);
 
+  /*Configure GPIO pins : PAPin PAPin PAPin */
+  GPIO_InitStruct.Pin = Relay_Ctrl_5_Pin | Relay_Ctrl_4_Pin | Relay_Ctrl_3_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : PCPin PCPin */
+  GPIO_InitStruct.Pin = Relay_Ctrl_2_Pin | Relay_Ctrl_1_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
   /*Configure GPIO pins : PEPin PEPin */
-  GPIO_InitStruct.Pin = Led1_Pin|Led0_Pin;
+  GPIO_InitStruct.Pin = Led1_Pin | Led0_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
@@ -95,14 +110,14 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(NET1_INT_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PBPin PBPin */
-  GPIO_InitStruct.Pin = NET1_RST_Pin|NET1_CS_Pin;
+  GPIO_InitStruct.Pin = NET1_RST_Pin | NET1_CS_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PCPin PCPin */
-  GPIO_InitStruct.Pin = Warning_Light_Pin|Lift_Ctrl_1_Pin;
+  GPIO_InitStruct.Pin = Warning_Light_Pin | Lift_Ctrl_1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
@@ -115,7 +130,7 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(Distance_Limit_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin */
-  GPIO_InitStruct.Pin = Lower_Limit_Pin|Upper_Limit_Pin;
+  GPIO_InitStruct.Pin = Lower_Limit_Pin | Upper_Limit_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
@@ -326,4 +341,63 @@ void Warning_Light_Off(void)
   HAL_GPIO_WritePin(Warning_Light_GPIO_Port, Warning_Light_Pin, GPIO_PIN_RESET);
 }
 
+void Relay_0_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_0_GPIO_Port, Relay_Ctrl_0_Pin, GPIO_PIN_SET);
+}
+
+void Relay_0_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_0_GPIO_Port, Relay_Ctrl_0_Pin, GPIO_PIN_RESET);
+}
+
+void Relay_1_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_1_GPIO_Port, Relay_Ctrl_1_Pin, GPIO_PIN_SET);
+}
+
+void Relay_1_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_1_GPIO_Port, Relay_Ctrl_1_Pin, GPIO_PIN_RESET);
+}
+
+void Relay_2_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_2_GPIO_Port, Relay_Ctrl_2_Pin, GPIO_PIN_SET);
+}
+
+void Relay_2_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_2_GPIO_Port, Relay_Ctrl_2_Pin, GPIO_PIN_RESET);
+}
+
+void Relay_3_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_3_GPIO_Port, Relay_Ctrl_3_Pin, GPIO_PIN_SET);
+}
+
+void Relay_3_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_3_GPIO_Port, Relay_Ctrl_3_Pin, GPIO_PIN_RESET);
+}
+
+void Relay_4_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_4_GPIO_Port, Relay_Ctrl_4_Pin, GPIO_PIN_SET);
+}
+
+void Relay_4_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_4_GPIO_Port, Relay_Ctrl_4_Pin, GPIO_PIN_RESET);
+}
+
+void Relay_5_On(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_5_GPIO_Port, Relay_Ctrl_5_Pin, GPIO_PIN_SET);
+}
+
+void Relay_5_Off(void)
+{
+  HAL_GPIO_WritePin(Relay_Ctrl_5_GPIO_Port, Relay_Ctrl_5_Pin, GPIO_PIN_RESET);
+}
 /* USER CODE END 2 */
