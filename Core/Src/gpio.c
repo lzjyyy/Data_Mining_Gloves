@@ -222,18 +222,15 @@ void Board_Pwr_3V3_Disable(void)
   HAL_GPIO_WritePin(GPIOE, Pwr_3V3_Ctrl_Pin, GPIO_PIN_RESET);
 }
 
+
 void Board_Pwr_Sequence_Enable(void)
 {
   Board_Pwr_24V_Enable();
-  HAL_Delay(300);
   Board_Pwr_19V_Enable();
-  HAL_Delay(300);
   Board_Pwr_12V_Enable();
-  HAL_Delay(300);
   Board_Pwr_5V_Enable();
-  HAL_Delay(300);
   Board_Pwr_3V3_Enable();
-  HAL_Delay(300);
+  HAL_Delay(200);
 }
 
 void Lift_Hold(void)

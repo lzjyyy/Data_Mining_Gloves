@@ -1200,7 +1200,7 @@ void messageArrived(MessageData* data)
 
     if (type_item && state_item) {
       gpioCmd.type = type_item->valueint;   // GPIO_Cmd_Type_t
-      gpioCmd.state = state_item->valueint;  // Lifting_Mode_t �???????? Warning_Mode_t
+      gpioCmd.state = state_item->valueint;  // Lifting_Mode_t Warning_Mode_t
 
       printf("GPIO cmd type=%d, state=%d\r\n", gpioCmd.type, gpioCmd.state);
 

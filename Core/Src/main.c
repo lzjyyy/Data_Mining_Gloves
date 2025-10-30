@@ -99,6 +99,9 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+
+  Board_Pwr_Sequence_Enable(); // enable 5v,12v,19v,24v output
+
   MX_ADC1_Init();
 
   MX_DMA_Init();
@@ -133,9 +136,6 @@ int main(void)
   Lift_Hold();
   RS485_Init();
 
-  // power on delay
-  HAL_Delay(1000);
-  Board_Pwr_Sequence_Enable(); // enable 5v,12v,19v,24v output
   //	ADC1_IN9_Init();
   //	ADC1_IN8_Init();
   int result = W5500_Init();

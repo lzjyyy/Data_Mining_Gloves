@@ -3,7 +3,7 @@
 <title>Static Call Graph - [STM32F407_Template\STM32F407_Template.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image STM32F407_Template\STM32F407_Template.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Fri Oct 24 12:18:21 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Oct 30 16:46:04 2025
 <BR><P>
 <H3>Maximum Stack Usage =        448 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
@@ -849,7 +849,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_Pwr_Sequence_Enable
 </UL>
 
-<P><STRONG><a name="[de]"></a>Board_Pwr_Sequence_Enable</STRONG> (Thumb, 60 bytes, Stack size 8 bytes, gpio.o(i.Board_Pwr_Sequence_Enable))
+<P><STRONG><a name="[de]"></a>Board_Pwr_Sequence_Enable</STRONG> (Thumb, 32 bytes, Stack size 8 bytes, gpio.o(i.Board_Pwr_Sequence_Enable))
 <BR><BR>[Stack]<UL><LI>Max Depth = 24<LI>Call Chain = Board_Pwr_Sequence_Enable &rArr; HAL_Delay
 </UL>
 <BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
@@ -1256,7 +1256,6 @@ Global Symbols
 <BR>[Calls]<UL><LI><a href="#[108]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_GetTick
 </UL>
 <BR>[Called By]<UL><LI><a href="#[de]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Board_Pwr_Sequence_Enable
-<LI><a href="#[75]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;main
 <LI><a href="#[203]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_DriverInit
 </UL>
 
@@ -3817,11 +3816,10 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[234]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;proceedSDO
 </UL>
 
-<P><STRONG><a name="[75]"></a>main</STRONG> (Thumb, 190 bytes, Stack size 0 bytes, main.o(i.main))
+<P><STRONG><a name="[75]"></a>main</STRONG> (Thumb, 182 bytes, Stack size 0 bytes, main.o(i.main))
 <BR><BR>[Stack]<UL><LI>Max Depth = 216<LI>Call Chain = main &rArr; MX_Modbus_Init &rArr; ModbusInit &rArr; osThreadNew &rArr; xTaskCreate &rArr; pvPortMalloc &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
-<BR>[Calls]<UL><LI><a href="#[df]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;HAL_Delay
-<LI><a href="#[1ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RS485_Init
+<BR>[Calls]<UL><LI><a href="#[1ca]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;RS485_Init
 <LI><a href="#[262]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelStart
 <LI><a href="#[261]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osKernelInitialize
 <LI><a href="#[1e4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_Init
