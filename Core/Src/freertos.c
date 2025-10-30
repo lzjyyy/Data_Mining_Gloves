@@ -1877,7 +1877,7 @@ void GpioTask(void* argument)
 {
   GPIOCmd_t cmd;
   for (;;) {
-    if (osMessageQueueGet(gpioQueueHandle, &cmd, NULL, osWaitForever) == osOK) {
+    if (osMessageQueueGet(gpioQueueHandle, &cmd, NULL, 0) == osOK) {
       switch (cmd.type) {
       case LIFTING:
         printf("[GPIO-LIFTING] state=%d\r\n", cmd.state);
@@ -1931,14 +1931,14 @@ void GpioTask(void* argument)
       Lift_Hold();
     }
     // gpio_in_status[2] = Chk_UpperLimit_Reached();
-    sys_status.gpio_in_status[2] = Chk_UpperLimit_Reached();
+    sys_status.gpio_in_status[2] = Chk_LowerLimit_Reached();
     // if (gpio_in_status[2] == true)
     if (sys_status.gpio_in_status[2] == true)
     {
       Lift_Hold();
     }
 
-    osDelay(50);
+    osDelay(500);
   }
 }
 

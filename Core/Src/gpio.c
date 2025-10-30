@@ -130,10 +130,15 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(Distance_Limit_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : PAPin PAPin */
-  GPIO_InitStruct.Pin = Lower_Limit_Pin | Upper_Limit_Pin;
+  GPIO_InitStruct.Pin = Upper_Limit_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = Lower_Limit_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+  GPIO_InitStruct.Pull = GPIO_PULLUP;
+  HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
   /*Configure GPIO pin : PtPin */
   GPIO_InitStruct.Pin = Lift_Ctrl_0_Pin;
@@ -293,7 +298,7 @@ void Lift_Down(void)
 
 bool Chk_UpperLimit_Reached(void)
 {
-  if (HAL_GPIO_ReadPin(Upper_Limit_GPIO_Port, Upper_Limit_Pin) == GPIO_PIN_RESET)
+  if (HAL_GPIO_ReadPin(Upper_Limit_GPIO_Port, Upper_Limit_Pin) == GPIO_PIN_SET)
   {
     return true;
   }
@@ -305,7 +310,7 @@ bool Chk_UpperLimit_Reached(void)
 
 bool Chk_LowerLimit_Reached(void)
 {
-  if (HAL_GPIO_ReadPin(Lower_Limit_GPIO_Port, Lower_Limit_Pin) == GPIO_PIN_RESET)
+  if (HAL_GPIO_ReadPin(Lower_Limit_GPIO_Port, Lower_Limit_Pin) == GPIO_PIN_SET)
   {
     return true;
   }
@@ -317,7 +322,7 @@ bool Chk_LowerLimit_Reached(void)
 
 bool Chk_Distance_Reached(void)
 {
-  if (HAL_GPIO_ReadPin(Distance_Limit_GPIO_Port, Distance_Limit_Pin) == GPIO_PIN_RESET)
+  if (HAL_GPIO_ReadPin(Distance_Limit_GPIO_Port, Distance_Limit_Pin) == GPIO_PIN_SET)
   {
     return true;
   }

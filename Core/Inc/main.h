@@ -16,9 +16,9 @@
   *
   ******************************************************************************
   */
-/* USER CODE END Header */
+  /* USER CODE END Header */
 
-/* Define to prevent recursive inclusion -------------------------------------*/
+  /* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef __MAIN_H
 #define __MAIN_H
 
@@ -26,7 +26,7 @@
 extern "C" {
 #endif
 
-/* Includes ------------------------------------------------------------------*/
+  /* Includes ------------------------------------------------------------------*/
 #include "stm32f4xx_hal.h"
 
 /* Private includes ----------------------------------------------------------*/
@@ -50,13 +50,13 @@ extern "C" {
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/
-void Error_Handler(void);
+  void Error_Handler(void);
 
-/* USER CODE BEGIN EFP */
+  /* USER CODE BEGIN EFP */
 
-/* USER CODE END EFP */
+  /* USER CODE END EFP */
 
-/* Private defines -----------------------------------------------------------*/
+  /* Private defines -----------------------------------------------------------*/
 #define Pwr_3V3_Ctrl_Pin GPIO_PIN_2
 #define Pwr_3V3_Ctrl_GPIO_Port GPIOE
 #define Sys_Ref_Pin GPIO_PIN_3
@@ -102,11 +102,11 @@ void Error_Handler(void);
 #define Warning_Light_Pin GPIO_PIN_7
 #define Warning_Light_GPIO_Port GPIOC
 #define Distance_Limit_Pin GPIO_PIN_8
-#define Distance_Limit_GPIO_Port GPIOC
+#define Distance_Limit_GPIO_Port GPIOA
 #define Lift_Ctrl_1_Pin GPIO_PIN_9
 #define Lift_Ctrl_1_GPIO_Port GPIOC
-#define Lower_Limit_Pin GPIO_PIN_8
-#define Lower_Limit_GPIO_Port GPIOA
+#define Lower_Limit_Pin GPIO_PIN_6
+#define Lower_Limit_GPIO_Port GPIOC
 #define RS485A_TX_Pin GPIO_PIN_9
 #define RS485A_TX_GPIO_Port GPIOA
 #define RS485A_RX_Pin GPIO_PIN_10
@@ -135,7 +135,7 @@ void Error_Handler(void);
 #define CAN2_TX_Pin_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
   uint8_t get_w5500_init_status(void);
-/* USER CODE END Private defines */
+  /* USER CODE END Private defines */
 
 #ifdef __cplusplus
 }
