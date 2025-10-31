@@ -117,6 +117,13 @@ int main(void)
   }
   if (flags & RCC_CSR_PORRSTF) {
     printf("Power-on reset\r\n");
+    Relay_0_On();
+    Relay_1_On();
+    printf("Arms power on start\r\n");
+    HAL_Delay(10000);
+    Relay_0_Off();
+    Relay_1_Off();
+    printf("Arms power on end\r\n");
   }
   if (flags & RCC_CSR_SFTRSTF) {
     printf("Software reset\r\n");

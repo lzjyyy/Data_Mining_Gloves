@@ -1,0 +1,11 @@
+.\mqttconnectclient.o: ..\MQTT\MQTTConnectClient.c
+.\mqttconnectclient.o: ..\MQTT\MQTTPacket.h
+.\mqttconnectclient.o: ..\MQTT\MQTTConnect.h
+.\mqttconnectclient.o: ..\MQTT\MQTTPublish.h
+.\mqttconnectclient.o: ..\MQTT\MQTTSubscribe.h
+.\mqttconnectclient.o: ..\MQTT\MQTTUnsubscribe.h
+.\mqttconnectclient.o: ..\MQTT\MQTTFormat.h
+.\mqttconnectclient.o: ..\MQTT\StackTrace.h
+.\mqttconnectclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqttconnectclient.o: ..\MQTT\MQTTPacket.h
+.\mqttconnectclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h

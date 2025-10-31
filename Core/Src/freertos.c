@@ -381,7 +381,7 @@ void MX_FREERTOS_Init(void) {
   kincoQueueHandle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
   zeroerrQueueHanle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
 
-  gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
+  // gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
   // start timers
   osTimerStart(timer10msLeft, 10);
@@ -419,7 +419,7 @@ void MX_FREERTOS_Init(void) {
 
   rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
 
-  gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
+  // gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
 
   // monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
   monitorTaskHandle = osThreadNew(StartMonitorUpdateTask, NULL, &monitorTask_attributes);
@@ -1889,10 +1889,12 @@ void GpioTask(void* argument)
         case TURN_UP:
           printf("Lifting TURN_UP set\r\n");
           Lift_Up();
+          osDelay(1000);
           break;
         case TURN_DOWN:
           printf("Lifting TURN_DOWN set\r\n");
           Lift_Down();
+          osDelay(1000);
           break;
         default:
           break;
@@ -1926,19 +1928,19 @@ void GpioTask(void* argument)
     sys_status.gpio_in_status[0] = Chk_Distance_Reached();
     sys_status.gpio_in_status[1] = Chk_UpperLimit_Reached();
     // if (gpio_in_status[1] == true)
-    if (sys_status.gpio_in_status[1] == true)
+    if (sys_status.gpio_in_status[1] == false)
     {
       Lift_Hold();
     }
     // gpio_in_status[2] = Chk_UpperLimit_Reached();
     sys_status.gpio_in_status[2] = Chk_LowerLimit_Reached();
     // if (gpio_in_status[2] == true)
-    if (sys_status.gpio_in_status[2] == true)
+    if (sys_status.gpio_in_status[2] == false)
     {
       Lift_Hold();
     }
 
-    osDelay(500);
+    osDelay(100);
   }
 }
 

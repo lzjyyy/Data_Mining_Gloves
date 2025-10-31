@@ -1,0 +1,11 @@
+.\mqttconnectserver.o: ..\MQTT\MQTTConnectServer.c
+.\mqttconnectserver.o: ..\MQTT\StackTrace.h
+.\mqttconnectserver.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqttconnectserver.o: ..\MQTT\MQTTPacket.h
+.\mqttconnectserver.o: ..\MQTT\MQTTConnect.h
+.\mqttconnectserver.o: ..\MQTT\MQTTPublish.h
+.\mqttconnectserver.o: ..\MQTT\MQTTSubscribe.h
+.\mqttconnectserver.o: ..\MQTT\MQTTUnsubscribe.h
+.\mqttconnectserver.o: ..\MQTT\MQTTFormat.h
+.\mqttconnectserver.o: ..\MQTT\MQTTPacket.h
+.\mqttconnectserver.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
