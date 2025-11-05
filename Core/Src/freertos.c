@@ -991,7 +991,7 @@ reconnect:
   }
 
   // 网络连接，建立TCP连接socket
-  if (NetworkConnect(&mqttNet, "192.168.1.10", 1883) != 0) {
+  if (NetworkConnect(&mqttNet, "192.168.2.10", 1883) != 0) {
     printf("MQTT Network connect failed, retry W5500 init\r\n");
     mqtt_err_cnt += 10;
     int result = W5500_Init();

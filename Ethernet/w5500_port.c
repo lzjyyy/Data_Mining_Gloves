@@ -196,7 +196,7 @@ void W5500_NetInfo_SetStatic(void)
 {
     wiz_NetInfo netinfo = {
         .mac = {0x00,0x08,0xDC,0x11,0x22,0x33},
-        .ip = {192,168,1,123},
+        .ip = {192,168,2,123},
         .sn = {255,255,255,0},
         .gw = {192,168,1,1},
         .dns = {8,8,8,8},
