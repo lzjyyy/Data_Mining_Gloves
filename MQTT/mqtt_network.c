@@ -86,7 +86,7 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
     if (parse_ip(ip_str, ip) != 0)
         return -1; // IP 转换失败
 
-    int max_attempts = 5;
+    int max_attempts = 2;
     int attempt;
     for (attempt = 1; attempt <= max_attempts; attempt++)
     {
