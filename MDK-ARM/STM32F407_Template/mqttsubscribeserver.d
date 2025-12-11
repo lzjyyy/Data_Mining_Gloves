@@ -1,0 +1,11 @@
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTSubscribeServer.c
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTPacket.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTConnect.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTPublish.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTSubscribe.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTUnsubscribe.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTFormat.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\StackTrace.h
+stm32f407_template\mqttsubscribeserver.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\mqttsubscribeserver.o: ..\MQTT\MQTTPacket.h
+stm32f407_template\mqttsubscribeserver.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h

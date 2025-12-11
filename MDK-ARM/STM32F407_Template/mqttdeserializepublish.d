@@ -1,0 +1,11 @@
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTDeserializePublish.c
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\StackTrace.h
+stm32f407_template\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTPacket.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTConnect.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTPublish.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTSubscribe.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTUnsubscribe.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTFormat.h
+stm32f407_template\mqttdeserializepublish.o: ..\MQTT\MQTTPacket.h
+stm32f407_template\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
