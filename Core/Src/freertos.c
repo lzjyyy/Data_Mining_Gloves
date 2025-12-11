@@ -381,7 +381,7 @@ void MX_FREERTOS_Init(void) {
   kincoQueueHandle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
   zeroerrQueueHanle = osMessageQueueNew(20, sizeof(ServoCmd_t), NULL);
 
-  // gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
+  gpioQueueHandle = osMessageQueueNew(10, sizeof(GPIOCmd_t), NULL);
 
   // start timers
   osTimerStart(timer10msLeft, 10);
@@ -419,7 +419,7 @@ void MX_FREERTOS_Init(void) {
 
   rightGripperTaskHandle = osThreadNew(RightGripperTask, NULL, &rightGripperTask_attributes);
 
-  // gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
+  gpioTaskHandle = osThreadNew(GpioTask, NULL, &gpioTask_attributes);
 
   // monitorTaskHandle = osThreadNew(StartMonitorTask, NULL, &monitorTask_attributes);
   monitorTaskHandle = osThreadNew(StartMonitorUpdateTask, NULL, &monitorTask_attributes);
@@ -537,7 +537,7 @@ __attribute__((unused)) void StartMQTTTestTask(void* argument)
 
   NetworkInit(&n);
   int conn_result = 0;
-  conn_result = NetworkConnect(&n, "192.168.1.10", 1883);
+  conn_result = NetworkConnect(&n, "192.168.2.10", 1883);
   if (conn_result != 0) {
     printf("MQTT Network Connect failed,result:%d\r\n", conn_result);
     vTaskDelete(NULL);

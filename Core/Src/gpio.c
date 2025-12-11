@@ -302,12 +302,16 @@ bool Chk_Distance_Reached(void)
 
 void Warning_Light_On(void)
 {
-  HAL_GPIO_WritePin(Warning_Light_GPIO_Port, Warning_Light_Pin, GPIO_PIN_SET);
+  // HAL_GPIO_WritePin(Warning_Light_GPIO_Port, Warning_Light_Pin, GPIO_PIN_SET);
+  Relay_4_On();
+  Relay_3_Off();
 }
 
 void Warning_Light_Off(void)
 {
-  HAL_GPIO_WritePin(Warning_Light_GPIO_Port, Warning_Light_Pin, GPIO_PIN_RESET);
+  // HAL_GPIO_WritePin(Warning_Light_GPIO_Port, Warning_Light_Pin, GPIO_PIN_RESET);
+  Relay_4_Off();
+  Relay_3_On();
 }
 
 void Relay_0_On(void)

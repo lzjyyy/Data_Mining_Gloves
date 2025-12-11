@@ -54,7 +54,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static const char version_str[] = "DW_20251114";
+static const char version_str[] = "DW_20251127";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -114,6 +114,11 @@ int main(void)
   MX_UART5_Init();
 
   printf("%s\r\n", version_str);
+
+  // warning light on
+  Relay_4_Off();
+  Relay_3_On();
+  Relay_2_On();
 
   if (flags & RCC_CSR_IWDGRSTF) {
     printf("IWDG reset\r\n");
