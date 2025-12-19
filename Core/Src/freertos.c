@@ -674,6 +674,8 @@ void StartZeroErrCtrlTask(void* argument)
 
   masterSendNMTstateChange(&ZeroErr_Ctrl_Data, 0x01, NMT_Start_Node);
 
+  float set_deg = 0.0;
+
   ServoCmd_t cmd;
   TickType_t lastWakeTime = xTaskGetTickCount(); // 记录当前tick
   for (;;)
@@ -710,7 +712,9 @@ void StartZeroErrCtrlTask(void* argument)
 
       if ((cmd.zeroerr.is_enable == 1) && (cmd.zeroerr.position != 0xFFFF))
       {
-        ZeroErr_MovPos_PDO(cmd.zeroerr.position);
+        set_deg = (float)(cmd.zeroerr.position / 1000.0);
+        // printf("set_deg:%.3f\r\n", set_deg);
+        ZeroErr_MovPos_PDO(set_deg);
         sys_status.sys_zeroerr_status.exp_pos = cmd.zeroerr.position;
       }
 
