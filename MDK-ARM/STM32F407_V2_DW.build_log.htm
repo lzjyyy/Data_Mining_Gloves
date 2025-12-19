@@ -17,7 +17,7 @@ Library Manager: ArmAr.exe V5.06 update 7 (build 960)
 Hex Converter:   FromElf.exe V5.06 update 7 (build 960)
 CPU DLL:         SARMCM3.DLL V5.41.0.0
 Dialog DLL:      DCM.DLL V1.17.5.0
-Target DLL:      UL2CM3.DLL V1.164.14.0
+Target DLL:      STLink\ST-LINKIII-KEIL_SWO.dll V3.3.0.0
 Dialog DLL:      TCM.DLL V1.56.4.0
  
 <h2>Project:</h2>
@@ -27,81 +27,7 @@ Project File Date:  12/11/2025
 <h2>Output:</h2>
 *** Using Compiler 'V5.06 update 7 (build 960)', folder: 'D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin'
 Build target 'STM32F407_V2_DW'
-compiling gpio.c...
-compiling UARTCallback.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-..\MODBUS-LIB\Src\UARTCallback.c: 2 warnings, 0 errors
-compiling Modbus.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-..\MODBUS-LIB\Src\Modbus.c(499): warning:  #68-D: integer conversion resulted in a change of sign
-  			xTaskNotify(mHandlers[i]->myTaskModbusAHandle, ERR_TIME_OUT, eSetValueWithOverwrite);
-..\MODBUS-LIB\Src\Modbus.c(670): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(742): warning:  #514-D: pointless comparison of unsigned integer with a negative constant
-  			if (u8exception != ERR_TIME_OUT)
-..\MODBUS-LIB\Src\Modbus.c(747): warning:  #188-D: enumerated type mixed with another type
-  			modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(753): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(864): warning:  #68-D: integer conversion resulted in a change of sign
-  	if (modH->u8id != 0) error = ERR_NOT_MASTER;
-..\MODBUS-LIB\Src\Modbus.c(865): warning:  #68-D: integer conversion resulted in a change of sign
-  	if (modH->i8state != COM_IDLE) error = ERR_POLLING;
-..\MODBUS-LIB\Src\Modbus.c(866): warning:  #68-D: integer conversion resulted in a change of sign
-  	if ((telegram.u8id == 0) || (telegram.u8id > 247)) error = ERR_BAD_SLAVE_ID;
-..\MODBUS-LIB\Src\Modbus.c(871): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = error;
-..\MODBUS-LIB\Src\Modbus.c(957): warning:  #188-D: enumerated type mixed with another type
-  	modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(1123): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = 0;
-..\MODBUS-LIB\Src\Modbus.c(1167): warning:  #188-D: enumerated type mixed with another type
-  			modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(1172): warning:  #188-D: enumerated type mixed with another type
-  		modH->i8lastError = u8exception;
-..\MODBUS-LIB\Src\Modbus.c(1205): warning:  #68-D: integer conversion resulted in a change of sign
-  			xTaskNotify((TaskHandle_t)telegram.u32CurrentTask, ERR_OK_QUERY, eSetValueWithOverwrite);
-..\MODBUS-LIB\Src\Modbus.c(1283): warning:  #550-D: variable "u8byte"  was set but never used
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1283): warning:  #177-D: variable "i"  was declared but never referenced
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1302): warning:  #550-D: variable "u8byte"  was set but never used
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1302): warning:  #177-D: variable "i"  was declared but never referenced
-  	uint8_t u8byte, i;
-..\MODBUS-LIB\Src\Modbus.c(1335): warning:  #68-D: integer conversion resulted in a change of sign
-  			return ERR_BAD_CRC;
-..\MODBUS-LIB\Src\Modbus.c(1346): warning:  #68-D: integer conversion resulted in a change of sign
-  		return ERR_EXCEPTION;
-..\MODBUS-LIB\Src\Modbus.c(1443): warning:  #68-D: integer conversion resulted in a change of sign
-  		return ERR_BAD_CRC;
-..\MODBUS-LIB\Src\Modbus.c(37): warning:  #177-D: variable "is_fc3_processed"  was declared but never referenced
-  static bool is_fc3_processed = false;
-..\MODBUS-LIB\Src\Modbus.c(38): warning:  #177-D: variable "recvRawData"  was declared but never referenced
-  static modbusRecvRawData_t recvRawData;
-..\MODBUS-LIB\Src\Modbus.c: 25 warnings, 0 errors
-compiling main.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-../Core/Src/main.c: 2 warnings, 0 errors
-compiling freertos.c...
-..\MODBUS-LIB\Inc\Modbus.h(243): warning:  #1295-D: Deprecated declaration getTimeOut - give arg types
-  uint16_t getTimeOut(); //!<get communication watch-dog timer value
-..\MODBUS-LIB\Inc\Modbus.h(244): warning:  #1295-D: Deprecated declaration getTimeOutState - give arg types
-  bool getTimeOutState(); //!<get communication watch-dog timer state
-../Core/Src/freertos.c: 2 warnings, 0 errors
-linking...
-Program Size: Code=75984 RO-data=2508 RW-data=4168 ZI-data=33872  
-FromELF: creating hex file...
-".\STM32F407_V2_DW.axf" - 0 Error(s), 31 Warning(s).
+".\STM32F407_V2_DW.axf" - 0 Error(s), 0 Warning(s).
 
 <h2>Software Packages used:</h2>
 
@@ -123,7 +49,7 @@ Package Vendor: Keil
 <h2>Collection of Component Files used:</h2>
 
    * Component: ARM::CMSIS:CORE@6.1.0
-Build Time Elapsed:  00:00:05
+Build Time Elapsed:  00:00:01
 </pre>
 </body>
 </html>

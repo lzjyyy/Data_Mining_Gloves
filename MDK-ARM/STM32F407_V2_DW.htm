@@ -3,9 +3,9 @@
 <title>Static Call Graph - [.\STM32F407_V2_DW.axf]</title></head>
 <body><HR>
 <H1>Static Call Graph for image .\STM32F407_V2_DW.axf</H1><HR>
-<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Thu Dec 11 16:29:43 2025
+<BR><P>#&#060CALLGRAPH&#062# ARM Linker, 5060960: Last Updated: Wed Dec 17 14:22:20 2025
 <BR><P>
-<H3>Maximum Stack Usage =        448 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
+<H3>Maximum Stack Usage =        464 bytes + Unknown(Cycles, Untraceable Function Pointers)</H3><H3>
 Call chain for Maximum Stack Depth:</H3>
 StartMqttTask &rArr; mqtt_publish_sys_status &rArr; MQTTPublish &rArr; waitfor &rArr; cycle &rArr; MQTTDeserialize_publish &rArr; MQTTPacket_decodeBuf &rArr; MQTTPacket_decode
 <P>
@@ -1836,7 +1836,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[86]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;StartKincoCtrlTask
 </UL>
 
-<P><STRONG><a name="[89]"></a>LeftGripperTask</STRONG> (Thumb, 116 bytes, Stack size 32 bytes, freertos.o(i.LeftGripperTask))
+<P><STRONG><a name="[89]"></a>LeftGripperTask</STRONG> (Thumb, 122 bytes, Stack size 32 bytes, freertos.o(i.LeftGripperTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = LeftGripperTask &rArr; gripper_get_status &rArr; get_warning_info &rArr; ModbusQuery &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2549,7 +2549,7 @@ Global Symbols
 <BR>[Called By]<UL><LI><a href="#[f1]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;Warning_Light_On
 </UL>
 
-<P><STRONG><a name="[8a]"></a>RightGripperTask</STRONG> (Thumb, 130 bytes, Stack size 32 bytes, freertos.o(i.RightGripperTask))
+<P><STRONG><a name="[8a]"></a>RightGripperTask</STRONG> (Thumb, 138 bytes, Stack size 32 bytes, freertos.o(i.RightGripperTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 240<LI>Call Chain = RightGripperTask &rArr; gripper_get_status &rArr; get_warning_info &rArr; ModbusQuery &rArr; xQueueGenericSend &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e8]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;osDelay
@@ -2648,7 +2648,7 @@ Global Symbols
 <LI><a href="#[a4]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;OnHeartbeatProducerUpdate
 </UL>
 
-<P><STRONG><a name="[86]"></a>StartKincoCtrlTask</STRONG> (Thumb, 282 bytes, Stack size 32 bytes, freertos.o(i.StartKincoCtrlTask))
+<P><STRONG><a name="[86]"></a>StartKincoCtrlTask</STRONG> (Thumb, 286 bytes, Stack size 32 bytes, freertos.o(i.StartKincoCtrlTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = StartKincoCtrlTask &rArr; Kinco_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; sendPdo &rArr; canSend &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sendSYNC
@@ -2684,7 +2684,7 @@ Global Symbols
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.MX_FREERTOS_Init)
 </UL>
 <P><STRONG><a name="[88]"></a>StartMqttTask</STRONG> (Thumb, 524 bytes, Stack size 104 bytes, freertos.o(i.StartMqttTask))
-<BR><BR>[Stack]<UL><LI>Max Depth = 448<LI>Call Chain = StartMqttTask &rArr; mqtt_publish_sys_status &rArr; MQTTPublish &rArr; waitfor &rArr; cycle &rArr; MQTTDeserialize_publish &rArr; MQTTPacket_decodeBuf &rArr; MQTTPacket_decode
+<BR><BR>[Stack]<UL><LI>Max Depth = 464<LI>Call Chain = StartMqttTask &rArr; mqtt_publish_sys_status &rArr; MQTTPublish &rArr; waitfor &rArr; cycle &rArr; MQTTDeserialize_publish &rArr; MQTTPacket_decodeBuf &rArr; MQTTPacket_decode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[e6]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;ForceCloseSocket
 <LI><a href="#[1ee]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;W5500_Init
@@ -2740,7 +2740,7 @@ Global Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> modbus.o(i.ModbusInit)
 </UL>
-<P><STRONG><a name="[87]"></a>StartZeroErrCtrlTask</STRONG> (Thumb, 282 bytes, Stack size 32 bytes, freertos.o(i.StartZeroErrCtrlTask))
+<P><STRONG><a name="[87]"></a>StartZeroErrCtrlTask</STRONG> (Thumb, 286 bytes, Stack size 32 bytes, freertos.o(i.StartZeroErrCtrlTask))
 <BR><BR>[Stack]<UL><LI>Max Depth = 384<LI>Call Chain = StartZeroErrCtrlTask &rArr; ZeroErr_Enable_PDO &rArr; Get_Parse_StatusWord &rArr; sendSYNC &rArr; proceedSYNC &rArr; _sendPDOevent &rArr; sendOnePDOevent &rArr; sendPdo &rArr; canSend &rArr; osDelay &rArr; vTaskDelay &rArr; xTaskResumeAll &rArr; xTaskIncrementTick
 </UL>
 <BR>[Calls]<UL><LI><a href="#[ec]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;sendSYNC
@@ -5651,8 +5651,8 @@ Local Symbols
 </UL>
 <BR>[Address Reference Count : 1]<UL><LI> freertos.o(i.StartMqttTask)
 </UL>
-<P><STRONG><a name="[1f0]"></a>mqtt_publish_sys_status</STRONG> (Thumb, 182 bytes, Stack size 104 bytes, freertos.o(i.mqtt_publish_sys_status))
-<BR><BR>[Stack]<UL><LI>Max Depth = 344<LI>Call Chain = mqtt_publish_sys_status &rArr; MQTTPublish &rArr; waitfor &rArr; cycle &rArr; MQTTDeserialize_publish &rArr; MQTTPacket_decodeBuf &rArr; MQTTPacket_decode
+<P><STRONG><a name="[1f0]"></a>mqtt_publish_sys_status</STRONG> (Thumb, 198 bytes, Stack size 120 bytes, freertos.o(i.mqtt_publish_sys_status))
+<BR><BR>[Stack]<UL><LI>Max Depth = 360<LI>Call Chain = mqtt_publish_sys_status &rArr; MQTTPublish &rArr; waitfor &rArr; cycle &rArr; MQTTDeserialize_publish &rArr; MQTTPacket_decodeBuf &rArr; MQTTPacket_decode
 </UL>
 <BR>[Calls]<UL><LI><a href="#[182]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;MQTTPublish
 <LI><a href="#[180]">&gt;&gt;</a>&nbsp;&nbsp;&nbsp;strlen

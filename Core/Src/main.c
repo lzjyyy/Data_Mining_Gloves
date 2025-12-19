@@ -54,7 +54,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static const char version_str[] = "DW_20251127";
+static const char version_str[] = "DW_20251217";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/

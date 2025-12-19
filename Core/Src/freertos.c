@@ -62,6 +62,7 @@ typedef struct {
 
 typedef struct {
   uint8_t side;
+  uint32_t exp_pos;
   uint32_t position;
   uint16_t reached;
   uint16_t warning;
@@ -78,6 +79,7 @@ typedef struct {
 typedef struct {
   uint16_t status_word;
   uint16_t error_code;
+  int32_t exp_pos;
   int32_t position;
   int32_t velocity;
 } ServoStatus_t;
@@ -610,6 +612,7 @@ void StartKincoCtrlTask(void* argument)
       if ((cmd.kinco.is_enable == 1) && (cmd.kinco.position != 0xFFFF))
       {
         Kinco_MovPos_PDO(cmd.kinco.position);
+        sys_status.sys_kinco_status.exp_pos = cmd.kinco.position;
       }
 
       if (cmd.kinco.velocity > 0 && cmd.kinco.velocity < 3000)
@@ -624,9 +627,9 @@ void StartKincoCtrlTask(void* argument)
       }
     }
 
-    /* 每隔 100ms 读取kinco状态和位置 */
+    /* 每隔 50ms 读取kinco状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 10 == 0) {  // 系统tick=10ms
+    if (counter % 5 == 0) {  // 系统tick=10ms
       sendSYNC(&Kinco_Ctrl_Data);
       // printf("Kinco Status=0x%04X, Pos=%ld\r\n", Statusword, Position_actual_value);
       sys_status.sys_kinco_status.status_word = Statusword;
@@ -708,6 +711,7 @@ void StartZeroErrCtrlTask(void* argument)
       if ((cmd.zeroerr.is_enable == 1) && (cmd.zeroerr.position != 0xFFFF))
       {
         ZeroErr_MovPos_PDO(cmd.zeroerr.position);
+        sys_status.sys_zeroerr_status.exp_pos = cmd.zeroerr.position;
       }
 
       if (cmd.zeroerr.is_enable == 0)
@@ -720,7 +724,7 @@ void StartZeroErrCtrlTask(void* argument)
 
     /* 每隔 50ms 读取ZeroErr状态和位置 */
     static uint32_t counter = 0;
-    if (counter % 10 == 0) {  // 系统tick=1ms
+    if (counter % 5 == 0) {  // 系统tick=1ms
       sendSYNC(&ZeroErr_Ctrl_Data);
       // printf("ZeroErr Status=0x%04X, Pos=%ld\r\n", status_word_zeroerr, pos_actual_val_zeroerr);
       sys_status.sys_zeroerr_status.status_word = status_word_zeroerr;
@@ -1427,6 +1431,7 @@ void LeftGripperTask(void* argument)
       if (osMessageQueueGet(leftGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&L_ModbusH, cmd.left.position, cmd.left.speed, cmd.left.torque, LEFT_GRIPPER);
+        sys_status.left_gripper_status.exp_pos = cmd.left.position;
         // 写命令后屏蔽状态查询时间
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
@@ -1478,6 +1483,7 @@ void RightGripperTask(void* argument)
       if (osMessageQueueGet(rightGripperQueueHandle, &cmd, NULL, 0) == osOK)
       {
         gripper_execute(&R_ModbusH, cmd.right.position, cmd.right.speed, cmd.right.torque, RIGHT_GRIPPER);
+        sys_status.right_gripper_status.exp_pos = cmd.right.position;
         // 写命令后屏蔽状态查询
         blockUntil = now + STATUS_BLOCK_AFTER_CMD;
       }
@@ -2017,24 +2023,28 @@ static bool mqtt_publish_sys_status(SysStatus_t* status)
   // 生成 JSON payload
   int len = snprintf(sys_status_payload, sizeof(sys_status_payload),
     "{"
-    "\"left_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
-    "\"right_gripper\":{\"pos\":%u,\"reached\":%u,\"warning\":%u},"
-    "\"sys_kinco\":{\"status_word\":%u,\"error_code\":%u,\"position\":%ld,\"velocity\":%ld},"
-    "\"sys_zeroerr\":{\"status_word\":%u,\"error_code\":%u,\"position\":%ld,\"velocity\":%ld},"
+    "\"left_gripper\":{\"exp_pos\":%u,\"pos\":%u,\"reached\":%u,\"warning\":%u},"
+    "\"right_gripper\":{\"exp_pos\":%u,\"pos\":%u,\"reached\":%u,\"warning\":%u},"
+    "\"sys_kinco\":{\"status_word\":%u,\"error_code\":%u,\"exp_pos\":%ld,\"position\":%ld,\"velocity\":%ld},"
+    "\"sys_zeroerr\":{\"status_word\":%u,\"error_code\":%u,\"exp_pos\":%ld,\"position\":%ld,\"velocity\":%ld},"
     "\"gpio_in\":[%d,%d,%d,%d,%d,%d]"
     "}",
+    status->left_gripper_status.exp_pos,
     status->left_gripper_status.position,
     status->left_gripper_status.reached,
     status->left_gripper_status.warning,
+    status->right_gripper_status.exp_pos,
     status->right_gripper_status.position,
     status->right_gripper_status.reached,
     status->right_gripper_status.warning,
     status->sys_kinco_status.status_word,
     status->sys_kinco_status.error_code,
+    status->sys_kinco_status.exp_pos,
     status->sys_kinco_status.position,
     status->sys_kinco_status.velocity,
     status->sys_zeroerr_status.status_word,
     status->sys_zeroerr_status.error_code,
+    status->sys_zeroerr_status.exp_pos,
     status->sys_zeroerr_status.position,
     status->sys_zeroerr_status.velocity,
     status->gpio_in_status[0],
