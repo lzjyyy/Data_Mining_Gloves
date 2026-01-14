@@ -176,11 +176,11 @@ int W5500_DriverInit(void)
     uint8_t link;
     uint32_t link_chk_cnt = 0;
     do {
-        HAL_Delay(200);
         result = 0;
         result = ctlwizchip(CW_GET_PHYLINK, (void*)&link);
         link_chk_cnt++;
         printf("Link: %d,chk_cnt:%d,result:%d\r\n", link, link_chk_cnt, result);
+        HAL_Delay(100); //修改每次PHY链路连接等待时间
     } while (link == PHY_LINK_OFF && (link_chk_cnt < MAX_LINK_CHK_CNT));
 
     if (result != 0 || (link == 0))
@@ -196,7 +196,7 @@ void W5500_NetInfo_SetStatic(void)
 {
     wiz_NetInfo netinfo = {
         .mac = {0x00,0x08,0xDC,0x11,0x22,0x33},
-        .ip = {192,168,2,123},
+        .ip = {192,168,3,123},  // 修改IP地址
         .sn = {255,255,255,0},
         .gw = {192,168,1,1},
         .dns = {8,8,8,8},
@@ -225,7 +225,8 @@ void W5500_RaiseSpiSpeed(void)
     // 以 HAL 为例：先禁用 SPI，改 CR1 分频，再启用（不同 HAL 版本略有差异）
     // 注意：在 CubeMX 自动生成的 hspi2.Init.BaudRatePrescaler 基础上修改
     __HAL_SPI_DISABLE(&hspi2);
-    MODIFY_REG(hspi2.Instance->CR1, SPI_CR1_BR, SPI_BAUDRATEPRESCALER_2);
+    // MODIFY_REG(hspi2.Instance->CR1, SPI_CR1_BR, SPI_BAUDRATEPRESCALER_2);
+    MODIFY_REG(hspi2.Instance->CR1, SPI_CR1_BR, SPI_BAUDRATEPRESCALER_4); // 调整为10.5MHz
     __HAL_SPI_ENABLE(&hspi2);
 }
 

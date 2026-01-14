@@ -86,7 +86,7 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
     if (parse_ip(ip_str, ip) != 0)
         return -1; // IP 转换失败
 
-    int max_attempts = 2;
+    int max_attempts = 1;
     int attempt;
     for (attempt = 1; attempt <= max_attempts; attempt++)
     {
@@ -104,11 +104,21 @@ int NetworkConnect(Network* n, const char* ip_str, uint16_t port)
             osDelay(10);
         }
 
-        if (socket(n->sock, Sn_MR_TCP, port, 0) != n->sock)
+        // 本地端口传入0，本地端口交给 W5500 自动分配
+        if (socket(n->sock, Sn_MR_TCP, 0, 0) != n->sock)
         {
             printf("[NetworkConnect] socket() failed\r\n");
             continue;
         }
+
+        // 开启广播过滤
+        uint8_t mr = getSn_MR(n->sock);
+        mr |= 0x40;   // BCASTB
+        setSn_MR(n->sock, mr);
+
+        /* 打印本地端口 */
+        uint16_t local_port = getSn_PORT(n->sock);
+        printf("[NetworkConnect] local port = %u\r\n", local_port);
 
         printf("[NetworkConnect] connecting to %s:%d...\r\n", ip_str, port);
         int8_t conn_result = connect(n->sock, ip, port);

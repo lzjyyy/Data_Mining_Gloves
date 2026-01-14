@@ -133,8 +133,6 @@ typedef struct {
 #define STATUS_QUERY_PERIOD_MS 100     // 查询状�?�周�??
 #define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状�?�查询时�??
 #define USE_TEST_TASKS
-#define W5500_RETRY_TIME     30000    // 3s (30000 × 100us)
-#define W5500_RETRY_COUNT    3
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -223,7 +221,6 @@ static const char* sys_status_topic = "robot/status";
 static char sys_status_payload[512];  // 足够容纳 JSON
 volatile uint32_t idle_counter = 0; // 负载监控用
 volatile uint32_t idle_counter_max = 0; // 负载监控用
-static bool w5500_reset_flag = false;
 
 const osThreadAttr_t modbusMasterTestTask_attributes = {
   .name = "modbusMasterTestTask",
@@ -324,7 +321,6 @@ static void system_reset(void);
 static void ForceCloseSocket(uint8_t sn);
 static bool mqtt_publish_sys_status(SysStatus_t* status);
 static void mqtt_subscribe_all(void);
-static void W5500_ConfigTimeout(void);
 
 // left and right grippers timer callback functions
 static void Timer10msLeft_Callback(void* argument);
@@ -983,7 +979,7 @@ static void ForceCloseSocket(uint8_t sn)
 
 void StartMqttTask(void* argument) {
   int rc;
-  w5500_reset_flag = false;
+
   if (get_w5500_init_status() != 1) {
     printf("W5500 init failed, MQTT task invalid.\r\n");
     // vTaskDelete(NULL);
@@ -1002,47 +998,21 @@ reconnect:
     osDelay(500);
   }
 
-  //初始化 W5500 超时机制
-  W5500_ConfigTimeout();
-
-  if(w5500_reset_flag == true)
-  {
+  // 网络连接，建立TCP连接socket
+  if (NetworkConnect(&mqttNet, "192.168.2.10", 1883) != 0) {
+    printf("MQTT Network connect failed, retry W5500 init\r\n");
+    mqtt_err_cnt += 10;
     int result = W5500_Init();
     if (result != 0) {
       printf("W5500 init failed,result is:%d\r\n", result);
-      osDelay(1000);
-      goto reconnect;
     }
     else
     {
-      printf("W5500 init completed.\r\n");
-      w5500_reset_flag = false;
+      printf("W5500 init successfully.\r\n");
     }
-  }
-
-  // 网络连接，建立TCP连接socket
-  if (NetworkConnect(&mqttNet, "192.168.3.10", 1883) != 0) { // 修改IP地址，192.168.2.10 -> 192.168.3.10
-    printf("MQTT Network connect failed, retry W5500 init\r\n");
-    mqtt_err_cnt += 10;
-    // int result = W5500_Init();
-    // if (result != 0) {
-    //   printf("W5500 init failed,result is:%d\r\n", result);
-    // }
-    // else
-    // {
-    //   printf("W5500 init successfully.\r\n");
-    //   w5500_reset_flag = false; 
-    // }
-    w5500_reset_flag = true; 
     osDelay(1000);
     goto reconnect;
   }
-
-  // TCP KeepAlive
-  // 5s × 6 = 30s
-//   setSn_KPALVTR(mqttNet.sock, 6);
-  uint8_t ka = 6;
-  setsockopt(mqttNet.sock, SO_KEEPALIVEAUTO, &ka);
 
   // MQTT 客户端初始化
   MQTTClientInit(&mqttClient, &mqttNet, 2000, mqttSendBuf, sizeof(mqttSendBuf), mqttReadBuf, sizeof(mqttReadBuf));
@@ -1093,12 +1063,19 @@ reconnect:
   const int publish_fail_threshold = 3;
 
   for (;;) {
+    static uint8_t last_phy = 0xFF;
+    uint8_t phy = W5500_Get_PHYCFGR();
+    if (phy != last_phy) {
+        printf("PHYCFGR changed: 0x%02X -> 0x%02X\r\n",
+            last_phy, phy);
+        last_phy = phy;
+    }
+
     // 1. 检测 PHY link
     if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
       printf("PHY Link Down, reconnecting...\r\n");
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
-      w5500_reset_flag = true;
       W5500_Init_Status = 0;
       goto reconnect;
     }
@@ -1107,15 +1084,23 @@ reconnect:
     uint8_t sock_status = getSn_SR(mqttNet.sock);
     if (sock_status != SOCK_ESTABLISHED) {
     //   printf("Socket lost (status=0x%02X), reconnecting...\r\n", sock_status);
-      uint8_t ir = getSn_IR(mqttNet.sock);
-      uint16_t lp = getSn_PORT(mqttNet.sock);
+    //   MQTTDisconnect(&mqttClient);
+    //   NetworkDisconnect(&mqttNet);
 
-      printf("Socket lost SR=0x%02X IR=0x%02X LocalPort=%u\r\n",
-              sock_status, ir, lp);
-      MQTTDisconnect(&mqttClient);
-      NetworkDisconnect(&mqttNet);
-      w5500_reset_flag = true; 
-      goto reconnect;
+    //   goto reconnect;
+        uint8_t phy = W5500_Get_PHYCFGR();
+        printf("=== SOCKET LOST ===\r\n");
+        printf("Sn_SR = 0x%02X\r\n", sock_status);
+        printf("PHYCFGR = 0x%02X (LINK=%d)\r\n",
+            phy, phy & 0x01);
+
+        printf("RTR = %d, RCR = %d\r\n",
+            getRTR(),
+            getRCR());
+
+        MQTTDisconnect(&mqttClient);
+        NetworkDisconnect(&mqttNet);
+        goto reconnect;
     }
 
     // 3. MQTT 收发（Yield）
@@ -1126,7 +1111,6 @@ reconnect:
       mqtt_err_cnt++;
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
-      w5500_reset_flag = true; 
       goto reconnect;
     }
     else {
@@ -1150,35 +1134,31 @@ reconnect:
       goto reconnect;
     }
 
-    // 检查缓冲区大小
-    uint16_t free = getSn_TX_FSR(mqttNet.sock);
-    if (free < 512) {
-        osDelay(10);
-        continue;
+    // 4. 发布状态消息（带失败计数）
+    if (!mqtt_publish_sys_status(&sys_status)) {
+    //   publish_fail_cnt++;
+    //   printf("Publish robot sys status failed (cnt=%d)\r\n", publish_fail_cnt);
+        uint8_t sr = getSn_SR(mqttNet.sock);
+        uint8_t phy = W5500_Get_PHYCFGR();
+
+        publish_fail_cnt++;
+        printf("Publish failed (cnt=%d), Sn_SR=0x%02X, PHYCFGR=0x%02X\r\n",
+            publish_fail_cnt, sr, phy);
+    }
+    else {
+      publish_fail_cnt = 0;
     }
 
-    // 发布状态消息，一旦失败，立即重连
-    if (!mqtt_publish_sys_status(&sys_status)) {
-      printf("Publish failed, reconnecting immediately\r\n");
+    // 如果连续多次发布失败，再决定重连（避免抖动导致频繁重连）
+    if (publish_fail_cnt >= publish_fail_threshold) {
+      printf("Publish failed %d times, reconnecting...\r\n", publish_fail_cnt);
+      publish_fail_cnt = 0;
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
-      w5500_reset_flag = true;
       goto reconnect;
     }
-    // else {
-    //   publish_fail_cnt = 0;
-    // }
 
-    // // 如果连续多次发布失败，再决定重连（避免抖动导致频繁重连）
-    // if (publish_fail_cnt >= publish_fail_threshold) {
-    //   printf("Publish failed %d times, reconnecting...\r\n", publish_fail_cnt);
-    //   publish_fail_cnt = 0;
-    //   MQTTDisconnect(&mqttClient);
-    //   NetworkDisconnect(&mqttNet);
-    //   goto reconnect;
-    // }
-
-    // 小延时，避免任务占满 CPU
+    // 5. 小延时，避免任务占满 CPU
     osDelay(10);
   }
 }
@@ -2167,19 +2147,6 @@ void StartMonitorUpdateTask(void* argument)
 
     osDelay(MONITOR_INTERVAL_MS);
   }
-}
-
-static void W5500_ConfigTimeout(void)
-{
-    wiz_NetTimeout timeout;
-
-    timeout.time_100us = W5500_RETRY_TIME;
-    timeout.retry_cnt  = W5500_RETRY_COUNT;
-
-    wizchip_settimeout(&timeout);
-
-    // printf("[W5500] timeout: %d x 100us, retry %d\r\n",
-    //        timeout.time_100us, timeout.retry_cnt);
 }
 
 /* USER CODE END Application */
