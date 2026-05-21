@@ -63,16 +63,32 @@ typedef struct
     uint16_t baseline;                /* 基线值，用于压力/触觉变化量计算 */
 } GloveTouchSample_t;
 
-/*
- * 原始数据帧
- *
- * 由采集任务生成，只发送给算法任务
- * 它包含同一时刻采集到的 16 个 IMU 数据、16 个四元数、81 个触觉点
- */
+/*由 IMU_CAN_Task 产生，包含一次 16 路 IMU 采集结果 */
+typedef struct
+{
+    uint32_t sensor_seq;              /* IMU 采集序号 */
+    uint32_t timestamp_us;            /* IMU 数据时间戳，单位 us */
+    uint32_t valid_flags;            
+
+    GloveImuSample_t imu[GLOVE_IMU_COUNT];
+    GloveQuaternion_t quat[GLOVE_IMU_COUNT];
+} GloveImuSensorData_t;
+
+/*由 Touch_ADC_Task 产生，包含一次 81 点触觉阵列采集结果 */
+typedef struct
+{
+    uint32_t sensor_seq;              /* 触觉采集序号 */
+    uint32_t timestamp_us;            /* 触觉数据时间戳，单位 us */
+    uint32_t valid_flags;             /* 有效标志 */
+
+    GloveTouchSample_t touch[GLOVE_TOUCH_COUNT];
+} GloveTouchSensorData_t;
+
+/* 由 FrameAssemblerTask 根据 ImuSensorData + TouchSensorData 组装生成 */
 typedef struct
 {
     uint32_t frame_id;                /* 单调递增帧号，用于日志和通讯对齐 */
-    uint32_t timestamp_us;            /* 采样时间戳，单位 us */
+    uint32_t timestamp_us;            /* 合帧时间戳，单位 us */
     uint32_t valid_flags;             /* 本帧有效数据标志 */
 
     GloveImuSample_t imu[GLOVE_IMU_COUNT];
@@ -91,44 +107,51 @@ typedef struct
     uint32_t timestamp_us;            /* 与输入 RawFrame 保持一致 */
     uint32_t valid_flags;             /* 算法结果有效标志 */
 
-    GloveQuaternion_t imu_attitude[GLOVE_IMU_COUNT];       /* 算法输出姿态 */
-    float joint_angle_rad[GLOVE_JOINT_DOF_COUNT];          /* 21 自由度关节角，单位 rad */
-    float joint_velocity_radps[GLOVE_JOINT_DOF_COUNT];     /* 21 自由度关节角速度，单位 rad/s */
+    GloveQuaternion_t imu_attitude[GLOVE_IMU_COUNT];
+    float joint_angle_rad[GLOVE_JOINT_DOF_COUNT];
+    float joint_velocity_radps[GLOVE_JOINT_DOF_COUNT];
 } GloveProcessedFrame_t;
 
-/*
- * 完整数据帧
- *
- * SD 卡和 RS485 都只消费 FullFrame，确保原始数据和对应算法结果天然绑定，
- * 避免原始帧已存储/发送，但对应解算结果丢失或错位的问题
- */
+/* SD 卡和 RS485 都只消费 FullFrame，确保原始数据和对应算法结果绑定在一起 */
 typedef struct
 {
-    uint32_t frame_id;                /* 取 RawFrame 的 frame_id */
-    uint32_t timestamp_us;            /* 取 RawFrame 的 timestamp_us */
-    uint32_t valid_flags;             /* raw 与 processed 的有效标志合并 */
+    uint32_t frame_id;
+    uint32_t timestamp_us;
+    uint32_t valid_flags;
 
     GloveRawFrame_t raw;
     GloveProcessedFrame_t processed;
 } GloveFullFrame_t;
 
-/* 数据管理模块的运行统计，用于调试、诊断丢帧和缓存压力 */
+/* 数据管理模块运行统计 */
 typedef struct
 {
+    uint32_t imu_sensor_published;
+    uint32_t touch_sensor_published;
     uint32_t raw_frames_published;
     uint32_t full_frames_published;
+
+    uint32_t imu_sensor_dropped;
+    uint32_t touch_sensor_dropped;
     uint32_t raw_frames_dropped;
     uint32_t full_frames_dropped;
+
     uint32_t pool_alloc_failures;
     uint32_t queue_send_failures;
 } GloveDataStats_t;
 
-/* 清空不同类型的数据帧，供内存池复用前初始化使用 */
+void AppData_ClearImuSensorData(GloveImuSensorData_t *data);
+void AppData_ClearTouchSensorData(GloveTouchSensorData_t *data);
 void AppData_ClearRawFrame(GloveRawFrame_t *frame);
 void AppData_ClearProcessedFrame(GloveProcessedFrame_t *frame);
 void AppData_ClearFullFrame(GloveFullFrame_t *frame);
 
-/* 将原始数据和算法结果合成为完整帧，供 SD/RS485 统一消费 */
+void AppData_BuildRawFrameFromSensors(GloveRawFrame_t *raw,
+                                      uint32_t frame_id,
+                                      uint32_t timestamp_us,
+                                      const GloveImuSensorData_t *imu,
+                                      const GloveTouchSensorData_t *touch);
+
 void AppData_BuildFullFrame(GloveFullFrame_t *full,
                             const GloveRawFrame_t *raw,
                             const GloveProcessedFrame_t *processed);

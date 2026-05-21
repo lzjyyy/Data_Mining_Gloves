@@ -10,11 +10,16 @@
 
 typedef struct
 {
+    osMessageQueueId_t imu_sensor_for_assembler;
+    osMessageQueueId_t touch_sensor_for_assembler;
     osMessageQueueId_t raw_for_algorithm;
     osMessageQueueId_t full_for_storage;
     osMessageQueueId_t full_for_rs485;
 } DataManagerQueues_t;
 
+/* 四类数据各自使用独立内存池 互不影响生命周期 */
+static FramePool_t s_imu_sensor_pool;
+static FramePool_t s_touch_sensor_pool;
 static FramePool_t s_raw_pool;
 static FramePool_t s_full_pool;
 
@@ -22,11 +27,19 @@ static DataManagerQueues_t s_queues;
 static GloveDataStats_t s_stats;
 static uint8_t s_initialized;
 
+/* 静态数据块存储区 运行期不使用 malloc */
+static GloveImuSensorBlock_t s_imu_sensor_blocks[GLOVE_IMU_SENSOR_POOL_SIZE];
+static GloveTouchSensorBlock_t s_touch_sensor_blocks[GLOVE_TOUCH_SENSOR_POOL_SIZE];
 static GloveRawFrameBlock_t s_raw_blocks[GLOVE_RAW_FRAME_POOL_SIZE];
 static GloveFullFrameBlock_t s_full_blocks[GLOVE_FULL_FRAME_POOL_SIZE];
+
+/* 各内存池对应的空闲索引栈 */
+static uint16_t s_imu_sensor_free_stack[GLOVE_IMU_SENSOR_POOL_SIZE];
+static uint16_t s_touch_sensor_free_stack[GLOVE_TOUCH_SENSOR_POOL_SIZE];
 static uint16_t s_raw_free_stack[GLOVE_RAW_FRAME_POOL_SIZE];
 static uint16_t s_full_free_stack[GLOVE_FULL_FRAME_POOL_SIZE];
 
+/* 创建只传指针的消息队列 避免拷贝大结构体 */
 static osMessageQueueId_t CreatePointerQueue(uint32_t depth, const char *name)
 {
     const osMessageQueueAttr_t attr = {
@@ -50,7 +63,6 @@ static uint32_t TimeoutMsToTicks(uint32_t timeout_ms)
         return osWaitForever;
     }
 
-    /* 向上取整，确保非 0 毫秒超时时间不会被换算成 0 tick */
     ticks = ((uint64_t)timeout_ms * (uint64_t)osKernelGetTickFreq() + 999ULL) / 1000ULL;
     if ((timeout_ms > 0U) && (ticks == 0ULL))
     {
@@ -62,7 +74,6 @@ static uint32_t TimeoutMsToTicks(uint32_t timeout_ms)
 
 static void StatsIncrement(uint32_t *value)
 {
-    /* 统计量可能被多个任务更新，因此自增操作放在临界区 */
     taskENTER_CRITICAL();
     (*value)++;
     taskEXIT_CRITICAL();
@@ -70,7 +81,6 @@ static void StatsIncrement(uint32_t *value)
 
 static GloveStatus_t SendPointer(osMessageQueueId_t queue, void *ptr, uint32_t timeout_ms)
 {
-    /* 所有发布路径统一走这个函数，保证队列发送失败统计一致 */
     if ((queue == NULL) || (ptr == NULL))
     {
         return GLOVE_STATUS_INVALID_PARAM;
@@ -105,36 +115,108 @@ static GloveStatus_t ReceivePointer(osMessageQueueId_t queue, void **ptr, uint32
     return (status == osErrorTimeout) ? GLOVE_STATUS_TIMEOUT : GLOVE_STATUS_QUEUE_EMPTY;
 }
 
-/*
- * 引用计数模型：
- * 1. 发布者在发布过程中临时持有 1 个引用；
- * 2. 每成功投递给一个消费者队列，就给该消费者增加 1 个引用；
- * 3. 消费者 Get* 成功后，处理完必须调用一次 Release*；
- * 4. 最后一个引用释放时，帧块才会归还到对应内存池
- */
-static void RawFrame_AddRef(GloveRawFrameBlock_t *block)
+static void AddRef(volatile uint8_t *ref_count)
 {
     taskENTER_CRITICAL();
-    block->ref_count++;
+    (*ref_count)++;
     taskEXIT_CRITICAL();
 }
 
-static void FullFrame_AddRef(GloveFullFrameBlock_t *block)
+/*
+ * 释放一个数据块引用
+ * ref_count 变为 0 时才归还到对应内存池
+ */
+static GloveStatus_t ReleaseRef(FramePool_t *pool, void *block, volatile uint8_t *ref_count)
 {
+    uint8_t should_free = 0U;
+
+    if ((pool == NULL) || (block == NULL) || (ref_count == NULL) ||
+        (FramePool_Owns(pool, block) == 0U))
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
     taskENTER_CRITICAL();
-    block->ref_count++;
+    if (*ref_count > 0U)
+    {
+        (*ref_count)--;
+        should_free = (*ref_count == 0U) ? 1U : 0U;
+    }
     taskEXIT_CRITICAL();
+
+    return (should_free != 0U) ? FramePool_Free(pool, block) : GLOVE_STATUS_OK;
+}
+
+/*
+ * 发布给单个消费者
+ * Sensor 数据和 RawFrame 都只有一个下游消费者
+ */
+static GloveStatus_t PublishSingleConsumer(void *block,
+                                           volatile uint8_t *ref_count,
+                                           osMessageQueueId_t queue,
+                                           FramePool_t *pool,
+                                           uint32_t *published_counter,
+                                           uint32_t *dropped_counter,
+                                           uint32_t timeout_ms)
+{
+    GloveStatus_t status;
+
+    if ((s_initialized == 0U) || (block == NULL) || (ref_count == NULL) || (pool == NULL))
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
+    /*
+     * Alloc 已经让发布者持有一个引用
+     * 队列发送成功后消费者再持有一个引用
+     */
+    AddRef(ref_count);
+
+    status = SendPointer(queue, block, timeout_ms);
+    if (status != GLOVE_STATUS_OK)
+    {
+        (void)ReleaseRef(pool, block, ref_count);
+        (void)ReleaseRef(pool, block, ref_count);
+        StatsIncrement(dropped_counter);
+        return status;
+    }
+
+    /* 发布结束后释放发布者临时引用 */
+    (void)ReleaseRef(pool, block, ref_count);
+    StatsIncrement(published_counter);
+    return GLOVE_STATUS_OK;
 }
 
 GloveStatus_t DataManager_Init(void)
 {
     GloveStatus_t status;
 
-    /* 创建内存池和队列前，先清空运行状态 */
     (void)memset(&s_queues, 0, sizeof(s_queues));
     (void)memset(&s_stats, 0, sizeof(s_stats));
 
-    /* RawFrame 由采集任务产生，只给算法任务消费 */
+    /* 初始化 IMU Sensor 数据池 */
+    status = FramePool_Init(&s_imu_sensor_pool,
+                            s_imu_sensor_blocks,
+                            sizeof(s_imu_sensor_blocks[0]),
+                            GLOVE_IMU_SENSOR_POOL_SIZE,
+                            s_imu_sensor_free_stack);
+    if (status != GLOVE_STATUS_OK)
+    {
+        return status;
+    }
+
+    /* 初始化 Touch Sensor 数据池 */
+    status = FramePool_Init(&s_touch_sensor_pool,
+                            s_touch_sensor_blocks,
+                            sizeof(s_touch_sensor_blocks[0]),
+                            GLOVE_TOUCH_SENSOR_POOL_SIZE,
+                            s_touch_sensor_free_stack);
+    if (status != GLOVE_STATUS_OK)
+    {
+        return status;
+    }
+
+    /* 初始化 RawFrame 数据池 */
     status = FramePool_Init(&s_raw_pool,
                             s_raw_blocks,
                             sizeof(s_raw_blocks[0]),
@@ -145,7 +227,7 @@ GloveStatus_t DataManager_Init(void)
         return status;
     }
 
-    /* FullFrame 包含 raw + processed，由 SD 和 RS485 消费 */
+    /* 初始化 FullFrame 数据池 */
     status = FramePool_Init(&s_full_pool,
                             s_full_blocks,
                             sizeof(s_full_blocks[0]),
@@ -156,12 +238,21 @@ GloveStatus_t DataManager_Init(void)
         return status;
     }
 
-    /* 每个消费者一个独立队列，避免慢消费者阻塞其他消费者 */
-    s_queues.raw_for_algorithm = CreatePointerQueue(GLOVE_RAW_FRAME_QUEUE_DEPTH, "raw.alg");
-    s_queues.full_for_storage = CreatePointerQueue(GLOVE_FULL_FRAME_QUEUE_DEPTH, "full.store");
-    s_queues.full_for_rs485 = CreatePointerQueue(GLOVE_FULL_FRAME_QUEUE_DEPTH, "full.rs485");
+    /* 创建各数据通道的指针队列 */
+    s_queues.imu_sensor_for_assembler =
+        CreatePointerQueue(GLOVE_IMU_SENSOR_QUEUE_DEPTH, "sensor.imu");
+    s_queues.touch_sensor_for_assembler =
+        CreatePointerQueue(GLOVE_TOUCH_SENSOR_QUEUE_DEPTH, "sensor.touch");
+    s_queues.raw_for_algorithm =
+        CreatePointerQueue(GLOVE_RAW_FRAME_QUEUE_DEPTH, "raw.alg");
+    s_queues.full_for_storage =
+        CreatePointerQueue(GLOVE_FULL_FRAME_QUEUE_DEPTH, "full.store");
+    s_queues.full_for_rs485 =
+        CreatePointerQueue(GLOVE_FULL_FRAME_QUEUE_DEPTH, "full.rs485");
 
-    if ((s_queues.raw_for_algorithm == NULL) ||
+    if ((s_queues.imu_sensor_for_assembler == NULL) ||
+        (s_queues.touch_sensor_for_assembler == NULL) ||
+        (s_queues.raw_for_algorithm == NULL) ||
         (s_queues.full_for_storage == NULL) ||
         (s_queues.full_for_rs485 == NULL))
     {
@@ -172,11 +263,52 @@ GloveStatus_t DataManager_Init(void)
     return GLOVE_STATUS_OK;
 }
 
+GloveImuSensorBlock_t *DataManager_AllocImuSensor(void)
+{
+    GloveImuSensorBlock_t *block;
+
+    if (s_initialized == 0U)
+    {
+        return NULL;
+    }
+
+    block = (GloveImuSensorBlock_t *)FramePool_Alloc(&s_imu_sensor_pool);
+    if (block == NULL)
+    {
+        StatsIncrement(&s_stats.pool_alloc_failures);
+        return NULL;
+    }
+
+    AppData_ClearImuSensorData(&block->data);
+    block->ref_count = 1U;
+    return block;
+}
+
+GloveTouchSensorBlock_t *DataManager_AllocTouchSensor(void)
+{
+    GloveTouchSensorBlock_t *block;
+
+    if (s_initialized == 0U)
+    {
+        return NULL;
+    }
+
+    block = (GloveTouchSensorBlock_t *)FramePool_Alloc(&s_touch_sensor_pool);
+    if (block == NULL)
+    {
+        StatsIncrement(&s_stats.pool_alloc_failures);
+        return NULL;
+    }
+
+    AppData_ClearTouchSensorData(&block->data);
+    block->ref_count = 1U;
+    return block;
+}
+
 GloveRawFrameBlock_t *DataManager_AllocRawFrame(void)
 {
     GloveRawFrameBlock_t *block;
 
-    /* 未初始化前申请帧，视为调用顺序错误 */
     if (s_initialized == 0U)
     {
         return NULL;
@@ -189,9 +321,8 @@ GloveRawFrameBlock_t *DataManager_AllocRawFrame(void)
         return NULL;
     }
 
-    /* 给生产者一帧干净数据，并重置引用计数 */
     AppData_ClearRawFrame(&block->frame);
-    block->ref_count = 0U;
+    block->ref_count = 1U;
     return block;
 }
 
@@ -199,7 +330,6 @@ GloveFullFrameBlock_t *DataManager_AllocFullFrame(void)
 {
     GloveFullFrameBlock_t *block;
 
-    /* 未初始化前申请帧，视为调用顺序错误 */
     if (s_initialized == 0U)
     {
         return NULL;
@@ -213,51 +343,56 @@ GloveFullFrameBlock_t *DataManager_AllocFullFrame(void)
     }
 
     AppData_ClearFullFrame(&block->frame);
-    block->ref_count = 0U;
+    block->ref_count = 1U;
     return block;
 }
 
-GloveStatus_t DataManager_PublishRawFrame(GloveRawFrameBlock_t *block, uint32_t timeout_ms)
+GloveStatus_t DataManager_PublishImuSensor(GloveImuSensorBlock_t *block, uint32_t timeout_ms)
 {
-    GloveStatus_t status;
-    GloveStatus_t final_status = GLOVE_STATUS_OK;
-    uint8_t delivered_count = 0U;
-
-    if ((s_initialized == 0U) || (block == NULL))
+    if (block == NULL)
     {
         return GLOVE_STATUS_INVALID_PARAM;
     }
 
-    /*
-     * 发布者引用用于保证发布过程中的帧始终有效
-     * 即使消费者任务很快收到并释放了帧，也不会导致发布过程访问已归还内存
-     */
-    block->ref_count = 1U;
+    return PublishSingleConsumer(block,
+                                 &block->ref_count,
+                                 s_queues.imu_sensor_for_assembler,
+                                 &s_imu_sensor_pool,
+                                 &s_stats.imu_sensor_published,
+                                 &s_stats.imu_sensor_dropped,
+                                 timeout_ms);
+}
 
-    /* 原始数据只投递给算法任务 */
-    RawFrame_AddRef(block);
-    status = SendPointer(s_queues.raw_for_algorithm, block, timeout_ms);
-    if (status != GLOVE_STATUS_OK)
+GloveStatus_t DataManager_PublishTouchSensor(GloveTouchSensorBlock_t *block, uint32_t timeout_ms)
+{
+    if (block == NULL)
     {
-        (void)DataManager_ReleaseRawFrame(block);
-        final_status = status;
-    }
-    else
-    {
-        delivered_count++;
+        return GLOVE_STATUS_INVALID_PARAM;
     }
 
-    /* 发布完成后释放发布者临时引用 */
-    (void)DataManager_ReleaseRawFrame(block);
+    return PublishSingleConsumer(block,
+                                 &block->ref_count,
+                                 s_queues.touch_sensor_for_assembler,
+                                 &s_touch_sensor_pool,
+                                 &s_stats.touch_sensor_published,
+                                 &s_stats.touch_sensor_dropped,
+                                 timeout_ms);
+}
 
-    if (delivered_count == 0U)
+GloveStatus_t DataManager_PublishRawFrame(GloveRawFrameBlock_t *block, uint32_t timeout_ms)
+{
+    if (block == NULL)
     {
-        StatsIncrement(&s_stats.raw_frames_dropped);
-        return GLOVE_STATUS_QUEUE_FULL;
+        return GLOVE_STATUS_INVALID_PARAM;
     }
 
-    StatsIncrement(&s_stats.raw_frames_published);
-    return final_status;
+    return PublishSingleConsumer(block,
+                                 &block->ref_count,
+                                 s_queues.raw_for_algorithm,
+                                 &s_raw_pool,
+                                 &s_stats.raw_frames_published,
+                                 &s_stats.raw_frames_dropped,
+                                 timeout_ms);
 }
 
 GloveStatus_t DataManager_PublishFullFrame(GloveFullFrameBlock_t *block, uint32_t timeout_ms)
@@ -272,13 +407,11 @@ GloveStatus_t DataManager_PublishFullFrame(GloveFullFrameBlock_t *block, uint32_
     }
 
     /*
-     * FullFrame 是 SD 和 RS485 唯一可见的数据帧
-     * 这样可以保证原始采样和对应算法结果始终绑定在同一个 frame_id 上
+     * FullFrame 有两个消费者
+     * Alloc 已经让发布者持有一个引用
+     * Storage 引用和 RS485 引用共同管理后续生命周期
      */
-    block->ref_count = 1U;
-
-    /* SD 存储任务获得一个独立引用 */
-    FullFrame_AddRef(block);
+    AddRef(&block->ref_count);
     status = SendPointer(s_queues.full_for_storage, block, timeout_ms);
     if (status != GLOVE_STATUS_OK)
     {
@@ -290,8 +423,7 @@ GloveStatus_t DataManager_PublishFullFrame(GloveFullFrameBlock_t *block, uint32_
         delivered_count++;
     }
 
-    /* RS485 通讯任务获得另一个独立引用 */
-    FullFrame_AddRef(block);
+    AddRef(&block->ref_count);
     status = SendPointer(s_queues.full_for_rs485, block, timeout_ms);
     if (status != GLOVE_STATUS_OK)
     {
@@ -303,7 +435,7 @@ GloveStatus_t DataManager_PublishFullFrame(GloveFullFrameBlock_t *block, uint32_
         delivered_count++;
     }
 
-    /* 发布完成后释放发布者临时引用 */
+    /* 发布结束后释放发布者临时引用 */
     (void)DataManager_ReleaseFullFrame(block);
 
     if (delivered_count == 0U)
@@ -314,6 +446,26 @@ GloveStatus_t DataManager_PublishFullFrame(GloveFullFrameBlock_t *block, uint32_
 
     StatsIncrement(&s_stats.full_frames_published);
     return final_status;
+}
+
+GloveStatus_t DataManager_GetImuSensor(GloveImuSensorBlock_t **block, uint32_t timeout_ms)
+{
+    if (block == NULL)
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
+    return ReceivePointer(s_queues.imu_sensor_for_assembler, (void **)block, timeout_ms);
+}
+
+GloveStatus_t DataManager_GetTouchSensor(GloveTouchSensorBlock_t **block, uint32_t timeout_ms)
+{
+    if (block == NULL)
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
+    return ReceivePointer(s_queues.touch_sensor_for_assembler, (void **)block, timeout_ms);
 }
 
 GloveStatus_t DataManager_GetRawFrame(DataConsumer_t consumer,
@@ -330,7 +482,6 @@ GloveStatus_t DataManager_GetRawFrame(DataConsumer_t consumer,
     switch (consumer)
     {
         case DATA_CONSUMER_ALGORITHM:
-            /* RawFrame 只暴露给算法任务，不暴露给 SD/RS485 */
             queue = s_queues.raw_for_algorithm;
             break;
         default:
@@ -354,11 +505,9 @@ GloveStatus_t DataManager_GetFullFrame(DataConsumer_t consumer,
     switch (consumer)
     {
         case DATA_CONSUMER_STORAGE:
-            /* SD 存储任务记录完整的 raw + processed 数据 */
             queue = s_queues.full_for_storage;
             break;
         case DATA_CONSUMER_RS485:
-            /* RS485 发送同样的完整数据帧格式 */
             queue = s_queues.full_for_rs485;
             break;
         default:
@@ -368,48 +517,44 @@ GloveStatus_t DataManager_GetFullFrame(DataConsumer_t consumer,
     return ReceivePointer(queue, (void **)block, timeout_ms);
 }
 
-GloveStatus_t DataManager_ReleaseRawFrame(GloveRawFrameBlock_t *block)
+GloveStatus_t DataManager_ReleaseImuSensor(GloveImuSensorBlock_t *block)
 {
-    uint8_t should_free = 0U;
-
-    /* 拒绝外来指针，确保只能释放 raw_pool 管理的块 */
-    if ((s_initialized == 0U) || (block == NULL) || (FramePool_Owns(&s_raw_pool, block) == 0U))
+    if ((s_initialized == 0U) || (block == NULL))
     {
         return GLOVE_STATUS_INVALID_PARAM;
     }
 
-    /* 最后一个引用释放时，将块归还到 raw_pool */
-    taskENTER_CRITICAL();
-    if (block->ref_count > 0U)
-    {
-        block->ref_count--;
-        should_free = (block->ref_count == 0U) ? 1U : 0U;
-    }
-    taskEXIT_CRITICAL();
+    return ReleaseRef(&s_imu_sensor_pool, block, &block->ref_count);
+}
 
-    return (should_free != 0U) ? FramePool_Free(&s_raw_pool, block) : GLOVE_STATUS_OK;
+GloveStatus_t DataManager_ReleaseTouchSensor(GloveTouchSensorBlock_t *block)
+{
+    if ((s_initialized == 0U) || (block == NULL))
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
+    return ReleaseRef(&s_touch_sensor_pool, block, &block->ref_count);
+}
+
+GloveStatus_t DataManager_ReleaseRawFrame(GloveRawFrameBlock_t *block)
+{
+    if ((s_initialized == 0U) || (block == NULL))
+    {
+        return GLOVE_STATUS_INVALID_PARAM;
+    }
+
+    return ReleaseRef(&s_raw_pool, block, &block->ref_count);
 }
 
 GloveStatus_t DataManager_ReleaseFullFrame(GloveFullFrameBlock_t *block)
 {
-    uint8_t should_free = 0U;
-
-    /* 确保只释放 full_pool 管理的块 */
-    if ((s_initialized == 0U) || (block == NULL) || (FramePool_Owns(&s_full_pool, block) == 0U))
+    if ((s_initialized == 0U) || (block == NULL))
     {
         return GLOVE_STATUS_INVALID_PARAM;
     }
 
-    /* 最后一个引用释放时，将块归还到 full_pool */
-    taskENTER_CRITICAL();
-    if (block->ref_count > 0U)
-    {
-        block->ref_count--;
-        should_free = (block->ref_count == 0U) ? 1U : 0U;
-    }
-    taskEXIT_CRITICAL();
-
-    return (should_free != 0U) ? FramePool_Free(&s_full_pool, block) : GLOVE_STATUS_OK;
+    return ReleaseRef(&s_full_pool, block, &block->ref_count);
 }
 
 void DataManager_GetStats(DataManagerStats_t *stats)
@@ -419,11 +564,12 @@ void DataManager_GetStats(DataManagerStats_t *stats)
         return;
     }
 
-    /* 统计计数先在临界区内快照，然后再读取各内存池状态 */
     taskENTER_CRITICAL();
     stats->data = s_stats;
     taskEXIT_CRITICAL();
 
+    FramePool_GetStats(&s_imu_sensor_pool, &stats->imu_sensor_pool);
+    FramePool_GetStats(&s_touch_sensor_pool, &stats->touch_sensor_pool);
     FramePool_GetStats(&s_raw_pool, &stats->raw_pool);
     FramePool_GetStats(&s_full_pool, &stats->full_pool);
 }

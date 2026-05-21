@@ -46,7 +46,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-
+extern UART_HandleTypeDef huart2;
 /* USER CODE END EM */
 
 /* Exported functions prototypes ---------------------------------------------*/

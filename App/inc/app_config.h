@@ -15,16 +15,21 @@ extern "C" {
 #define GLOVE_TOUCH_COUNT                       (81U)
 #define GLOVE_JOINT_DOF_COUNT                   (21U)
 
-#define GLOVE_RAW_FRAME_POOL_SIZE               (8U)
-#define GLOVE_FULL_FRAME_POOL_SIZE              (8U)
+#define GLOVE_IMU_SENSOR_POOL_SIZE              (6U)
+#define GLOVE_TOUCH_SENSOR_POOL_SIZE            (6U)
+#define GLOVE_IMU_SENSOR_QUEUE_DEPTH            (4U)
+#define GLOVE_TOUCH_SENSOR_QUEUE_DEPTH          (4U)
 
+#define GLOVE_RAW_FRAME_POOL_SIZE               (8U)
 #define GLOVE_RAW_FRAME_QUEUE_DEPTH             (4U)
+
+#define GLOVE_FULL_FRAME_POOL_SIZE              (8U)
 #define GLOVE_FULL_FRAME_QUEUE_DEPTH            (4U)
 
 #define GLOVE_RAW_FRAME_CONSUMER_COUNT          (1U)
 #define GLOVE_FULL_FRAME_CONSUMER_COUNT         (2U)
 
-/* 数据帧有效标志，用于描述本帧包含哪些有效数据 */
+/* 数据有效标志，用于描述当前数据块包含哪些有效内容。 */
 #define GLOVE_FRAME_FLAG_NONE                   (0x00000000UL)
 #define GLOVE_FRAME_FLAG_IMU_VALID              (0x00000001UL)
 #define GLOVE_FRAME_FLAG_QUAT_VALID             (0x00000002UL)

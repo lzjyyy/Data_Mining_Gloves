@@ -22,7 +22,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "test_task.h"
+#include "data_manager.h"
+#include "uart_redirect.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -58,6 +60,13 @@ const osThreadAttr_t uartDebugTask_attributes = {
   .priority = (osPriority_t) osPriorityLow,
   .stack_size = 128 * 4
 };
+/* Definitions for testTask */
+osThreadId_t testTaskHandle;
+const osThreadAttr_t testTask_attributes = {
+  .name = "testTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 4096 * 4
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -71,7 +80,10 @@ const osThreadAttr_t uartDebugTask_attributes = {
   */
 void MX_FREERTOS_Init(void) {
   /* USER CODE BEGIN Init */
-
+  if (DataManager_Init() != GLOVE_STATUS_OK)
+  {
+    Error_Handler();
+  }
   /* USER CODE END Init */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -94,6 +106,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of uartDebugTask */
   uartDebugTaskHandle = osThreadNew(UartDebugTask, NULL, &uartDebugTask_attributes);
+
+  /* creation of testTask */
+  testTaskHandle = osThreadNew(StartTestTask, NULL, &testTask_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -138,6 +153,24 @@ void UartDebugTask(void *argument)
     osDelay(1);
   }
   /* USER CODE END uartDebugTask */
+}
+
+/* USER CODE BEGIN Header_StartTestTask */
+/**
+* @brief Function implementing the testTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartTestTask */
+__weak void StartTestTask(void *argument)
+{
+  /* USER CODE BEGIN testTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1000);
+  }
+  /* USER CODE END testTask */
 }
 
 /* Private application code --------------------------------------------------*/
