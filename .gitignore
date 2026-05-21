@@ -19,6 +19,7 @@ Objects/
 Listings/
 DebugConfig/
 
+
 # 多工程工作区文件
 *.uvmpw
 
@@ -27,3 +28,4 @@ DebugConfig/
 *.uvguix.*
 
 MDK-ARM/.vscode
+MDK-ARM/glovesV0.1
