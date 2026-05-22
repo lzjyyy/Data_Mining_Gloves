@@ -64,8 +64,8 @@ const osThreadAttr_t uartDebugTask_attributes = {
 osThreadId_t testTaskHandle;
 const osThreadAttr_t testTask_attributes = {
   .name = "testTask",
-  .priority = (osPriority_t) osPriorityLow,
-  .stack_size = 4096 * 4
+  .priority = (osPriority_t) osPriorityNormal1,
+  .stack_size = 1024 * 4
 };
 
 /* Private function prototypes -----------------------------------------------*/

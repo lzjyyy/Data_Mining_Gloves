@@ -284,6 +284,12 @@ void StartTestTask(void *argument)
             Test_SetError(status);
         }
 
+        printf("TestTask: frame_id=%lu, status=%d, pass_count=%lu, fail_count=%lu\r\n",
+               s_test_stats.last_frame_id,
+               s_test_stats.last_status,
+               s_test_stats.pass_count,
+               s_test_stats.fail_count);
+
         osDelay(1000U);
     }
 }
