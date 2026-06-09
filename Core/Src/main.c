@@ -134,19 +134,10 @@ int main(void)
   lcd_print(&lcd_desc, 100, 60, "-----------------------");
   lcd_show_picture(&lcd_desc, 0, 0, 80, 80, (uint8_t *)logo);
   
-  lcd_fill(&lcd_desc,  30, 85,  50, 105, GREEN);
-  lcd_draw_rectangle(&lcd_desc,  90, 85, 110, 105, CYAN);
-  lcd_draw_rectangle(&lcd_desc, 150, 85, 170, 105, LIGHTBLUE);
-  lcd_draw_rectangle(&lcd_desc, 210, 85, 230, 105, MAGENTA);
-  lcd_fill(&lcd_desc, 270, 85, 290, 105, LBBLUE);
-  
-//  lcd_fill(&lcd_desc,  30, 120,  50, 140, GREEN);
-//  lcd_fill(&lcd_desc,  90, 120, 110, 140, CYAN);
-//  lcd_fill(&lcd_desc, 150, 120, 170, 140, LIGHTBLUE);
-  lcd_print(&lcd_desc, 8, 120, "STATE:INIT");
-  lcd_print(&lcd_desc, 8, 135, "TX_START:0 DMA:0 OV:0");
-//  lcd_fill(&lcd_desc, 210, 120, 230, 140, MAGENTA);
-//  lcd_fill(&lcd_desc, 270, 120, 290, 140, LBBLUE);
+  lcd_print(&lcd_desc, 8, 85, "STATE:INIT");
+  lcd_print(&lcd_desc, 8, 105, "TX_START:0 DMA:0 OV:0");
+  lcd_print(&lcd_desc, 8, 125, "EV RE:0 TE:0 LCD:0");
+  lcd_print(&lcd_desc, 8, 145, "RTC:---- -- -- --:--:--");
   
   lcd_set_font(&lcd_desc, FONT_1608, YELLOW, BLACK);
   if (RS485_Init() != HAL_OK)

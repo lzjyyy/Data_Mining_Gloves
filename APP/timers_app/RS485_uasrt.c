@@ -1,9 +1,12 @@
 #include "RS485_uasrt.h"
+#include "rs485_task.h"
 #include "usart.h"
 #include <stdio.h>
 #include <string.h>
 
 static uint8_t rs485_rx_dma_buffer[RS485_RX_BUFFER_SIZE];
+
+/* RX callbacks copy one completed DMA frame here for task-level processing. */
 static uint8_t rs485_rx_frame_buffer[RS485_RX_BUFFER_SIZE];
 static uint8_t rs485_tx_buffer[RS485_TX_BUFFER_SIZE];
 static uint8_t rs485_echo_buffer[RS485_RX_BUFFER_SIZE];
@@ -46,6 +49,8 @@ HAL_StatusTypeDef RS485_StartReceive(void)
   HAL_StatusTypeDef status;
 
   RS485_SetReceiveMode();
+
+  /* IDLE or full-buffer events enter HAL_UARTEx_RxEventCallback(). */
   status = HAL_UARTEx_ReceiveToIdle_DMA(&huart2, rs485_rx_dma_buffer, RS485_RX_BUFFER_SIZE);
   if (status == HAL_OK)
   {
@@ -92,6 +97,8 @@ HAL_StatusTypeDef RS485_SendDMA(const uint8_t *data, uint16_t size)
   __enable_irq();
 
   memcpy(rs485_tx_buffer, data, size);
+
+  /* Half-duplex RS485: stop RX, enable DE, then launch TX DMA. */
   (void)HAL_UART_AbortReceive(&huart2);
   __HAL_UART_CLEAR_FLAG(&huart2, UART_CLEAR_TCF);
   RS485_SetTransmitMode();
@@ -156,11 +163,13 @@ uint8_t RS485_IsTxBusy(void)
 
 void RS485_OnTxDmaIrq(void)
 {
+  /* DMA complete is earlier than UART TC; do not switch DE here. */
   rs485_tx_dma_irq++;
 }
 
-static void RS485_CheckTxCompleteFallback(void)
+void RS485_ProcessTxEvent(void)
 {
+  /* TX completion processing is driven by UART TC, then RX is armed again. */
   if ((rs485_tx_busy != 0U) && (__HAL_UART_GET_FLAG(&huart2, UART_FLAG_TC) != RESET))
   {
     rs485_tx_busy = 0U;
@@ -171,19 +180,18 @@ static void RS485_CheckTxCompleteFallback(void)
   }
 }
 
-void RS485_PollEcho(void)
+void RS485_ProcessRxFrame(void)
 {
   uint16_t rx_size = 0U;
   int tx_size;
   RS485_StatusTypeDef status;
-
-  RS485_CheckTxCompleteFallback();
 
   if (rs485_tx_busy != 0U)
   {
     return;
   }
 
+  /* Current debug behavior: one received frame produces one text response. */
   if (RS485_TakeRxFrame(rs485_echo_buffer, &rx_size, sizeof(rs485_echo_buffer)) != 0U)
   {
     RS485_GetStatus(&status);
@@ -200,6 +208,12 @@ void RS485_PollEcho(void)
       (void)RS485_SendDMA(rs485_echo_buffer, (uint16_t)tx_size);
     }
   }
+}
+
+void RS485_PollEcho(void)
+{
+  RS485_ProcessTxEvent();
+  RS485_ProcessRxFrame();
 }
 
 void RS485_GetStatus(RS485_StatusTypeDef *status)
@@ -250,6 +264,9 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
       rs485_rx_frame_ready = 1U;
       rs485_rx_events++;
       rs485_rx_bytes += frame_size;
+
+      /* Wake RS485 task; protocol parsing stays outside the ISR callback. */
+      RS485_TaskNotifyRxFrame();
     }
 
     if (rs485_tx_busy == 0U)
@@ -270,6 +287,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
     RS485_SetReceiveMode();
     RS485_DirectionSwitchDelay();
     (void)RS485_StartReceive();
+
+    /* TE counter is incremented from this TC-complete notification path. */
+    RS485_TaskNotifyTxComplete();
   }
 }
 
@@ -281,5 +301,6 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef *huart)
     rs485_tx_busy = 0U;
     RS485_SetReceiveMode();
     (void)RS485_StartReceive();
+    RS485_TaskNotifyTxError();
   }
 }

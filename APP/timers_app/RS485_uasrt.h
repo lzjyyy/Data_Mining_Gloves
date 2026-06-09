@@ -29,14 +29,32 @@ typedef struct
   uint8_t tx_busy;
 } RS485_StatusTypeDef;
 
+/* Initialize RS485 helper and start the first receive path if init TX fails. */
 HAL_StatusTypeDef RS485_Init(void);
+
+/* Put RS485 transceiver in receive mode and arm USART2 ReceiveToIdle DMA. */
 HAL_StatusTypeDef RS485_StartReceive(void);
+
+/* Start one half-duplex DMA transmit. The caller must handle HAL_BUSY. */
 HAL_StatusTypeDef RS485_SendDMA(const uint8_t *data, uint16_t size);
+
+/* Public send facade. It currently maps to DMA transmit. */
 HAL_StatusTypeDef RS485_Send(const uint8_t *data, uint16_t size);
+
+/* Copy one completed RX frame out of the ISR-owned frame buffer. */
 uint8_t RS485_TakeRxFrame(uint8_t *data, uint16_t *size, uint16_t max_size);
 uint8_t RS485_IsTxBusy(void);
+
+/* Compatibility helper for old polling tests: process TX then RX once. */
 void RS485_PollEcho(void);
+
+/* Event-driven task entry points for RX frame processing and TX completion. */
+void RS485_ProcessRxFrame(void);
+void RS485_ProcessTxEvent(void);
+
 void RS485_GetStatus(RS485_StatusTypeDef *status);
+
+/* Called from the GPDMA TX IRQ; only counts DMA IRQ, not UART TC completion. */
 void RS485_OnTxDmaIrq(void);
 
 #ifdef __cplusplus
