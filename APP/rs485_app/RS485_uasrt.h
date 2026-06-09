@@ -24,6 +24,11 @@ typedef struct
   uint32_t rx_events;
   uint32_t rx_bytes;
   uint32_t rx_overwrite;
+  uint32_t rx_taken;
+  uint32_t modbus_response_ready;
+  uint32_t modbus_no_response;
+  uint32_t modbus_frame_error;
+  uint32_t tx_send_fail;
   uint32_t tx_done;
   uint32_t errors;
   uint8_t tx_busy;
@@ -41,7 +46,7 @@ HAL_StatusTypeDef RS485_SendDMA(const uint8_t *data, uint16_t size);
 /* Public send facade. It currently maps to DMA transmit. */
 HAL_StatusTypeDef RS485_Send(const uint8_t *data, uint16_t size);
 
-/* Copy one completed RX frame out of the ISR-owned frame buffer. */
+/* Copy one completed RX frame out of the halted DMA buffer in task context. */
 uint8_t RS485_TakeRxFrame(uint8_t *data, uint16_t *size, uint16_t max_size);
 uint8_t RS485_IsTxBusy(void);
 

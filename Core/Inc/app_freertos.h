@@ -55,8 +55,6 @@ extern "C" {
 
 /* USER CODE END EM */
 extern osThreadId_t defaultTaskHandle;
-extern osThreadId_t rs485TaskHandle;
-extern osThreadId_t lcdTaskHandle;
 
 /* Exported function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -64,8 +62,6 @@ extern osThreadId_t lcdTaskHandle;
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void *argument);
-void StartRs485Task(void *argument);
-void StartLcdTask(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 

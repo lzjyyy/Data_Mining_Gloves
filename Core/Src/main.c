@@ -33,6 +33,7 @@
 #include "logo.h"
 #include "RS485_uasrt.h"
 #include "timers_APP.h"
+#include "modbus_time_sync.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -118,19 +119,16 @@ int main(void)
   MX_GPDMA2_Init();
   MX_ICACHE_Init();
   MX_RTC_Init();
-  if (RTC_SetToCurrentTime() != HAL_OK)
-  {
-    Error_Handler();
-  }
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_TIM6_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
   lcd_init_dev(&lcd_desc, LCD_1_47_INCH, LCD_ROTATE_90);
   
   lcd_print(&lcd_desc, 100,  0, "------- X Pulse -------");
   lcd_print(&lcd_desc, 100, 20, "|    STM32 LCD demo   |");
-  lcd_print(&lcd_desc, 100, 40, "|  1.47 inch 320x172  |");
+  lcd_print(&lcd_desc, 100, 40, "|  1.47 inch 320x179  |");
   lcd_print(&lcd_desc, 100, 60, "-----------------------");
   lcd_show_picture(&lcd_desc, 0, 0, 80, 80, (uint8_t *)logo);
   
@@ -140,6 +138,11 @@ int main(void)
   lcd_print(&lcd_desc, 8, 145, "RTC:---- -- -- --:--:--");
   
   lcd_set_font(&lcd_desc, FONT_1608, YELLOW, BLACK);
+  if (ModbusTimeSync_Init() != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   if (RS485_Init() != HAL_OK)
   {
     Error_Handler();
@@ -192,14 +195,14 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLL1_SOURCE_HSE;
-  RCC_OscInitStruct.PLL.PLLM = 2;
-  RCC_OscInitStruct.PLL.PLLN = 40;
+  RCC_OscInitStruct.PLL.PLLM = 1;
+  RCC_OscInitStruct.PLL.PLLN = 62;
   RCC_OscInitStruct.PLL.PLLP = 2;
   RCC_OscInitStruct.PLL.PLLQ = 2;
   RCC_OscInitStruct.PLL.PLLR = 2;
   RCC_OscInitStruct.PLL.PLLRGE = RCC_PLL1_VCIRANGE_3;
   RCC_OscInitStruct.PLL.PLLVCOSEL = RCC_PLL1_VCORANGE_WIDE;
-  RCC_OscInitStruct.PLL.PLLFRACN = 0;
+  RCC_OscInitStruct.PLL.PLLFRACN = 4096;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
   {
     Error_Handler();
@@ -245,6 +248,10 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+{
+  ModbusTimeSync_OnGpioFalling(GPIO_Pin);
+}
 
 /* USER CODE END 4 */
 
@@ -266,6 +273,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
+  ModbusTimeSync_OnTimPeriodElapsed(htim);
   Timers_APP_OnPeriodElapsed(htim);
 
   /* USER CODE END Callback 1 */

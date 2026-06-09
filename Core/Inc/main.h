@@ -67,6 +67,9 @@ void Error_Handler(void);
 #define LCD_MOSI_GPIO_Port GPIOA
 #define RS485_EN_Pin GPIO_PIN_4
 #define RS485_EN_GPIO_Port GPIOC
+#define Time_tongbu_Pin GPIO_PIN_8
+#define Time_tongbu_GPIO_Port GPIOA
+#define Time_tongbu_EXTI_IRQn EXTI8_IRQn
 #define LCD_BLK_Pin GPIO_PIN_4
 #define LCD_BLK_GPIO_Port GPIOB
 #define LCD_RST_Pin GPIO_PIN_5

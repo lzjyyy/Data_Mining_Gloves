@@ -1,15 +1,14 @@
 #include "RS485_uasrt.h"
+#include "modbus_frame.h"
 #include "rs485_task.h"
 #include "usart.h"
-#include <stdio.h>
 #include <string.h>
 
 static uint8_t rs485_rx_dma_buffer[RS485_RX_BUFFER_SIZE];
 
-/* RX callbacks copy one completed DMA frame here for task-level processing. */
-static uint8_t rs485_rx_frame_buffer[RS485_RX_BUFFER_SIZE];
+static uint8_t rs485_rx_work_buffer[RS485_RX_BUFFER_SIZE];
 static uint8_t rs485_tx_buffer[RS485_TX_BUFFER_SIZE];
-static uint8_t rs485_echo_buffer[RS485_RX_BUFFER_SIZE];
+static uint8_t rs485_response_buffer[RS485_TX_BUFFER_SIZE];
 static volatile uint16_t rs485_rx_frame_size = 0U;
 static volatile uint8_t rs485_rx_frame_ready = 0U;
 static volatile uint8_t rs485_tx_busy = 0U;
@@ -23,6 +22,11 @@ static volatile uint32_t rs485_tx_cplt_callback = 0U;
 static volatile uint32_t rs485_rx_events = 0U;
 static volatile uint32_t rs485_rx_bytes = 0U;
 static volatile uint32_t rs485_rx_overwrite = 0U;
+static volatile uint32_t rs485_rx_taken = 0U;
+static volatile uint32_t rs485_modbus_response_ready = 0U;
+static volatile uint32_t rs485_modbus_no_response = 0U;
+static volatile uint32_t rs485_modbus_frame_error = 0U;
+static volatile uint32_t rs485_tx_send_fail = 0U;
 static volatile uint32_t rs485_tx_done = 0U;
 static volatile uint32_t rs485_errors = 0U;
 
@@ -64,14 +68,23 @@ HAL_StatusTypeDef RS485_StartReceive(void)
 HAL_StatusTypeDef RS485_Init(void)
 {
   HAL_StatusTypeDef status;
+  static const uint8_t run_msg[] = "RS485 RUN\r\n";
 
   rs485_init_calls++;
   rs485_tx_from_init++;
-  status = RS485_Send((const uint8_t *)"RS485 RUN\r\n", 11U);
-  if (status != HAL_OK)
+
+  /* FreeRTOS is not running yet, so do not use event-driven DMA TX here. */
+  RS485_SetTransmitMode();
+  RS485_DirectionSwitchDelay();
+  status = HAL_UART_Transmit(&huart2, (uint8_t *)run_msg, (uint16_t)(sizeof(run_msg) - 1U), 100U);
+  RS485_SetReceiveMode();
+
+  if (status == HAL_OK)
   {
-    status = RS485_StartReceive();
+    rs485_tx_done++;
   }
+
+  status = RS485_StartReceive();
 
   return status;
 }
@@ -129,6 +142,7 @@ HAL_StatusTypeDef RS485_Send(const uint8_t *data, uint16_t size)
 uint8_t RS485_TakeRxFrame(uint8_t *data, uint16_t *size, uint16_t max_size)
 {
   uint16_t frame_size;
+  uint8_t has_frame = 0U;
 
   if ((data == NULL) || (size == NULL))
   {
@@ -147,13 +161,22 @@ uint8_t RS485_TakeRxFrame(uint8_t *data, uint16_t *size, uint16_t max_size)
   {
     frame_size = max_size;
   }
-  memcpy(data, rs485_rx_frame_buffer, frame_size);
+
+  /* The RS485 task owns frame data copying; the RX callback only marks ready. */
+  memcpy(data, rs485_rx_dma_buffer, frame_size);
   rs485_rx_frame_ready = 0U;
   rs485_rx_frame_size = 0U;
+  has_frame = 1U;
   __enable_irq();
 
   *size = frame_size;
-  return 1U;
+  if (has_frame != 0U)
+  {
+    rs485_rx_taken++;
+    (void)RS485_StartReceive();
+  }
+
+  return has_frame;
 }
 
 uint8_t RS485_IsTxBusy(void)
@@ -183,29 +206,37 @@ void RS485_ProcessTxEvent(void)
 void RS485_ProcessRxFrame(void)
 {
   uint16_t rx_size = 0U;
-  int tx_size;
-  RS485_StatusTypeDef status;
+  uint16_t tx_size = 0U;
+  ModbusResult_t modbus_result;
 
   if (rs485_tx_busy != 0U)
   {
     return;
   }
 
-  /* Current debug behavior: one received frame produces one text response. */
-  if (RS485_TakeRxFrame(rs485_echo_buffer, &rx_size, sizeof(rs485_echo_buffer)) != 0U)
+  if (RS485_TakeRxFrame(rs485_rx_work_buffer, &rx_size, sizeof(rs485_rx_work_buffer)) != 0U)
   {
-    RS485_GetStatus(&status);
-    tx_size = snprintf((char *)rs485_echo_buffer,
-                       sizeof(rs485_echo_buffer),
-                       "FRAME:%u LEN:%u TOTAL:%u OV:%u\r\n",
-                       (unsigned int)status.rx_events,
-                       rx_size,
-                       (unsigned int)status.rx_bytes,
-                       (unsigned int)status.rx_overwrite);
-    if ((tx_size > 0) && ((uint32_t)tx_size < sizeof(rs485_echo_buffer)))
+    modbus_result = Modbus_ProcessRequest(rs485_rx_work_buffer,
+                                          rx_size,
+                                          rs485_response_buffer,
+                                          sizeof(rs485_response_buffer),
+                                          &tx_size);
+    if ((modbus_result == MODBUS_RESULT_RESPONSE_READY) && (tx_size > 0U))
     {
       rs485_tx_from_echo_task++;
-      (void)RS485_SendDMA(rs485_echo_buffer, (uint16_t)tx_size);
+      rs485_modbus_response_ready++;
+      if (RS485_Send(rs485_response_buffer, tx_size) != HAL_OK)
+      {
+        rs485_tx_send_fail++;
+      }
+    }
+    else if (modbus_result == MODBUS_RESULT_NO_RESPONSE)
+    {
+      rs485_modbus_no_response++;
+    }
+    else
+    {
+      rs485_modbus_frame_error++;
     }
   }
 }
@@ -234,6 +265,11 @@ void RS485_GetStatus(RS485_StatusTypeDef *status)
   status->rx_events = rs485_rx_events;
   status->rx_bytes = rs485_rx_bytes;
   status->rx_overwrite = rs485_rx_overwrite;
+  status->rx_taken = rs485_rx_taken;
+  status->modbus_response_ready = rs485_modbus_response_ready;
+  status->modbus_no_response = rs485_modbus_no_response;
+  status->modbus_frame_error = rs485_modbus_frame_error;
+  status->tx_send_fail = rs485_tx_send_fail;
   status->tx_done = rs485_tx_done;
   status->errors = rs485_errors;
   status->tx_busy = rs485_tx_busy;
@@ -259,19 +295,14 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef *huart, uint16_t Size)
         rs485_rx_overwrite++;
       }
 
-      memcpy(rs485_rx_frame_buffer, rs485_rx_dma_buffer, frame_size);
+      /* Callback only records frame metadata; the RS485 task copies bytes. */
       rs485_rx_frame_size = frame_size;
       rs485_rx_frame_ready = 1U;
       rs485_rx_events++;
       rs485_rx_bytes += frame_size;
 
-      /* Wake RS485 task; protocol parsing stays outside the ISR callback. */
+      /* Wake RS485 task; copying and protocol parsing stay outside the callback. */
       RS485_TaskNotifyRxFrame();
-    }
-
-    if (rs485_tx_busy == 0U)
-    {
-      (void)RS485_StartReceive();
     }
   }
 }
@@ -282,13 +313,8 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
   {
     /* In DMA normal mode HAL calls this after USART TC, not just DMA TC. */
     rs485_tx_cplt_callback++;
-    rs485_tx_busy = 0U;
-    rs485_tx_done++;
-    RS485_SetReceiveMode();
-    RS485_DirectionSwitchDelay();
-    (void)RS485_StartReceive();
 
-    /* TE counter is incremented from this TC-complete notification path. */
+    /* The task owns post-TC processing: clear busy, switch DE, restart RX. */
     RS485_TaskNotifyTxComplete();
   }
 }

@@ -22,9 +22,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include "../../task/inc/default_task.h"
-#include "../../task/inc/rs485_task.h"
-#include "../../task/inc/lcd_task.h"
+#include "../../task/inc/app_task.h"
 
 /* USER CODE END Includes */
 
@@ -53,20 +51,6 @@ const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
   .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 128 * 4
-};
-/* Definitions for rs485Task */
-osThreadId_t rs485TaskHandle;
-const osThreadAttr_t rs485Task_attributes = {
-  .name = "rs485Task",
-  .priority = (osPriority_t) osPriorityBelowNormal,
-  .stack_size = 512 * 4
-};
-/* Definitions for lcdTask */
-osThreadId_t lcdTaskHandle;
-const osThreadAttr_t lcdTask_attributes = {
-  .name = "lcdTask",
-  .priority = (osPriority_t) osPriorityLow,
-  .stack_size = 512 * 4
 };
 
 /* Private function prototypes -----------------------------------------------*/
@@ -102,14 +86,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of defaultTask */
   defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
 
-  /* creation of rs485Task */
-  rs485TaskHandle = osThreadNew(StartRs485Task, NULL, &rs485Task_attributes);
-
-  /* creation of lcdTask */
-  lcdTaskHandle = osThreadNew(StartLcdTask, NULL, &lcdTask_attributes);
-
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  AppTask_Init();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */
@@ -117,8 +96,27 @@ void MX_FREERTOS_Init(void) {
   /* USER CODE END RTOS_EVENTS */
 
 }
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+* @brief Function implementing the defaultTask thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+  /* USER CODE BEGIN defaultTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END defaultTask */
+}
+
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
+/* Business tasks are created by AppTask_Init() from the USER CODE RTOS_THREADS block. */
 
 /* USER CODE END Application */
 

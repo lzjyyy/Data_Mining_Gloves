@@ -337,7 +337,7 @@
               <MiscControls></MiscControls>
               <Define>USE_HAL_DRIVER,STM32H562xx</Define>
               <Undefine></Undefine>
-              <IncludePath>../Core/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H5xx/Include;../Drivers/CMSIS/Include;../BSP/LCD_ST7789;../APP/timers_app;../Middlewares/Third_Party/FreeRTOS/Source/include/;../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/;../Middlewares/Third_Party/CMSIS/RTOS2/Include/;..\task\inc</IncludePath>
+              <IncludePath>../Core/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc;../Drivers/STM32H5xx_HAL_Driver/Inc/Legacy;../Drivers/CMSIS/Device/ST/STM32H5xx/Include;../Drivers/CMSIS/Include;../BSP/LCD_ST7789;../APP/timers_app;../APP/lcd_app;../APP/rs485_app;../APP/modbus_app;../Middlewares/Third_Party/FreeRTOS/Source/include/;../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM33_NTZ/non_secure/;../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/;../Middlewares/Third_Party/CMSIS/RTOS2/Include/;../task/inc</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -859,14 +859,52 @@
             <File>
               <FileName>RS485_uasrt.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\APP\timers_app\RS485_uasrt.c</FilePath>
+              <FilePath>..\APP\rs485_app\RS485_uasrt.c</FilePath>
             </File>
             <File>
               <FileName>LCD_DMA_APP.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\APP\timers_app\LCD_DMA_APP.c</FilePath>
+              <FilePath>..\APP\lcd_app\LCD_DMA_APP.c</FilePath>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>Modbus</GroupName>
+          <Files>
+            <File>
+              <FileName>modbus_frame.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\modbus_app\modbus_frame.c</FilePath>
+            </File>
+            <File>
+              <FileName>modbus_time_sync.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\APP\modbus_app\modbus_time_sync.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>Task</GroupName>
+          <Files>
+            <File>
+              <FileName>app_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\task\src\app_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>lcd_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\task\src\lcd_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>rs485_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\task\src\rs485_task.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
         <Group>
           <GroupName>Middlewares/RTOS2/CMSIS/RTOS2/Core/TZ_Non_Supported</GroupName>
@@ -1631,29 +1669,6 @@
               </FileOption>
             </File>
           </Files>
-        </Group>
-        <Group>
-          <GroupName>Task</GroupName>
-          <Files>
-            <File>
-              <FileName>default_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\task\src\default_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>lcd_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\task\src\lcd_task.c</FilePath>
-            </File>
-            <File>
-              <FileName>rs485_task.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\task\src\rs485_task.c</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

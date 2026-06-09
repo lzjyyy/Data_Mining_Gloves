@@ -1,7 +1,6 @@
 #include "main.h"
 #include "lcd.h"
 #include "lcd_port.h"
-#include "LCD_DMA_APP.h"
 
 /************ Hardware Port ************/
 void lcd_delay(uint32_t delay)
@@ -19,8 +18,9 @@ static void lcd_spi_transmit(void* spi, uint8_t* data, uint32_t len)
 {
     while(spi && len) {
         if(len > 0xffff) {
-            len -= 0xffff;
             HAL_SPI_Transmit(spi, data, 0xffff, 0xffff);
+            data += 0xffff;
+            len -= 0xffff;
         } else {
             HAL_SPI_Transmit(spi, data, len, 0xffff);
             break;
@@ -68,7 +68,7 @@ void lcd_write_bulk(lcd_io* lcdio, uint8_t* data, uint32_t len)
 {
     lcd_io_dc(lcdio, 1);
     if(lcdio->spi && data && len) {
-        (void)LCD_DMA_APP_Transmit((SPI_HandleTypeDef *)lcdio->spi, (uint8_t *)data, len);
+        lcd_spi_transmit(lcdio->spi, data, len);
     }
 }
 
