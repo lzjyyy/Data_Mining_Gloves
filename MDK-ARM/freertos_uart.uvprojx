@@ -870,6 +870,11 @@
               <FileType>1</FileType>
               <FilePath>..\task\src\slave_time_test_task.c</FilePath>
             </File>
+            <File>
+              <FileName>sync_output_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\task\src\sync_output_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

@@ -6,6 +6,7 @@
 #include "RS485_uasrt.h"
 #include "../inc/rs485_task.h"
 #include "timers_APP.h"
+#include "../inc/sync_output_task.h"
 
 extern lcd lcd_desc;
 extern RTC_HandleTypeDef hrtc;
@@ -59,7 +60,7 @@ void StartLcdTask(void *argument)
     RS485_TaskGetEventCounts(&rs485_task_rx_events, &rs485_task_tx_events);
 
     lcd_print(&lcd_desc, 8, 85, "STATE:%s IRQ:%lu CB:%lu      ",
-              (rs485_status.tx_busy != 0U) ? "TX" : "RX",
+              (SyncOutput_IsRunning() != 0U) ? "RUN" : "STOP",
               rs485_status.tx_dma_irq,
               rs485_status.tx_cplt_callback);
     lcd_print(&lcd_desc, 8, 105, "SYNC O:%lu F:%lu RD O:%lu F:%lu   ",
@@ -71,10 +72,10 @@ void StartLcdTask(void *argument)
               slave_time_test_interval_ok,
               slave_time_test_interval_fail,
               (uint32_t)slave_time_test_last_delta_us);
-    lcd_print(&lcd_desc, 8, 145, "RE:%lu TE:%lu RX:%lu TD:%lu      ",
-              rs485_task_rx_events,
+    lcd_print(&lcd_desc, 8, 145, "KEY:%lu PULSE:%lu TE:%lu RX:%lu      ",
+              SyncOutput_GetToggleCount(),
+              SyncOutput_GetPulseCount(),
               rs485_task_tx_events,
-              rs485_status.rx_events,
-              rs485_status.tx_done);
+              rs485_status.rx_events);
   }
 }

@@ -57,6 +57,9 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define syctime_key_Pin GPIO_PIN_13
+#define syctime_key_GPIO_Port GPIOC
+#define syctime_key_EXTI_IRQn EXTI13_IRQn
 #define LCD_CS_Pin GPIO_PIN_4
 #define LCD_CS_GPIO_Port GPIOA
 #define LCD_SCK_Pin GPIO_PIN_5
@@ -67,9 +70,8 @@ void Error_Handler(void);
 #define LCD_MOSI_GPIO_Port GPIOA
 #define RS485_EN_Pin GPIO_PIN_4
 #define RS485_EN_GPIO_Port GPIOC
-#define Time_tongbu_Pin GPIO_PIN_8
-#define Time_tongbu_GPIO_Port GPIOA
-#define Time_tongbu_EXTI_IRQn EXTI8_IRQn
+#define time_tongbu_Pin GPIO_PIN_8
+#define time_tongbu_GPIO_Port GPIOA
 #define LCD_BLK_Pin GPIO_PIN_4
 #define LCD_BLK_GPIO_Port GPIOB
 #define LCD_RST_Pin GPIO_PIN_5

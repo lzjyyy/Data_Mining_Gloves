@@ -166,20 +166,6 @@ void DebugMon_Handler(void)
 /******************************************************************************/
 
 /**
-  * @brief This function handles EXTI Line8 interrupt.
-  */
-void EXTI8_IRQHandler(void)
-{
-  /* USER CODE BEGIN EXTI8_IRQn 0 */
-
-  /* USER CODE END EXTI8_IRQn 0 */
-  HAL_GPIO_EXTI_IRQHandler(Time_tongbu_Pin);
-  /* USER CODE BEGIN EXTI8_IRQn 1 */
-
-  /* USER CODE END EXTI8_IRQn 1 */
-}
-
-/**
   * @brief This function handles GPDMA1 Channel 1 global interrupt.
   */
 void GPDMA1_Channel1_IRQHandler(void)
@@ -192,6 +178,20 @@ void GPDMA1_Channel1_IRQHandler(void)
   RS485_OnTxDmaIrq();
 
   /* USER CODE END GPDMA1_Channel1_IRQn 1 */
+}
+
+/**
+  * @brief This function handles EXTI Line13 interrupt.
+  */
+void EXTI13_IRQHandler(void)
+{
+  /* USER CODE BEGIN EXTI13_IRQn 0 */
+
+  /* USER CODE END EXTI13_IRQn 0 */
+  HAL_GPIO_EXTI_IRQHandler(syctime_key_Pin);
+  /* USER CODE BEGIN EXTI13_IRQn 1 */
+
+  /* USER CODE END EXTI13_IRQn 1 */
 }
 
 /**

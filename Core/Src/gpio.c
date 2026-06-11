@@ -53,6 +53,7 @@ void MX_GPIO_Init(void)
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, LCD_CS_Pin|LCD_DC_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(time_tongbu_GPIO_Port, time_tongbu_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(RS485_EN_GPIO_Port, RS485_EN_Pin, GPIO_PIN_RESET);
@@ -60,8 +61,14 @@ void MX_GPIO_Init(void)
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, LCD_BLK_Pin|LCD_RST_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : LCD_CS_Pin LCD_DC_Pin */
-  GPIO_InitStruct.Pin = LCD_CS_Pin|LCD_DC_Pin;
+  /*Configure GPIO pin : syctime_key_Pin */
+  GPIO_InitStruct.Pin = syctime_key_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  HAL_GPIO_Init(syctime_key_GPIO_Port, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : LCD_CS_Pin LCD_DC_Pin time_tongbu_Pin */
+  GPIO_InitStruct.Pin = LCD_CS_Pin|LCD_DC_Pin|time_tongbu_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -74,12 +81,6 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(RS485_EN_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pin : Time_tongbu_Pin */
-  GPIO_InitStruct.Pin = Time_tongbu_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
-  GPIO_InitStruct.Pull = GPIO_PULLUP;
-  HAL_GPIO_Init(Time_tongbu_GPIO_Port, &GPIO_InitStruct);
-
   /*Configure GPIO pins : LCD_BLK_Pin LCD_RST_Pin */
   GPIO_InitStruct.Pin = LCD_BLK_Pin|LCD_RST_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
@@ -88,8 +89,8 @@ void MX_GPIO_Init(void)
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  HAL_NVIC_SetPriority(EXTI8_IRQn, 5, 0);
-  HAL_NVIC_EnableIRQ(EXTI8_IRQn);
+  HAL_NVIC_SetPriority(EXTI13_IRQn, 5, 0);
+  HAL_NVIC_EnableIRQ(EXTI13_IRQn);
 
 }
 

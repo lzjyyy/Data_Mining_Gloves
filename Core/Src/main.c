@@ -33,6 +33,7 @@
 #include "logo.h"
 #include "RS485_uasrt.h"
 #include "timers_APP.h"
+#include "../../task/inc/sync_output_task.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -245,6 +246,11 @@ void PeriphCommonClock_Config(void)
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
   (void)GPIO_Pin;
+}
+
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
+{
+  SyncOutput_OnButtonExti(GPIO_Pin);
 }
 
 /* USER CODE END 4 */

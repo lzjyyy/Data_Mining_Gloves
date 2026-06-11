@@ -4,6 +4,7 @@
 #include "modbus_master.h"
 #include "modbus_registers.h"
 #include "timers_APP.h"
+#include "../inc/sync_output_task.h"
 
 #define SLAVE_TIME_TEST_ADDR                 MODBUS_SLAVE_ADDR_DEFAULT
 #define SLAVE_TIME_TEST_INITIAL_UTC_US       1710000000000000ULL
@@ -42,25 +43,49 @@ void StartSlaveTimeTestTask(void *argument)
   uint64_t last_utc_us = 0U;
   uint64_t delta_us;
   uint8_t has_last = 0U;
+  uint8_t was_running = 0U;
+  uint8_t sync_sent = 0U;
 
   (void)argument;
 
   osDelay(300);
 
-  if (ModbusMaster_WriteU64(SLAVE_TIME_TEST_ADDR,
-                            REG_TIME_SYNC_UTC_US,
-                            SLAVE_TIME_TEST_INITIAL_UTC_US,
-                            SLAVE_TIME_TEST_MODBUS_TIMEOUT_MS) == HAL_OK)
-  {
-    slave_time_test_sync_ok++;
-  }
-  else
-  {
-    slave_time_test_sync_fail++;
-  }
-
   for (;;)
   {
+    if (SyncOutput_IsRunning() == 0U)
+    {
+      was_running = 0U;
+      sync_sent = 0U;
+      has_last = 0U;
+      osDelay(20);
+      continue;
+    }
+
+    if (was_running == 0U)
+    {
+      was_running = 1U;
+      has_last = 0U;
+      sync_sent = 0U;
+    }
+
+    if (sync_sent == 0U)
+    {
+      if (ModbusMaster_WriteU64(SLAVE_TIME_TEST_ADDR,
+                                REG_TIME_SYNC_UTC_US,
+                                SLAVE_TIME_TEST_INITIAL_UTC_US,
+                                SLAVE_TIME_TEST_MODBUS_TIMEOUT_MS) == HAL_OK)
+      {
+        slave_time_test_sync_ok++;
+        sync_sent = 1U;
+      }
+      else
+      {
+        slave_time_test_sync_fail++;
+        osDelay(100);
+        continue;
+      }
+    }
+
     if (Timers_APP_TakeSlaveTimeCheckEvent() == 0U)
     {
       osDelay(5);

@@ -4,6 +4,7 @@
 #include "../inc/lcd_task.h"
 #include "../inc/rs485_task.h"
 #include "../inc/slave_time_test_task.h"
+#include "../inc/sync_output_task.h"
 
 static osThreadId_t rs485TaskHandle;
 static const osThreadAttr_t rs485Task_attributes = {
@@ -26,6 +27,13 @@ static const osThreadAttr_t slaveTimeTestTask_attributes = {
   .stack_size = 512 * 4
 };
 
+static osThreadId_t syncOutputTaskHandle;
+static const osThreadAttr_t syncOutputTask_attributes = {
+  .name = "syncOutput",
+  .priority = (osPriority_t) osPriorityNormal,
+  .stack_size = 256 * 4
+};
+
 static uint8_t rs485TaskCreated = 0U;
 static uint8_t lcdTaskCreated = 0U;
 
@@ -45,6 +53,7 @@ void AppTask_Init(void)
   lcdTaskCreated = (lcdTaskHandle != NULL) ? 1U : 0U;
   app_task_lcd_create_ok = lcdTaskCreated;
 
+  syncOutputTaskHandle = osThreadNew(StartSyncOutputTask, NULL, &syncOutputTask_attributes);
   slaveTimeTestTaskHandle = osThreadNew(StartSlaveTimeTestTask, NULL, &slaveTimeTestTask_attributes);
 }
 
