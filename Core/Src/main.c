@@ -122,7 +122,7 @@ int main(void)
   MX_SPI1_Init();
   MX_USART2_UART_Init();
   MX_TIM6_Init();
-  MX_TIM2_Init();
+  MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
   lcd_init_dev(&lcd_desc, LCD_1_47_INCH, LCD_ROTATE_90);
   

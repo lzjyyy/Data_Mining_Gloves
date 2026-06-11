@@ -1,7 +1,7 @@
 # Keil / MDK build outputs
 MDK-ARM/freertos_uart/
 MDK-ARM/build_from_codex.log
-MDK-ARM/*.uvguix.*
+#MDK-ARM/*.uvguix.*
 
 # Keil temporary and generated files
 *.o
@@ -10,10 +10,10 @@ MDK-ARM/*.uvguix.*
 *.lst
 *.lnp
 *.map
-*.axf
-*.elf
-*.hex
-*.bin
+#*.axf
+#*.elf
+#*.hex
+#*.bin
 *.dep
 *.htm
 *.build_log.htm
