@@ -33,7 +33,6 @@
 #include "logo.h"
 #include "RS485_uasrt.h"
 #include "timers_APP.h"
-#include "modbus_time_sync.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -138,11 +137,6 @@ int main(void)
   lcd_print(&lcd_desc, 8, 145, "RTC:---- -- -- --:--:--");
   
   lcd_set_font(&lcd_desc, FONT_1608, YELLOW, BLACK);
-  if (ModbusTimeSync_Init() != HAL_OK)
-  {
-    Error_Handler();
-  }
-
   if (RS485_Init() != HAL_OK)
   {
     Error_Handler();
@@ -250,7 +244,7 @@ void PeriphCommonClock_Config(void)
 /* USER CODE BEGIN 4 */
 void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
 {
-  ModbusTimeSync_OnGpioFalling(GPIO_Pin);
+  (void)GPIO_Pin;
 }
 
 /* USER CODE END 4 */
@@ -273,7 +267,6 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
     HAL_IncTick();
   }
   /* USER CODE BEGIN Callback 1 */
-  ModbusTimeSync_OnTimPeriodElapsed(htim);
   Timers_APP_OnPeriodElapsed(htim);
 
   /* USER CODE END Callback 1 */

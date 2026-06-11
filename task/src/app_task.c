@@ -3,6 +3,7 @@
 #include "cmsis_os2.h"
 #include "../inc/lcd_task.h"
 #include "../inc/rs485_task.h"
+#include "../inc/slave_time_test_task.h"
 
 static osThreadId_t rs485TaskHandle;
 static const osThreadAttr_t rs485Task_attributes = {
@@ -15,6 +16,13 @@ static osThreadId_t lcdTaskHandle;
 static const osThreadAttr_t lcdTask_attributes = {
   .name = "lcdTask",
   .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 512 * 4
+};
+
+static osThreadId_t slaveTimeTestTaskHandle;
+static const osThreadAttr_t slaveTimeTestTask_attributes = {
+  .name = "slaveTimeTest",
+  .priority = (osPriority_t) osPriorityNormal,
   .stack_size = 512 * 4
 };
 
@@ -36,6 +44,8 @@ void AppTask_Init(void)
   lcdTaskHandle = osThreadNew(StartLcdTask, NULL, &lcdTask_attributes);
   lcdTaskCreated = (lcdTaskHandle != NULL) ? 1U : 0U;
   app_task_lcd_create_ok = lcdTaskCreated;
+
+  slaveTimeTestTaskHandle = osThreadNew(StartSlaveTimeTestTask, NULL, &slaveTimeTestTask_attributes);
 }
 
 void AppTask_GetCreateStatus(uint8_t *rs485_created, uint8_t *lcd_created)

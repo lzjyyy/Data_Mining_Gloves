@@ -9,6 +9,13 @@
 
 extern lcd lcd_desc;
 extern RTC_HandleTypeDef hrtc;
+extern volatile uint32_t slave_time_test_sync_ok;
+extern volatile uint32_t slave_time_test_sync_fail;
+extern volatile uint32_t slave_time_test_read_ok;
+extern volatile uint32_t slave_time_test_read_fail;
+extern volatile uint32_t slave_time_test_interval_ok;
+extern volatile uint32_t slave_time_test_interval_fail;
+extern volatile uint64_t slave_time_test_last_delta_us;
 
 volatile uint32_t lcd_task_entry_count = 0U;
 volatile uint32_t lcd_task_loop_count = 0U;
@@ -55,23 +62,19 @@ void StartLcdTask(void *argument)
               (rs485_status.tx_busy != 0U) ? "TX" : "RX",
               rs485_status.tx_dma_irq,
               rs485_status.tx_cplt_callback);
-    lcd_print(&lcd_desc, 8, 105, "REQ:%lu RX:%lu TD:%lu OV:%lu      ",
-              rs485_status.tx_requests,
-              rs485_status.rx_events,
-              rs485_status.tx_done,
-              rs485_status.rx_overwrite);
-    lcd_print(&lcd_desc, 8, 125, "RE:%lu TE:%lu MR:%lu MN:%lu MF:%lu   ",
+    lcd_print(&lcd_desc, 8, 105, "SYNC O:%lu F:%lu RD O:%lu F:%lu   ",
+              slave_time_test_sync_ok,
+              slave_time_test_sync_fail,
+              slave_time_test_read_ok,
+              slave_time_test_read_fail);
+    lcd_print(&lcd_desc, 8, 125, "INTV O:%lu F:%lu D:%lu us       ",
+              slave_time_test_interval_ok,
+              slave_time_test_interval_fail,
+              (uint32_t)slave_time_test_last_delta_us);
+    lcd_print(&lcd_desc, 8, 145, "RE:%lu TE:%lu RX:%lu TD:%lu      ",
               rs485_task_rx_events,
               rs485_task_tx_events,
-              rs485_status.modbus_response_ready,
-              rs485_status.modbus_no_response,
-              rs485_status.modbus_frame_error);
-    lcd_print(&lcd_desc, 8, 145, "RTC:20%02d-%02d-%02d %02d:%02d:%02d",
-              RTC_DateStruct.Year,
-              RTC_DateStruct.Month,
-              RTC_DateStruct.Date,
-              RTC_TimeStruct.Hours,
-              RTC_TimeStruct.Minutes,
-              RTC_TimeStruct.Seconds);
+              rs485_status.rx_events,
+              rs485_status.tx_done);
   }
 }

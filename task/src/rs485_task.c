@@ -71,10 +71,7 @@ void StartRs485Task(void *argument)
         RS485_ProcessTxEvent();
       }
 
-      if ((flags & RS485_TASK_EVT_RX_FRAME) != 0U)
-      {
-        RS485_ProcessRxFrame();
-      }
+      (void)(flags & RS485_TASK_EVT_RX_FRAME);
     }
   }
 }

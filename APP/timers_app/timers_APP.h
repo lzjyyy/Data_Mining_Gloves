@@ -9,6 +9,7 @@ extern "C" {
 
 void Timers_APP_Init(void);
 uint8_t Timers_APP_TakeLcdRefreshEvent(void);
+uint8_t Timers_APP_TakeSlaveTimeCheckEvent(void);
 void Timers_APP_OnPeriodElapsed(TIM_HandleTypeDef *htim);
 
 #ifdef __cplusplus
