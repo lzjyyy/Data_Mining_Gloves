@@ -440,41 +440,51 @@ bit15 = IMU15 状态
 读取范围：
 
 ```plain
-起始寄存器：0x2084
-寄存器数量：4
+起始寄存器：0x2088
+寄存器数量：9
 ```
 
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x84] [0x00 0x04] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x88] [0x00 0x09] [CRC_L] [CRC_H]
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x08]
+[SlaveAddr] [0x03] [0x12]
 [Data0_H Data0_L]
 [Data1_H Data1_L]
 [Data2_H Data2_L]
 [Data3_H Data3_L]
+[Data4_H Data4_L]
+[Data5_H Data5_L]
+[Data6_H Data6_L]
+[Data7_H Data7_L]
+[Data8_H Data8_L]
 [CRC_L] [CRC_H]
 ```
 
 读取内容：
 
 ```c
-REG_R_STATUS_START      0x2084
-REG_R_STATUS_END        0x2087
+REG_R_STATUS_START      0x2088
+REG_R_STATUS_END        0x2090
 ```
 
 状态位分布：
 
 ```plain
-0x2084：R0  ~ R15  状态位
-0x2085：R16 ~ R31  状态位
-0x2086：R32 ~ R47  状态位
-0x2087：R48 ~ R63  状态位
+0x2088：R0   ~ R15   状态位
+0x2089：R16  ~ R31   状态位
+0x208A：R32  ~ R47   状态位
+0x208B：R48  ~ R63   状态位
+0x208C：R64  ~ R79   状态位
+0x208D：R80  ~ R95   状态位
+0x208E：R96  ~ R111  状态位
+0x208F：R112 ~ R127  状态位
+0x2090：R128 ~ R131  状态位，bit4 ~ bit15 保留为 0
 ```
 
 状态位含义：
@@ -605,9 +615,9 @@ UTC_Reg3 = bit[63:48]
 
 ---
 
-## 5. IMU 校准任务
-### 5.1 开始 IMU 校准
-IMU 校准不需要向从机发送校准命令。主机进入本地校准流程后，通过语音或界面提示用户动作，并持续读取 IMU 数据用于计算 Offset。
+## 5. IMU 与关节角度校准任务
+### 5.1 开始 IMU 与关节角度校准
+IMU 校准不需要向从机发送校准命令。主机进入本地校准流程后，通过语音或界面提示用户动作，并持续读取 IMU 数据和关节角度数据用于计算 Offset 与动作状态。
 
 ---
 
@@ -657,14 +667,125 @@ Frame 2：IMU float[120] ~ float[159]
 
 ---
 
-### 5.4 记录 IMU 校准步骤数据
+### 5.4 关节角度校准说明
+关节角度由 IMU 姿态解算得到，不直接来自独立角度传感器。因此关节角度校准的对象不是“关节角度数据本身”，而是 IMU 到关节角度解算链路中的零点、安装偏差和映射参数。
+
+误差来源主要包括：
+
+```plain
+1. IMU 自身零偏，例如陀螺仪零偏、加速度计零偏；
+2. IMU 安装方向偏差，即传感器坐标系与手指/手掌坐标系不完全一致；
+3. 初始姿态零点偏差，例如五指自然伸直时各关节应定义为 0 度或标准初始角度；
+4. 关节角度映射模型误差，即多个 IMU 姿态转换为 21 个关节角度时的模型偏差；
+5. 个体差异和佩戴差异，例如手型、绑带松紧和传感器位置变化。
+```
+
+建议校准流程：
+
+```plain
+1. 先完成 IMU 姿态/零偏校准；
+2. 用户保持标准初始手势，例如手掌平放、五指自然伸直；
+3. 主机读取当前解算出的 21 个关节角度 `joint_angle_raw[21]`；
+4. 根据标准手势期望角度 `expected_angle[21]` 计算零点偏移；
+5. 运行时输出校准后的关节角度。
+```
+
+基础零点校准公式：
+
+```plain
+joint_angle_offset[i] = joint_angle_raw[i] - expected_angle[i]
+joint_angle[i] = joint_angle_raw[i] - joint_angle_offset[i]
+```
+
+若后续需要更高精度，可增加比例系数或非线性映射：
+
+```plain
+joint_angle[i] = scale[i] * joint_angle_raw[i] + offset[i]
+```
+
+第一版建议先采用 offset 零点校准，简单可靠，便于调试和现场复现。
+
+---
+
+### 5.5 关节角度 Offset 寄存器区
+关节角度 offset 区位于关节角度数据区 `0x1FD6` 前面的 84 byte，即 42 个 Modbus 寄存器，因此关节角度 offset 起始寄存器为：
+
+```plain
+0x1FD6 - 42 regs = 0x1FAC
+```
+
+读取范围：
+
+```plain
+起始寄存器：0x1FAC
+寄存器数量：42
+```
+
+请求帧：
+
+```plain
+[SlaveAddr] [0x03] [0x1F 0xAC] [0x00 0x2A] [CRC_L] [CRC_H]
+```
+
+对应：
+
+```plain
+0x1FAC ~ 0x1FD5：joint_angle_offset[0] ~ joint_angle_offset[20]，float32，共 42 regs
+```
+
+保存关节角度 offset 时，主机可使用 `0x10` 写多个寄存器：
+
+```plain
+[SlaveAddr] [0x10] [0x1F 0xAC] [0x00 0x2A] [0x54]
+[OffsetReg0_H OffsetReg0_L]
+[OffsetReg1_H OffsetReg1_L]
+...
+[OffsetReg41_H OffsetReg41_L]
+[CRC_L] [CRC_H]
+```
+
+从机运行时根据该 offset 输出校准后的关节角度：
+
+```plain
+joint_angle[i] = joint_angle_raw[i] - joint_angle_offset[i]
+```
+
+---
+
+### 5.6 关节角度数据寄存器区
+关节角度数据区起始寄存器仍为 `0x1FD6`，用于返回从机运行时输出的 21 个关节角度。
+
+读取范围：
+
+```plain
+起始寄存器：0x1FD6
+寄存器数量：42
+```
+
+请求帧：
+
+```plain
+[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x2A] [CRC_L] [CRC_H]
+```
+
+对应：
+
+```plain
+0x1FD6 ~ 0x1FFF：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
+```
+
+关节角度数据是运行时输出值，主机不通过该区域写入校准参数；校准参数应写入 `0x1FAC ~ 0x1FD5` 的关节角度 offset 区。
+
+---
+
+### 5.7 记录 IMU 校准步骤数据
 每个动作完成后，主机在本地记录当前动作对应的 IMU 数据快照或统计结果，例如静止均值、姿态初始值、加速度零偏和角速度零偏。
 
 从机只负责返回实时 IMU 数据，不需要接收校准步骤命令，也不需要返回校准 ACK。
 
 ---
 
-### 5.5 保存 IMU 校准参数
+### 5.8 保存 IMU 校准参数
 所有动作完成后，主机根据采样结果计算每个 IMU 的 Offset，并通过功能码 `0x10` 写入 IMU Offset 寄存器区：
 
 ```plain
@@ -702,43 +823,47 @@ i = 0 ~ 15
 
 ## 6. 电阻点阵校准任务
 ### 6.1 开始电阻点阵校准
-电阻点阵校准不需要向从机发送校准命令。主机进入本地校准流程后，提示用户保持无压力状态，并通过读取电阻点阵数据计算零点基准。
+电阻点阵校准不需要向从机发送校准命令。主机进入本地校准流程后，提示用户保持无压力状态，并通过读取电阻点阵 ADC 原始值计算零点基准。
 
 ---
 
 ### 6.2 零点校准
-用户保持无压力状态，主机连续读取电阻点阵数据并在本地计算 64 个电阻点的零点基准。
+用户保持无压力状态，主机连续读取电阻点阵 ADC 原始值并在本地计算 132 个电阻点的零点基准。
 
 ---
 
-### 6.3 主机读取电阻点阵数据
-电阻点阵数据区：
+### 6.3 主机读取电阻点阵 ADC 原始值
+电阻点阵 ADC 原始值区：
 
 ```plain
-0x2000 ~ 0x207F
+0x2000 ~ 0x2083
 ```
 
-拆成 2 帧读取：
+单独读取电阻点阵校准数据时可拆成 3 帧读取：
 
 ```plain
 Frame 0:
-[SlaveAddr] [0x03] [0x20 0x00] [0x00 0x40] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x00] [0x00 0x3C] [CRC_L] [CRC_H]
 
 Frame 1:
-[SlaveAddr] [0x03] [0x20 0x40] [0x00 0x40] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x3C] [0x00 0x3C] [CRC_L] [CRC_H]
+
+Frame 2:
+[SlaveAddr] [0x03] [0x20 0x78] [0x00 0x0C] [CRC_L] [CRC_H]
 ```
 
 对应：
 
 ```plain
-Frame 0：R float[0]  ~ R float[31]
-Frame 1：R float[32] ~ R float[63]
+Frame 0：R_ADC[0]   ~ R_ADC[59]
+Frame 1：R_ADC[60]  ~ R_ADC[119]
+Frame 2：R_ADC[120] ~ R_ADC[131]
 ```
 
 ---
 
 ### 6.4 保存电阻点阵校准参数
-主机在本地保存电阻点阵零点基准，或按后续定义的电阻点阵 Offset 寄存器区写入从机。当前文档未定义电阻点阵 Offset 寄存器区，因此本流程不发送保存命令。
+主机在本地保存 132 个电阻点的 ADC 零点基准。当前文档未定义电阻点阵 Offset 寄存器区，因此本流程不发送保存命令。
 
 ---
 
@@ -944,6 +1069,269 @@ REG_CMD_SEQ   0x0022 = seq
 
 ---
 
+### 7.6 SD 卡数据块存储规则
+SD 卡记录采用固定 `1024 byte` 数据块。每个数据块由 3 个业务子帧、`CRC16` 和末尾分隔符组成。
+
+采用 `1024 byte` 固定块的原因：
+
+```plain
+1. SD 卡常见物理扇区大小为 512 byte；
+2. 1 帧完整采集数据固定为 1024 byte，刚好等于 2 个扇区；
+3. 写入时天然按扇区对齐，便于 FatFs/底层块设备连续写入；
+4. 固定长度记录便于掉电后按块扫描、CRC 校验和快速定位损坏帧；
+5. 每帧长度固定后，文件偏移可直接通过 frame_index × 1024 计算。
+```
+
+#### 7.6.1 子帧格式
+每个业务子帧格式如下：
+
+```plain
+[FrameHead] [DataId] [Payload...] [TimestampUs] [FrameTail]
+```
+
+字段说明：
+
+| 字段 | 长度 | 说明 |
+| --- | --- | --- |
+| `FrameHead` | 1 byte | 固定为 `0xA5` |
+| `DataId` | 1 byte | 数据标识符，区分左右手和数据类型 |
+| `Payload` | N byte | 数据载荷 |
+| `TimestampUs` | 8 byte | uint64，单位 us |
+| `FrameTail` | 1 byte | 固定为 `0x5A` |
+
+#### 7.6.2 数据标识符
+右手标识符：
+
+| 数据类型 | 标识符 |
+| --- | --- |
+| IMU 数据 | `0x01` |
+| 关节角度 | `0x02` |
+| 电阻点阵 / 触觉 ADC 原始值 | `0x03` |
+
+左手标识符为右手标识符加 `0x80`：
+
+| 数据类型 | 标识符 |
+| --- | --- |
+| IMU 数据 | `0x81` |
+| 关节角度 | `0x82` |
+| 电阻点阵 / 触觉 ADC 原始值 | `0x83` |
+
+#### 7.6.3 固定 1024 byte 数据块布局
+单个 SD 数据块布局如下：
+
+```plain
+IMU 子帧：
+    0xA5
+    DataId = 0x01 / 0x81
+    IMU 数据 640 byte
+    IMU timestamp_us 8 byte
+    0x5A
+
+关节角度子帧：
+    0xA5
+    DataId = 0x02 / 0x82
+    关节角度数据 84 byte
+    joint timestamp_us 8 byte
+    0x5A
+
+触觉数据子帧：
+    0xA5
+    DataId = 0x03 / 0x83
+    触觉 / 电阻点阵 ADC 原始值 264 byte
+    tactile timestamp_us 8 byte
+    0x5A
+
+块尾：
+    CRC16_L
+    CRC16_H
+    Separator = 0x00
+```
+
+长度计算：
+
+```plain
+IMU 子帧：      1 + 1 + 640 + 8 + 1 = 651 byte
+关节角度子帧： 1 + 1 +  84 + 8 + 1 =  95 byte
+触觉数据子帧： 1 + 1 + 264 + 8 + 1 = 275 byte
+
+业务数据合计：651 + 95 + 275 = 1021 byte
+CRC16：2 byte
+分隔符：1 byte
+
+SD 数据块总长度：1021 + 2 + 1 = 1024 byte
+```
+
+#### 7.6.4 数据拷贝方式与字节序
+SD 卡数据块中的所有业务数据均通过 `memcpy` 从内存直接拷贝到写入缓冲区，不做逐字段字节翻转。
+
+```plain
+IMU float32[160]：
+    memcpy 640 byte
+
+关节角度 float32[21]：
+    memcpy 84 byte
+
+触觉 / 电阻点阵 ADC uint16[132]：
+    memcpy 264 byte
+
+timestamp_us uint64：
+    memcpy 8 byte
+```
+
+SD 卡记录保存的是运行时关节角度数据；`0x1FAC ~ 0x1FD5` 的关节角度 offset 仅作为校准参数区，不直接作为 SD 关节角度子帧写入。
+
+本系统 MCU 为小端序，因此 SD 卡文件中的 `float32`、`uint16`、`uint64` 均按小端内存布局保存。
+
+解析 SD 卡文件时，上位机应按小端序还原数据：
+
+```plain
+float32：低地址字节为最低有效字节
+uint16：低地址字节为最低有效字节
+uint64：低地址字节为最低有效字节
+```
+
+示例代码：
+
+```c
+#include <stdint.h>
+#include <string.h>
+
+#define SD_LOG_BLOCK_SIZE          1024U
+#define SD_LOG_CONTENT_SIZE        1021U
+#define SD_LOG_FRAME_HEAD          0xA5U
+#define SD_LOG_FRAME_TAIL          0x5AU
+#define SD_LOG_SEPARATOR           0x00U
+
+#define SD_LOG_ID_RIGHT_IMU        0x01U
+#define SD_LOG_ID_RIGHT_JOINT      0x02U
+#define SD_LOG_ID_RIGHT_TACTILE    0x03U
+#define SD_LOG_ID_LEFT_IMU         0x81U
+#define SD_LOG_ID_LEFT_JOINT       0x82U
+#define SD_LOG_ID_LEFT_TACTILE     0x83U
+
+static uint16_t SdLog_Crc16(const uint8_t *data, uint32_t len)
+{
+  uint16_t crc = 0xFFFFU;
+
+  for (uint32_t i = 0U; i < len; i++)
+  {
+    crc ^= data[i];
+    for (uint8_t bit = 0U; bit < 8U; bit++)
+    {
+      if ((crc & 0x0001U) != 0U)
+      {
+        crc = (uint16_t)((crc >> 1) ^ 0xA001U);
+      }
+      else
+      {
+        crc >>= 1;
+      }
+    }
+  }
+
+  return crc;
+}
+
+static uint32_t SdLog_AppendSubFrame(uint8_t *block,
+                                     uint32_t offset,
+                                     uint8_t data_id,
+                                     const void *payload,
+                                     uint32_t payload_len,
+                                     const uint64_t *timestamp_us)
+{
+  block[offset++] = SD_LOG_FRAME_HEAD;
+  block[offset++] = data_id;
+
+  memcpy(&block[offset], payload, payload_len);
+  offset += payload_len;
+
+  memcpy(&block[offset], timestamp_us, sizeof(*timestamp_us));
+  offset += (uint32_t)sizeof(*timestamp_us);
+
+  block[offset++] = SD_LOG_FRAME_TAIL;
+
+  return offset;
+}
+
+void SdLog_BuildBlock(uint8_t block[SD_LOG_BLOCK_SIZE],
+                      uint8_t is_left_hand,
+                      const float imu_data[160],
+                      uint64_t imu_timestamp_us,
+                      const float joint_angle[21],
+                      uint64_t joint_timestamp_us,
+                      const uint16_t tactile_adc[132],
+                      uint64_t tactile_timestamp_us)
+{
+  uint32_t offset = 0U;
+  uint16_t crc;
+  uint8_t imu_id = is_left_hand ? SD_LOG_ID_LEFT_IMU : SD_LOG_ID_RIGHT_IMU;
+  uint8_t joint_id = is_left_hand ? SD_LOG_ID_LEFT_JOINT : SD_LOG_ID_RIGHT_JOINT;
+  uint8_t tactile_id = is_left_hand ? SD_LOG_ID_LEFT_TACTILE : SD_LOG_ID_RIGHT_TACTILE;
+
+  offset = SdLog_AppendSubFrame(block,
+                                offset,
+                                imu_id,
+                                imu_data,
+                                160U * sizeof(float),
+                                &imu_timestamp_us);
+
+  offset = SdLog_AppendSubFrame(block,
+                                offset,
+                                joint_id,
+                                joint_angle,
+                                21U * sizeof(float),
+                                &joint_timestamp_us);
+
+  offset = SdLog_AppendSubFrame(block,
+                                offset,
+                                tactile_id,
+                                tactile_adc,
+                                132U * sizeof(uint16_t),
+                                &tactile_timestamp_us);
+
+  /* offset should be 1021 here. */
+  crc = SdLog_Crc16(block, SD_LOG_CONTENT_SIZE);
+  block[offset++] = (uint8_t)(crc & 0xFFU);
+  block[offset++] = (uint8_t)(crc >> 8);
+  block[offset++] = SD_LOG_SEPARATOR;
+}
+```
+
+CRC 采用 Modbus RTU CRC16 算法，低字节在前。CRC 覆盖范围为前 `1021 byte`，即 3 个完整业务子帧；不包含最后的 `CRC16_L CRC16_H` 和 `Separator`。
+
+末尾分隔符固定为：
+
+```plain
+Separator = 0x00
+```
+
+#### 7.6.5 SD 卡容量估算
+按高频采集 `100 Hz` 计算：
+
+```plain
+单帧大小：1024 byte
+采样频率：100 frame/s
+每秒数据量：1024 × 100 = 102400 byte/s
+每小时数据量：102400 × 3600 = 368640000 byte ≈ 351.56 MiB
+每天 8 小时数据量：368640000 × 8 = 2949120000 byte ≈ 2.95 GB ≈ 2.75 GiB
+```
+
+按 SD 卡厂家常用十进制容量估算：
+
+| SD 卡容量 | 每天 8 小时采集 | 理论可保存时长 |
+| --- | --- | --- |
+| 16 GB | 约 2.95 GB/day | 约 5.4 天 |
+| 32 GB | 约 2.95 GB/day | 约 10.8 天 |
+
+考虑文件系统元数据、坏块预留、实际可用容量和日志索引开销，工程上建议按以下保守值规划：
+
+| SD 卡容量 | 建议按可用时长 |
+| --- | --- |
+| 16 GB | 约 5 天 |
+| 32 GB | 约 10 天 |
+
+---
+
 ## 8. 采集控制任务
 
 采集控制统一使用命令寄存器区下发。主机通过 `REG_CMD` 写入采集命令字，从机执行后更新 `REG_WORK_STATE`，主机通过读取 `REG_WORK_STATE` 确认采集状态。
@@ -1070,7 +1458,7 @@ REG_CMD_SEQ   0x0022 = seq
 ---
 
 ## 9. 高频数据交互任务
-采集任务开启后，主机以 100 Hz 周期读取 5 帧数据。
+采集任务开启后，主机以 100 Hz 周期读取 6 帧数据。
 
 ### 9.1 高频数据内容
 ```plain
@@ -1079,17 +1467,22 @@ IMU 数据：
     320 个寄存器
     640 byte
 
-电阻点阵数据：
-    64 个 float
-    128 个寄存器
-    256 byte
+关节角度数据：
+    21 个 float
+    42 个寄存器
+    84 byte
+
+电阻点阵 ADC 原始值：
+    132 个 uint16
+    132 个寄存器
+    264 byte
 
 总计：
-    448 个寄存器
-    896 byte
+    494 个寄存器
+    988 byte
 ```
 
-### 9.2 高频数据 5 帧读取表
+### 9.2 高频数据 6 帧读取表
 ```c
 typedef struct
 {
@@ -1097,18 +1490,19 @@ typedef struct
     uint16_t reg_count;
 } ModbusReadSegment_t;
 
-static const ModbusReadSegment_t g_high_rate_segments[5] =
+static const ModbusReadSegment_t g_high_rate_segments[6] =
 {
-    {0x1000, 120},   // IMU float[0]   ~ float[59]
-    {0x1078, 120},   // IMU float[60]  ~ float[119]
-    {0x10F0,  80},   // IMU float[120] ~ float[159]
-    {0x2000,  64},   // R float[0]     ~ R float[31]
-    {0x2040,  64},   // R float[32]    ~ R float[63]
+    {0x1000, 120},   // IMU float[0]    ~ float[59]
+    {0x1078, 120},   // IMU float[60]   ~ float[119]
+    {0x10F0,  80},   // IMU float[120]  ~ float[159]
+    {0x1FD6,  54},   // Joint angle[0]  ~ angle[20]  + R_ADC[0]  ~ R_ADC[11]
+    {0x200C,  60},   // R_ADC[12]       ~ R_ADC[71]
+    {0x2048,  60},   // R_ADC[72]       ~ R_ADC[131]
 };
 ```
 
 ### 9.3 高频读取请求帧
-采集任务开始后，主机以 100 Hz 周期读取 5 帧高频数据。读取功能码统一为 `0x03`，即读取保持寄存器。
+采集任务开始后，主机以 100 Hz 周期读取 6 帧高频数据。读取功能码统一为 `0x03`，即读取保持寄存器。
 
 标准 Modbus `0x03` 响应帧格式如下：
 
@@ -1245,98 +1639,135 @@ IMU float[120] ~ IMU float[159]
 
 ---
 
-#### Frame 3：读取电阻点阵 float[0] ~ float[31]
+#### Frame 3：读取 21 个关节角度和前 12 个电阻 ADC 原始值
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x00] [0x00 0x40] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x36] [CRC_L] [CRC_H]
 ```
 
 含义：
 
 ```plain
-起始寄存器：0x2000
-寄存器数量：0x0040 = 64
-数据长度：64 × 2 = 128 byte = 0x80
-对应数据：32 个 float32
+起始寄存器：0x1FD6
+寄存器数量：0x0036 = 54
+数据长度：54 × 2 = 108 byte = 0x6C
+对应数据：21 个 joint angle float32 + 12 个 uint16 ADC
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x80]
-[Reg2000_H Reg2000_L]
-[Reg2001_H Reg2001_L]
+[SlaveAddr] [0x03] [0x6C]
+[Reg1FD6_H Reg1FD6_L]
+[Reg1FD7_H Reg1FD7_L]
 ...
-[Reg203F_H Reg203F_L]
+[Reg200B_H Reg200B_L]
 [CRC_L] [CRC_H]
 ```
 
-对应电阻点阵数据范围：
+对应数据范围：
 
 ```plain
-R float[0] ~ R float[31]
+0x1FD6 ~ 0x1FFF：joint_angle[0]        ~ joint_angle[20]，float32，共 42 regs
+0x2000 ~ 0x200B：R_ADC[0]       ~ R_ADC[11]，uint16，共 12 regs
 ```
 
 ---
 
-#### Frame 4：读取电阻点阵 float[32] ~ float[63]
+#### Frame 4：读取电阻点阵 ADC 原始值 R_ADC[12] ~ R_ADC[71]
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x40] [0x00 0x40] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x0C] [0x00 0x3C] [CRC_L] [CRC_H]
 ```
 
 含义：
 
 ```plain
-起始寄存器：0x2040
-寄存器数量：0x0040 = 64
-数据长度：64 × 2 = 128 byte = 0x80
-对应数据：32 个 float32
+起始寄存器：0x200C
+寄存器数量：0x003C = 60
+数据长度：60 × 2 = 120 byte = 0x78
+对应数据：60 个 uint16 ADC 原始值
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x80]
-[Reg2040_H Reg2040_L]
-[Reg2041_H Reg2041_L]
+[SlaveAddr] [0x03] [0x78]
+[Reg200C_H Reg200C_L]
+[Reg200D_H Reg200D_L]
 ...
-[Reg207F_H Reg207F_L]
+[Reg2047_H Reg2047_L]
 [CRC_L] [CRC_H]
 ```
 
-对应电阻点阵数据范围：
+对应数据范围：
 
 ```plain
-R float[32] ~ R float[63]
+R_ADC[12] ~ R_ADC[71]
 ```
 
 ---
 
-#### 5 帧响应数据长度汇总
+#### Frame 5：读取电阻点阵 ADC 原始值 R_ADC[72] ~ R_ADC[131]
+请求帧：
+
+```plain
+[SlaveAddr] [0x03] [0x20 0x48] [0x00 0x3C] [CRC_L] [CRC_H]
+```
+
+含义：
+
+```plain
+起始寄存器：0x2048
+寄存器数量：0x003C = 60
+数据长度：60 × 2 = 120 byte = 0x78
+对应数据：60 个 uint16 ADC 原始值
+```
+
+回复帧：
+
+```plain
+[SlaveAddr] [0x03] [0x78]
+[Reg2048_H Reg2048_L]
+[Reg2049_H Reg2049_L]
+...
+[Reg2083_H Reg2083_L]
+[CRC_L] [CRC_H]
+```
+
+对应数据范围：
+
+```plain
+R_ADC[72] ~ R_ADC[131]
+```
+
+---
+
+#### 6 帧响应数据长度汇总
 | 帧号 | 起始寄存器 | 寄存器数量 | ByteCount | 数据内容 |
 | --- | --- | --- | --- | --- |
 | Frame 0 | 0x1000 | 120 | 0xF0 / 240 byte | IMU float[0] ~ float[59] |
 | Frame 1 | 0x1078 | 120 | 0xF0 / 240 byte | IMU float[60] ~ float[119] |
 | Frame 2 | 0x10F0 | 80 | 0xA0 / 160 byte | IMU float[120] ~ float[159] |
-| Frame 3 | 0x2000 | 64 | 0x80 / 128 byte | R float[0] ~ float[31] |
-| Frame 4 | 0x2040 | 64 | 0x80 / 128 byte | R float[32] ~ float[63] |
+| Frame 3 | 0x1FD6 | 54 | 0x6C / 108 byte | joint_angle[0] ~ joint_angle[20] + R_ADC[0] ~ R_ADC[11] |
+| Frame 4 | 0x200C | 60 | 0x78 / 120 byte | R_ADC[12] ~ R_ADC[71] |
+| Frame 5 | 0x2048 | 60 | 0x78 / 120 byte | R_ADC[72] ~ R_ADC[131] |
 
-
-5 帧数据区总长度为：
+6 帧数据区总长度为：
 
 ```plain
-240 + 240 + 160 + 128 + 128 = 896 byte
+240 + 240 + 160 + 108 + 120 + 120 = 988 byte
 ```
 
 其中：
 
 ```plain
 IMU 数据：640 byte
-电阻点阵数据：256 byte
-总计：896 byte
+关节角度数据：84 byte
+电阻点阵 ADC 原始值：264 byte
+总计：988 byte
 ```
 
 ---
@@ -1349,19 +1780,15 @@ IMU 数据：640 byte
 2. 检查功能码是否为 0x03；
 3. 检查 ByteCount 是否与请求寄存器数量匹配；
 4. 提取 Data 区；
-5. 按 float32 小端寄存器序解析数据；
-6. 按帧号拼接到对应数据数组。
+5. IMU 和关节角度按 float32 小端寄存器序解析；
+6. 电阻点阵按 uint16 ADC 原始值解析，不转换为 float；
+7. 按帧号拼接到对应数据数组。
 ```
 
-例如 Frame 0 的数据区长度为 240 byte，对应 60 个 float：
+Frame 0 的数据区长度为 240 byte，对应 60 个 IMU float：
 
 ```plain
 float_count = ByteCount / 4 = 240 / 4 = 60
-```
-
-解析后的数据应写入：
-
-```plain
 imu_data[0] ~ imu_data[59]
 ```
 
@@ -1380,30 +1807,37 @@ imu_data[120] ~ imu_data[159]
 Frame 3 写入：
 
 ```plain
-r_data[0] ~ r_data[31]
+joint_angle[0] ~ joint_angle[20]
+r_adc[0]       ~ r_adc[11]
 ```
 
 Frame 4 写入：
 
 ```plain
-r_data[32] ~ r_data[63]
+r_adc[12] ~ r_adc[71]
+```
+
+Frame 5 写入：
+
+```plain
+r_adc[72] ~ r_adc[131]
 ```
 
 ### 9.4 主机解析任务
-主机收到 5 帧后：
+主机收到 6 帧后：
 
 ```plain
 1. 校验每帧 CRC；
-2. 根据帧号拼接 IMU 数据和电阻点阵数据；
+2. 根据帧号拼接 IMU 数据、关节角度和电阻点阵 ADC 原始值；
 3. 按 float32 小端寄存器序解析 160 个 IMU float；
-4. 按 float32 小端寄存器序解析 64 个电阻点阵 float；
-5. 读取或缓存 IMU 时间戳 0x1140；
-6. 读取或缓存电阻点阵时间戳 0x2080；
-7. 更新上位机显示和算法输入。
+4. 按 float32 小端寄存器序解析 21 个关节角度 float；
+5. 按 uint16 解析 132 个电阻点阵 ADC 原始值；
+6. 读取或缓存 IMU 时间戳 0x1140；
+7. 读取或缓存电阻点阵时间戳 0x2084；
+8. 更新上位机显示和算法输入。
 ```
 
 ---
-
 ## 10. 低频状态监控任务
 在高频数据交互过程中，主机还应低频读取关键状态。建议频率如下：
 
@@ -1436,7 +1870,7 @@ IMU 状态：
     0x1144
 
 电阻点阵状态：
-    0x2084 ~ 0x2087
+    0x2088 ~ 0x2090
 ```
 
 若出现以下情况，主机应停止采集或报警：
@@ -1477,16 +1911,17 @@ RS485 CRC 或超时错误过多；
    - 从机建立同步基准；
    - 主机读取 UTC 或状态确认同步成功。
 
-4. IMU 校准
+4. IMU 与关节角度校准
    - 主机语音提示用户执行动作；
    - 主机持续读取 IMU 高频数据；
+   - 主机读取或写入 21 个关节角度 offset；
    - 每个动作完成后在本地记录校准数据；
    - 计算 IMU Offset 并写入 IMU Offset 寄存器区。
 
 5. 电阻点阵校准
    - 用户保持无压力状态；
-   - 主机读取电阻点阵数据；
-   - 主机在本地计算并保存零点基准。
+   - 主机读取电阻点阵 ADC 原始值；
+   - 主机在本地计算并保存 132 个电阻点的零点基准。
 
 6. 开启 SD 记录
    - 主机发送创建日志文件命令；
@@ -1502,9 +1937,10 @@ RS485 CRC 或超时错误过多；
    - 工作状态为空闲后退出高频采集通信。
 
 8. 高频数据交互
-   - 主机以 100 Hz 周期读取 5 帧数据；
+   - 主机以 100 Hz 周期读取 6 帧数据；
    - 解析 IMU float 数据；
-   - 解析电阻点阵 float 数据；
+   - 解析 21 个关节角度 float 数据；
+   - 解析 132 个电阻点阵 uint16 ADC 原始值；
    - 低频查询 SD、电源、错误和时间同步状态。
 ```
 
@@ -1535,7 +1971,8 @@ RS485 CRC 或超时错误过多；
 
 5. 高频数据请求：
    - IMU 数据直接从 IMU float 数组指定位置打包；
-   - 电阻点阵数据直接从电阻 float 数组指定位置打包；
+   - 关节角度数据直接从 joint angle float 数组指定位置打包；
+   - 电阻点阵数据直接从 uint16 ADC 原始值数组指定位置打包；
    - 使用双缓冲或临界区保证数据一致性。
 
 6. SD 日志任务：
@@ -1783,14 +2220,34 @@ REG_IMU14_OFFSET_START  0x126C    REG_IMU14_OFFSET_END  0x127F
 REG_IMU15_OFFSET_START  0x1280    REG_IMU15_OFFSET_END  0x1293
 ```
 
-### A.8 电阻点阵数据、时间戳与状态区
+### A.8 关节角度 Offset、电阻点阵 ADC、时间戳与状态区
 
 | 地址 | 名称 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `0x2000 ~ 0x207F` | `REG_R_DATA_START ~ REG_R_DATA_END` | `float32[64]` | 64 个电阻点阵数据 |
-| `0x2080 ~ 0x2083` | `REG_R_TIMESTAMP_US` | `uint64` | 当前电阻点阵数据帧时间戳，单位 us |
-| `0x2084 ~ 0x2087` | `REG_R_STATUS_START ~ REG_R_STATUS_END` | `uint16[4]` | 64 个电阻点状态位 |
-| `0x2088 ~ 0x20C3` | `REG_R_STATUS_RESERVED_START ~ REG_R_STATUS_RESERVED_END` | `uint16[]` | 电阻点阵状态扩展保留区 |
+| `0x1FAC ~ 0x1FD5` | `REG_JOINT_ANGLE_OFFSET_START ~ REG_JOINT_ANGLE_OFFSET_END` | `float32[21]` | 21 个关节角度 offset |
+| `0x1FD6 ~ 0x1FFF` | `REG_JOINT_ANGLE_START ~ REG_JOINT_ANGLE_END` | `float32[21]` | 21 个关节角度 |
+| `0x2000 ~ 0x2083` | `REG_R_ADC_START ~ REG_R_ADC_END` | `uint16[132]` | 132 个电阻点 ADC 原始值 |
+| `0x2084 ~ 0x2087` | `REG_R_TIMESTAMP_US` | `uint64` | 当前电阻点阵数据帧时间戳，单位 us |
+| `0x2088 ~ 0x2090` | `REG_R_STATUS_START ~ REG_R_STATUS_END` | `uint16[9]` | 132 个电阻点状态位 |
+| `0x2091 ~ 0x20C3` | `REG_R_STATUS_RESERVED_START ~ REG_R_STATUS_RESERVED_END` | `uint16[]` | 电阻点阵状态扩展保留区 |
+
+关节角度 offset 区按每个 offset 2 个寄存器排列：
+
+```plain
+REG_JOINT_ANGLE_OFFSET0_START   0x1FAC    REG_JOINT_ANGLE_OFFSET0_END   0x1FAD
+REG_JOINT_ANGLE_OFFSET1_START   0x1FAE    REG_JOINT_ANGLE_OFFSET1_END   0x1FAF
+...
+REG_JOINT_ANGLE_OFFSET20_START  0x1FD4    REG_JOINT_ANGLE_OFFSET20_END  0x1FD5
+```
+
+电阻点阵 ADC 原始值区按每个电阻点 1 个寄存器排列：
+
+```plain
+REG_R_ADC0    0x2000
+REG_R_ADC1    0x2001
+...
+REG_R_ADC131  0x2083
+```
 
 电阻点阵状态位含义：
 
@@ -1798,8 +2255,13 @@ REG_IMU15_OFFSET_START  0x1280    REG_IMU15_OFFSET_END  0x1293
 bit = 1：对应电阻点正常
 bit = 0：对应电阻点异常、离线或数据无效
 
-0x2084：R0  ~ R15  状态位
-0x2085：R16 ~ R31  状态位
-0x2086：R32 ~ R47  状态位
-0x2087：R48 ~ R63  状态位
+0x2088：R0   ~ R15   状态位
+0x2089：R16  ~ R31   状态位
+0x208A：R32  ~ R47   状态位
+0x208B：R48  ~ R63   状态位
+0x208C：R64  ~ R79   状态位
+0x208D：R80  ~ R95   状态位
+0x208E：R96  ~ R111  状态位
+0x208F：R112 ~ R127  状态位
+0x2090：R128 ~ R131  状态位，bit4 ~ bit15 保留为 0
 ```

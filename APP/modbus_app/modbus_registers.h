@@ -126,17 +126,26 @@ extern "C" {
 #define REG_IMU_OFFSET_ADDR(index)     (REG_IMU_OFFSET_START + ((uint16_t)(index) * MODBUS_IMU_REGS_PER_UNIT))
 
 /* Resistance matrix data, timestamp and status registers. */
-#define MODBUS_R_POINT_COUNT           64U
-#define MODBUS_R_STATUS_REG_COUNT      4U
-#define MODBUS_R_DATA_REG_COUNT        128U
+#define MODBUS_JOINT_ANGLE_COUNT       21U
+#define MODBUS_JOINT_ANGLE_REG_COUNT   (MODBUS_JOINT_ANGLE_COUNT * MODBUS_REGS_FLOAT32)
+#define MODBUS_R_POINT_COUNT           132U
+#define MODBUS_R_STATUS_REG_COUNT      9U
+#define MODBUS_R_DATA_REG_COUNT        MODBUS_R_POINT_COUNT
 
+#define REG_JOINT_ANGLE_OFFSET_START   0x1FACU
+#define REG_JOINT_ANGLE_OFFSET_END     0x1FD5U
+#define REG_JOINT_ANGLE_START          0x1FD6U
+#define REG_JOINT_ANGLE_END            0x1FFFU
 #define REG_R_DATA_START               0x2000U
-#define REG_R_DATA_END                 0x207FU
-#define REG_R_TIMESTAMP_US             0x2080U
-#define REG_R_STATUS_START             0x2084U
-#define REG_R_STATUS_END               0x2087U
-#define REG_R_STATUS_RESERVED_START    0x2088U
+#define REG_R_DATA_END                 0x2083U
+#define REG_R_TIMESTAMP_US             0x2084U
+#define REG_R_STATUS_START             0x2088U
+#define REG_R_STATUS_END               0x2090U
+#define REG_R_STATUS_RESERVED_START    0x2091U
 #define REG_R_STATUS_RESERVED_END      0x20C3U
+
+#define REG_JOINT_ANGLE_OFFSET_ADDR(index) (REG_JOINT_ANGLE_OFFSET_START + ((uint16_t)(index) * MODBUS_REGS_FLOAT32))
+#define REG_JOINT_ANGLE_ADDR(index)        (REG_JOINT_ANGLE_START + ((uint16_t)(index) * MODBUS_REGS_FLOAT32))
 
 /* Command values written to REG_CMD. */
 #define CMD_NONE                       0x0000U

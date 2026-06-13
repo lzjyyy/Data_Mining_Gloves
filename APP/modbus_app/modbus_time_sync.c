@@ -21,6 +21,7 @@ static volatile uint8_t time_sync_synced = 0U;
 static volatile uint8_t time_sync_has_utc_base = 0U;
 static volatile uint8_t time_sync_has_prediction = 0U;
 static volatile uint8_t time_sync_timer_running = 0U;
+static volatile uint8_t time_sync_initialized = 0U;
 
 static uint64_t ModbusTimeSync_GetLocalUptimeUsIrqUnsafe(void)
 {
@@ -89,6 +90,7 @@ static int32_t ModbusTimeSync_ClampCorrStepPpb(int64_t corr_step_ppb)
 
 HAL_StatusTypeDef ModbusTimeSync_Init(void)
 {
+  time_sync_initialized = 0U;
   time_sync_local_timer_overflow = 0U;
   time_sync_utc_base_us = 0U;
   time_sync_last_sync_utc_us = 0U;
@@ -106,6 +108,7 @@ HAL_StatusTypeDef ModbusTimeSync_Init(void)
 
   __HAL_TIM_SET_COUNTER(&htim5, 0U);
   __HAL_TIM_CLEAR_FLAG(&htim5, TIM_FLAG_UPDATE);
+  time_sync_initialized = 1U;
 
   return HAL_OK;
 }
@@ -118,8 +121,13 @@ void ModbusTimeSync_OnTimPeriodElapsed(TIM_HandleTypeDef *htim)
   }
 }
 
-void ModbusTimeSync_OnGpioFalling(uint16_t gpio_pin)
+void ModbusTimeSync_OnGpioSyncEdge(uint16_t gpio_pin)
 {
+  if (time_sync_initialized == 0U)
+  {
+    return;
+  }
+
   if (gpio_pin == Time_tongbu_Pin)
   {
     uint64_t elapsed_us;
@@ -153,7 +161,6 @@ void ModbusTimeSync_OnGpioFalling(uint16_t gpio_pin)
     }
 
     time_sync_wait_utc_frame = 1U;
-    time_sync_synced = 0U;
   }
 }
 

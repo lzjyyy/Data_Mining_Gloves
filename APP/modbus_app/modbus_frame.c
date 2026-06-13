@@ -4,6 +4,7 @@
 #include "modbus_time_sync.h"
 
 static uint8_t modbus_slave_address = MODBUS_SLAVE_ADDR_DEFAULT;
+static uint16_t joint_angle_offset_regs[MODBUS_JOINT_ANGLE_REG_COUNT];
 
 static uint16_t Modbus_ReadU16(const uint8_t *data)
 {
@@ -69,12 +70,37 @@ static uint8_t Modbus_IsReadableRegister(uint16_t reg_addr)
     return 1U;
   }
 
+  if ((reg_addr >= REG_IMU_DATA_START) && (reg_addr <= REG_IMU_DATA_END))
+  {
+    return 1U;
+  }
+
   if ((reg_addr >= REG_IMU_TIMESTAMP_US) && (reg_addr < (REG_IMU_TIMESTAMP_US + MODBUS_REGS_U64)))
   {
     return 1U;
   }
 
   if (reg_addr == REG_IMU_STATUS_BITS)
+  {
+    return 1U;
+  }
+
+  if ((reg_addr >= REG_IMU_OFFSET_START) && (reg_addr <= REG_IMU_OFFSET_END))
+  {
+    return 1U;
+  }
+
+  if ((reg_addr >= REG_JOINT_ANGLE_OFFSET_START) && (reg_addr <= REG_JOINT_ANGLE_OFFSET_END))
+  {
+    return 1U;
+  }
+
+  if ((reg_addr >= REG_JOINT_ANGLE_START) && (reg_addr <= REG_JOINT_ANGLE_END))
+  {
+    return 1U;
+  }
+
+  if ((reg_addr >= REG_R_DATA_START) && (reg_addr <= REG_R_DATA_END))
   {
     return 1U;
   }
@@ -189,12 +215,6 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
     case REG_IMU_STATUS_BITS:
       return 0xFFFFU;
 
-    case REG_R_STATUS_START:
-    case REG_R_STATUS_START + 1U:
-    case REG_R_STATUS_START + 2U:
-    case REG_R_STATUS_START + 3U:
-      return 0xFFFFU;
-
     default:
       break;
   }
@@ -224,7 +244,32 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
     return 0U;
   }
 
+  if ((reg_addr >= REG_IMU_DATA_START) && (reg_addr <= REG_IMU_DATA_END))
+  {
+    return 0U;
+  }
+
   if ((reg_addr >= REG_IMU_TIMESTAMP_US) && (reg_addr < (REG_IMU_TIMESTAMP_US + MODBUS_REGS_U64)))
+  {
+    return 0U;
+  }
+
+  if ((reg_addr >= REG_IMU_OFFSET_START) && (reg_addr <= REG_IMU_OFFSET_END))
+  {
+    return 0U;
+  }
+
+  if ((reg_addr >= REG_JOINT_ANGLE_OFFSET_START) && (reg_addr <= REG_JOINT_ANGLE_OFFSET_END))
+  {
+    return joint_angle_offset_regs[reg_addr - REG_JOINT_ANGLE_OFFSET_START];
+  }
+
+  if ((reg_addr >= REG_JOINT_ANGLE_START) && (reg_addr <= REG_JOINT_ANGLE_END))
+  {
+    return 0U;
+  }
+
+  if ((reg_addr >= REG_R_DATA_START) && (reg_addr <= REG_R_DATA_END))
   {
     return 0U;
   }
@@ -232,6 +277,11 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
   if ((reg_addr >= REG_R_TIMESTAMP_US) && (reg_addr < (REG_R_TIMESTAMP_US + MODBUS_REGS_U64)))
   {
     return 0U;
+  }
+
+  if ((reg_addr >= REG_R_STATUS_START) && (reg_addr <= REG_R_STATUS_END))
+  {
+    return 0xFFFFU;
   }
 
   return 0U;
@@ -340,6 +390,8 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
                                                      uint16_t tx_buf_size,
                                                      uint16_t *tx_len)
 {
+  uint16_t end_reg;
+  uint16_t index;
   uint64_t utc_us;
 
   if ((data_buf == 0) || (tx_buf == 0) || (tx_len == 0) || (tx_buf_size < 8U))
@@ -359,16 +411,31 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
 
   if ((start_reg != REG_TIME_SYNC_UTC_US) || (reg_count != MODBUS_REGS_U64))
   {
-    return Modbus_BuildException(response_addr,
-                                 MB_FC_WRITE_MULTIPLE_REGS,
-                                 MB_EX_ILLEGAL_DATA_ADDRESS,
-                                 tx_buf,
-                                 tx_buf_size,
-                                 tx_len);
-  }
+    end_reg = (uint16_t)(start_reg + reg_count - 1U);
 
-  utc_us = Modbus_ReadU64FromRegs(data_buf);
-  ModbusTimeSync_SetUtcFromMaster(utc_us);
+    if ((start_reg < REG_JOINT_ANGLE_OFFSET_START) ||
+        (end_reg > REG_JOINT_ANGLE_OFFSET_END) ||
+        (end_reg < start_reg))
+    {
+      return Modbus_BuildException(response_addr,
+                                   MB_FC_WRITE_MULTIPLE_REGS,
+                                   MB_EX_ILLEGAL_DATA_ADDRESS,
+                                   tx_buf,
+                                   tx_buf_size,
+                                   tx_len);
+    }
+
+    for (index = 0U; index < reg_count; index++)
+    {
+      joint_angle_offset_regs[start_reg - REG_JOINT_ANGLE_OFFSET_START + index] =
+        Modbus_ReadU16(&data_buf[index * 2U]);
+    }
+  }
+  else
+  {
+    utc_us = Modbus_ReadU64FromRegs(data_buf);
+    ModbusTimeSync_SetUtcFromMaster(utc_us);
+  }
 
   tx_buf[0] = response_addr;
   tx_buf[1] = MB_FC_WRITE_MULTIPLE_REGS;

@@ -124,6 +124,11 @@ int main(void)
   MX_TIM6_Init();
   MX_TIM5_Init();
   /* USER CODE BEGIN 2 */
+  if (ModbusTimeSync_Init() != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   lcd_init_dev(&lcd_desc, LCD_1_47_INCH, LCD_ROTATE_90);
   
   lcd_print(&lcd_desc, 100,  0, "------- X Pulse -------");
@@ -138,11 +143,6 @@ int main(void)
   lcd_print(&lcd_desc, 8, 145, "RTC:---- -- -- --:--:--");
   
   lcd_set_font(&lcd_desc, FONT_1608, YELLOW, BLACK);
-  if (ModbusTimeSync_Init() != HAL_OK)
-  {
-    Error_Handler();
-  }
-
   if (RS485_Init() != HAL_OK)
   {
     Error_Handler();
@@ -248,9 +248,9 @@ void PeriphCommonClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void HAL_GPIO_EXTI_Falling_Callback(uint16_t GPIO_Pin)
+void HAL_GPIO_EXTI_Rising_Callback(uint16_t GPIO_Pin)
 {
-  ModbusTimeSync_OnGpioFalling(GPIO_Pin);
+  ModbusTimeSync_OnGpioSyncEdge(GPIO_Pin);
 }
 
 /* USER CODE END 4 */

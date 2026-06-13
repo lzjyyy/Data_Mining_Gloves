@@ -10,7 +10,7 @@ extern "C" {
 
 HAL_StatusTypeDef ModbusTimeSync_Init(void);
 void ModbusTimeSync_OnTimPeriodElapsed(TIM_HandleTypeDef *htim);
-void ModbusTimeSync_OnGpioFalling(uint16_t gpio_pin);
+void ModbusTimeSync_OnGpioSyncEdge(uint16_t gpio_pin);
 
 uint64_t ModbusTimeSync_GetLocalUptimeUs(void);
 uint64_t ModbusTimeSync_GetUtcTimestampUs(void);
