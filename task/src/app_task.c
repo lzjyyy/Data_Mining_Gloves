@@ -52,7 +52,6 @@ void AppTask_Init(void)
   lcdTaskHandle = osThreadNew(StartLcdTask, NULL, &lcdTask_attributes);
   lcdTaskCreated = (lcdTaskHandle != NULL) ? 1U : 0U;
   app_task_lcd_create_ok = lcdTaskCreated;
-
   syncOutputTaskHandle = osThreadNew(StartSyncOutputTask, NULL, &syncOutputTask_attributes);
   slaveTimeTestTaskHandle = osThreadNew(StartSlaveTimeTestTask, NULL, &slaveTimeTestTask_attributes);
 }
