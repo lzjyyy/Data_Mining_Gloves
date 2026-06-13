@@ -4,6 +4,7 @@
 #include "lcd.h"
 #include "rtc.h"
 #include "RS485_uasrt.h"
+#include "modbus_master.h"
 #include "../inc/rs485_task.h"
 #include "timers_APP.h"
 #include "../inc/sync_output_task.h"
@@ -26,6 +27,7 @@ void StartLcdTask(void *argument)
   RTC_TimeTypeDef RTC_TimeStruct;
   RTC_DateTypeDef RTC_DateStruct;
   RS485_StatusTypeDef rs485_status;
+  ModbusMaster_DebugTypeDef modbus_debug;
   uint32_t rs485_task_rx_events = 0U;
   uint32_t rs485_task_tx_events = 0U;
   uint32_t lcd_refresh_count = 0U;
@@ -57,12 +59,14 @@ void StartLcdTask(void *argument)
     HAL_RTC_GetTime(&hrtc, &RTC_TimeStruct, RTC_FORMAT_BIN);
     HAL_RTC_GetDate(&hrtc, &RTC_DateStruct, RTC_FORMAT_BIN);
     RS485_GetStatus(&rs485_status);
+    ModbusMaster_GetDebug(&modbus_debug);
     RS485_TaskGetEventCounts(&rs485_task_rx_events, &rs485_task_tx_events);
 
-    lcd_print(&lcd_desc, 8, 85, "STATE:%s IRQ:%lu CB:%lu      ",
+    lcd_print(&lcd_desc, 8, 85, "STATE:%s OP:%lu MS:%lu ML:%lu ",
               (SyncOutput_IsRunning() != 0U) ? "RUN" : "STOP",
-              rs485_status.tx_dma_irq,
-              rs485_status.tx_cplt_callback);
+              modbus_debug.op,
+              modbus_debug.status,
+              modbus_debug.rx_len);
     lcd_print(&lcd_desc, 8, 105, "SYNC O:%lu F:%lu RD O:%lu F:%lu   ",
               slave_time_test_sync_ok,
               slave_time_test_sync_fail,
@@ -72,10 +76,10 @@ void StartLcdTask(void *argument)
               slave_time_test_interval_ok,
               slave_time_test_interval_fail,
               (uint32_t)slave_time_test_last_delta_us);
-    lcd_print(&lcd_desc, 8, 145, "KEY:%lu PULSE:%lu TE:%lu RX:%lu      ",
+    lcd_print(&lcd_desc, 8, 145, "KEY:%lu P:%lu A:%lu F:%lu    ",
               SyncOutput_GetToggleCount(),
               SyncOutput_GetPulseCount(),
-              rs485_task_tx_events,
-              rs485_status.rx_events);
+              modbus_debug.rx_addr,
+              modbus_debug.rx_func);
   }
 }
