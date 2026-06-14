@@ -22,6 +22,7 @@
 #include "gpdma.h"
 #include "icache.h"
 #include "rtc.h"
+#include "sdmmc.h"
 #include "spi.h"
 #include "tim.h"
 #include "usart.h"
@@ -34,6 +35,7 @@
 #include "RS485_uasrt.h"
 #include "timers_APP.h"
 #include "modbus_time_sync.h"
+#include "sd_log.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,7 +125,13 @@ int main(void)
   MX_USART2_UART_Init();
   MX_TIM6_Init();
   MX_TIM5_Init();
+  MX_TIM3_Init();
   /* USER CODE BEGIN 2 */
+  if (RTC_SetToCurrentTime() != HAL_OK)
+  {
+    Error_Handler();
+  }
+
   if (ModbusTimeSync_Init() != HAL_OK)
   {
     Error_Handler();
@@ -131,11 +139,12 @@ int main(void)
 
   lcd_init_dev(&lcd_desc, LCD_1_47_INCH, LCD_ROTATE_90);
   
-  lcd_print(&lcd_desc, 100,  0, "------- X Pulse -------");
-  lcd_print(&lcd_desc, 100, 20, "|    STM32 LCD demo   |");
-  lcd_print(&lcd_desc, 100, 40, "|  1.47 inch 320x179  |");
-  lcd_print(&lcd_desc, 100, 60, "-----------------------");
+  lcd_print(&lcd_desc, 100,  0, "------ SD LOG TEST -----");
+  lcd_print(&lcd_desc, 100, 20, "WRITE:0 KB");
+  lcd_print(&lcd_desc, 100, 40, "| 2KB WRITE / 100Hz    |");
+  lcd_print(&lcd_desc, 100, 60, "| AUTO LOG START       |");
   lcd_show_picture(&lcd_desc, 0, 0, 80, 80, (uint8_t *)logo);
+  MX_SDMMC1_SD_Init();
   
   lcd_print(&lcd_desc, 8, 85, "STATE:INIT");
   lcd_print(&lcd_desc, 8, 105, "TX_START:0 DMA:0 OV:0");
@@ -274,6 +283,7 @@ void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim)
   }
   /* USER CODE BEGIN Callback 1 */
   ModbusTimeSync_OnTimPeriodElapsed(htim);
+  SdLog_OnTimPeriodElapsed(htim);
   Timers_APP_OnPeriodElapsed(htim);
 
   /* USER CODE END Callback 1 */

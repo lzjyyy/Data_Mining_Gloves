@@ -108,6 +108,7 @@ HAL_StatusTypeDef ModbusTimeSync_Init(void)
 
   __HAL_TIM_SET_COUNTER(&htim5, 0U);
   __HAL_TIM_CLEAR_FLAG(&htim5, TIM_FLAG_UPDATE);
+  ModbusTimeSync_StartLocalTimerIrqUnsafe();
   time_sync_initialized = 1U;
 
   return HAL_OK;

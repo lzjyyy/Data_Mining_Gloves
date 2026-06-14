@@ -122,15 +122,15 @@ HAL_StatusTypeDef RTC_SetToCurrentTime(void)
   RTC_DateTypeDef date = {0};
   HAL_StatusTypeDef status;
 
-  time.Hours = 18U;
-  time.Minutes = 34U;
-  time.Seconds = 53U;
+  time.Hours = 15U;
+  time.Minutes = 18U;
+  time.Seconds = 11U;
   time.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
   time.StoreOperation = RTC_STOREOPERATION_RESET;
 
-  date.WeekDay = RTC_WEEKDAY_MONDAY;
+  date.WeekDay = RTC_WEEKDAY_SUNDAY;
   date.Month = RTC_MONTH_JUNE;
-  date.Date = 8U;
+  date.Date = 14U;
   date.Year = 26U;
 
   status = HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN);

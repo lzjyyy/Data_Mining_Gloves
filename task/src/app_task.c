@@ -3,6 +3,7 @@
 #include "cmsis_os2.h"
 #include "../inc/lcd_task.h"
 #include "../inc/rs485_task.h"
+#include "../inc/sd_task.h"
 
 static osThreadId_t rs485TaskHandle;
 static const osThreadAttr_t rs485Task_attributes = {
@@ -18,12 +19,21 @@ static const osThreadAttr_t lcdTask_attributes = {
   .stack_size = 512 * 4
 };
 
+static osThreadId_t sdTaskHandle;
+static const osThreadAttr_t sdTask_attributes = {
+  .name = "sdTask",
+  .priority = (osPriority_t) osPriorityLow,
+  .stack_size = 1536 * 4
+};
+
 static uint8_t rs485TaskCreated = 0U;
 static uint8_t lcdTaskCreated = 0U;
+static uint8_t sdTaskCreated = 0U;
 
 volatile uint32_t app_task_init_count = 0U;
 volatile uint32_t app_task_rs485_create_ok = 0U;
 volatile uint32_t app_task_lcd_create_ok = 0U;
+volatile uint32_t app_task_sd_create_ok = 0U;
 
 void AppTask_Init(void)
 {
@@ -36,6 +46,10 @@ void AppTask_Init(void)
   lcdTaskHandle = osThreadNew(StartLcdTask, NULL, &lcdTask_attributes);
   lcdTaskCreated = (lcdTaskHandle != NULL) ? 1U : 0U;
   app_task_lcd_create_ok = lcdTaskCreated;
+
+  sdTaskHandle = osThreadNew(StartSdTask, NULL, &sdTask_attributes);
+  sdTaskCreated = (sdTaskHandle != NULL) ? 1U : 0U;
+  app_task_sd_create_ok = sdTaskCreated;
 }
 
 void AppTask_GetCreateStatus(uint8_t *rs485_created, uint8_t *lcd_created)

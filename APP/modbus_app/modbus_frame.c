@@ -2,9 +2,14 @@
 
 #include "modbus_registers.h"
 #include "modbus_time_sync.h"
+#include "sd_log.h"
 
 static uint8_t modbus_slave_address = MODBUS_SLAVE_ADDR_DEFAULT;
 static uint16_t joint_angle_offset_regs[MODBUS_JOINT_ANGLE_REG_COUNT];
+
+extern volatile uint32_t sd_disk_last_hal_status;
+extern volatile uint32_t sd_disk_last_hal_error;
+extern volatile uint32_t sd_disk_last_result;
 
 static uint16_t Modbus_ReadU16(const uint8_t *data)
 {
@@ -140,8 +145,34 @@ static uint16_t Modbus_ReadU64Reg(uint64_t value, uint16_t word_offset)
   return (uint16_t)((value >> (word_offset * 16U)) & 0xFFFFU);
 }
 
+static uint16_t Modbus_ReadU32Reg(uint32_t value, uint16_t word_offset)
+{
+  return (uint16_t)((value >> (word_offset * 16U)) & 0xFFFFU);
+}
+
+static uint16_t Modbus_ReadStringReg(const char *text, uint16_t word_offset)
+{
+  uint16_t byte_offset = (uint16_t)(word_offset * 2U);
+  uint16_t value = 0U;
+
+  if ((text != NULL) && (byte_offset < SD_LOG_FILENAME_BYTES))
+  {
+    value = (uint8_t)text[byte_offset];
+    if ((byte_offset + 1U) < SD_LOG_FILENAME_BYTES)
+    {
+      value |= (uint16_t)((uint16_t)(uint8_t)text[byte_offset + 1U] << 8);
+    }
+  }
+
+  return value;
+}
+
 static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
 {
+  SdLogStatusSnapshot_t sd_status;
+
+  SdLog_GetStatus(&sd_status);
+
   if (reg_addr == REG_SLAVE_ADDR)
   {
     return (uint16_t)modbus_slave_address;
@@ -186,10 +217,10 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
       return WORK_MODE_NORMAL;
 
     case REG_LOG_STATE:
-      return LOG_STATE_IDLE;
+      return sd_status.log_status;
 
     case REG_SD_STATE:
-      return SD_STATE_NOT_READY;
+      return (sd_status.fs_status == SD_LOG_FS_MOUNTED) ? SD_STATE_READY : SD_STATE_NOT_READY;
 
     case REG_SENSOR_STATE:
       return SENSOR_STATE_ALL_OK;
@@ -201,16 +232,22 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
       return WORK_STATE_IDLE;
 
     case REG_SD_FS_STATUS:
-      return SD_FS_STATUS_NOT_MOUNTED;
+      return sd_status.fs_status;
 
     case REG_SD_LOG_STATUS:
-      return SD_LOG_STATUS_IDLE;
+      return sd_status.log_status;
 
     case REG_SD_ERROR_CODE:
-      return SD_ERROR_NONE;
+      return sd_status.error_code;
 
     case REG_SD_CURRENT_FILE_ID:
-      return 0U;
+      return sd_status.current_file_id;
+
+    case REG_SD_DISK_LAST_RESULT:
+      return (uint16_t)sd_disk_last_result;
+
+    case REG_SD_DISK_HAL_STATUS:
+      return (uint16_t)sd_disk_last_hal_status;
 
     case REG_IMU_STATUS_BITS:
       return 0xFFFFU;
@@ -237,6 +274,46 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
   if ((reg_addr >= REG_BAT_CURRENT) && (reg_addr < (REG_BAT_CURRENT + MODBUS_REGS_FLOAT32)))
   {
     return Modbus_ReadFloatReg(0.0f, (uint16_t)(reg_addr - REG_BAT_CURRENT));
+  }
+
+  if ((reg_addr >= REG_SD_TOTAL_SIZE_MB) && (reg_addr < (REG_SD_TOTAL_SIZE_MB + MODBUS_REGS_U32)))
+  {
+    return Modbus_ReadU32Reg(sd_status.total_size_mb, (uint16_t)(reg_addr - REG_SD_TOTAL_SIZE_MB));
+  }
+
+  if ((reg_addr >= REG_SD_FREE_SIZE_MB) && (reg_addr < (REG_SD_FREE_SIZE_MB + MODBUS_REGS_U32)))
+  {
+    return Modbus_ReadU32Reg(sd_status.free_size_mb, (uint16_t)(reg_addr - REG_SD_FREE_SIZE_MB));
+  }
+
+  if ((reg_addr >= REG_SD_USED_SIZE_MB) && (reg_addr < (REG_SD_USED_SIZE_MB + MODBUS_REGS_U32)))
+  {
+    return Modbus_ReadU32Reg(sd_status.used_size_mb, (uint16_t)(reg_addr - REG_SD_USED_SIZE_MB));
+  }
+
+  if ((reg_addr >= REG_SD_CURRENT_FILE_SIZE) && (reg_addr < (REG_SD_CURRENT_FILE_SIZE + MODBUS_REGS_U64)))
+  {
+    return Modbus_ReadU64Reg(sd_status.current_file_size, (uint16_t)(reg_addr - REG_SD_CURRENT_FILE_SIZE));
+  }
+
+  if ((reg_addr >= REG_SD_CURRENT_WRITE_CNT) && (reg_addr < (REG_SD_CURRENT_WRITE_CNT + MODBUS_REGS_U32)))
+  {
+    return Modbus_ReadU32Reg(sd_status.current_write_count, (uint16_t)(reg_addr - REG_SD_CURRENT_WRITE_CNT));
+  }
+
+  if ((reg_addr >= REG_SD_DISK_HAL_ERROR) && (reg_addr < (REG_SD_DISK_HAL_ERROR + MODBUS_REGS_U32)))
+  {
+    return Modbus_ReadU32Reg(sd_disk_last_hal_error, (uint16_t)(reg_addr - REG_SD_DISK_HAL_ERROR));
+  }
+
+  if ((reg_addr >= REG_SD_CURRENT_FILENAME) && (reg_addr < (REG_SD_CURRENT_FILENAME + REG_SD_FILENAME_REG_COUNT)))
+  {
+    return Modbus_ReadStringReg(sd_status.current_filename, (uint16_t)(reg_addr - REG_SD_CURRENT_FILENAME));
+  }
+
+  if ((reg_addr >= REG_SD_LAST_FILENAME) && (reg_addr < (REG_SD_LAST_FILENAME + REG_SD_FILENAME_REG_COUNT)))
+  {
+    return Modbus_ReadStringReg(sd_status.last_filename, (uint16_t)(reg_addr - REG_SD_LAST_FILENAME));
   }
 
   if ((reg_addr >= REG_SD_TOTAL_SIZE_MB) && (reg_addr <= REG_SD_STATUS_END))
@@ -393,6 +470,7 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
   uint16_t end_reg;
   uint16_t index;
   uint64_t utc_us;
+  uint16_t command;
 
   if ((data_buf == 0) || (tx_buf == 0) || (tx_len == 0) || (tx_buf_size < 8U))
   {
@@ -409,7 +487,56 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
                                  tx_len);
   }
 
-  if ((start_reg != REG_TIME_SYNC_UTC_US) || (reg_count != MODBUS_REGS_U64))
+  if ((start_reg == REG_TIME_SYNC_UTC_US) && (reg_count == MODBUS_REGS_U64))
+  {
+    utc_us = Modbus_ReadU64FromRegs(data_buf);
+    ModbusTimeSync_SetUtcFromMaster(utc_us);
+  }
+  else if ((start_reg == REG_SD_LOG_CREATE_FILE) && (reg_count == MODBUS_REGS_U16))
+  {
+    if (Modbus_ReadU16(data_buf) != 0U)
+    {
+      SdLog_RequestCreateFile();
+    }
+  }
+  else if ((start_reg == REG_SD_LOG_STATUS) && (reg_count == MODBUS_REGS_U16))
+  {
+    command = Modbus_ReadU16(data_buf);
+    if (command == SD_LOG_STATUS_RECORDING)
+    {
+      SdLog_RequestStart();
+    }
+    else if (command == SD_LOG_STATUS_IDLE)
+    {
+      SdLog_RequestStop();
+    }
+    else
+    {
+      return Modbus_BuildException(response_addr,
+                                   MB_FC_WRITE_MULTIPLE_REGS,
+                                   MB_EX_ILLEGAL_DATA_VALUE,
+                                   tx_buf,
+                                   tx_buf_size,
+                                   tx_len);
+    }
+  }
+  else if ((start_reg == REG_CMD) && (reg_count >= MODBUS_REGS_U16))
+  {
+    command = Modbus_ReadU16(data_buf);
+    if (command == CMD_LOG_START)
+    {
+      SdLog_RequestStart();
+    }
+    else if (command == CMD_LOG_STOP)
+    {
+      SdLog_RequestStop();
+    }
+    else if (command == CMD_SD_RESET)
+    {
+      SdLog_RequestReset();
+    }
+  }
+  else
   {
     end_reg = (uint16_t)(start_reg + reg_count - 1U);
 
@@ -431,12 +558,6 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
         Modbus_ReadU16(&data_buf[index * 2U]);
     }
   }
-  else
-  {
-    utc_us = Modbus_ReadU64FromRegs(data_buf);
-    ModbusTimeSync_SetUtcFromMaster(utc_us);
-  }
-
   tx_buf[0] = response_addr;
   tx_buf[1] = MB_FC_WRITE_MULTIPLE_REGS;
   Modbus_WriteU16(&tx_buf[2], start_reg);

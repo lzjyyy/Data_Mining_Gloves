@@ -82,6 +82,9 @@ extern "C" {
 #define REG_SD_CURRENT_FILE_SIZE       0x008CU
 #define REG_SD_CURRENT_WRITE_CNT       0x0090U
 #define REG_SD_LOG_CREATE_FILE         0x0092U
+#define REG_SD_DISK_LAST_RESULT        0x0094U
+#define REG_SD_DISK_HAL_STATUS         0x0095U
+#define REG_SD_DISK_HAL_ERROR          0x0096U
 #define REG_SD_RESERVED0_START         0x0093U
 #define REG_SD_RESERVED0_END           0x0099U
 #define REG_SD_LOG_LENGTH              0x009AU
@@ -151,6 +154,7 @@ extern "C" {
 #define CMD_NONE                       0x0000U
 #define CMD_LOG_START                  0x0094U
 #define CMD_LOG_STOP                   0x0096U
+#define CMD_SD_RESET                   0x0098U
 #define CMD_ACQ_START                  0x0501U
 #define CMD_ACQ_STOP                   0x0502U
 
