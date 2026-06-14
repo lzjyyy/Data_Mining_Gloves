@@ -26,6 +26,13 @@ static DRESULT SdDisk_SetResult(DRESULT result, HAL_StatusTypeDef hal_status)
   return result;
 }
 
+static DRESULT SdDisk_SetError(HAL_StatusTypeDef hal_status)
+{
+  (void)HAL_SD_Abort(&hsd1);
+  sd_status = STA_NOINIT;
+  return SdDisk_SetResult(RES_ERROR, hal_status);
+}
+
 static void SdDisk_EnsureSemaphore(void)
 {
   if (sd_dma_sem == NULL)
@@ -119,29 +126,29 @@ DRESULT disk_read(BYTE pdrv, BYTE *buff, LBA_t sector, UINT count)
     return RES_NOTRDY;
   }
 
-  if ((((uintptr_t)buff) & 0x03U) == 0U)
-  {
-    status = HAL_SD_ReadBlocks_DMA(&hsd1, buff, (uint32_t)sector, count);
-    if (status != HAL_OK)
-    {
-      return SdDisk_SetResult(RES_ERROR, status);
-    }
-
-    return SdDisk_SetResult(SdDisk_WaitDma(), status);
-  }
-
   for (UINT index = 0U; index < count; index++)
   {
-    status = HAL_SD_ReadBlocks_DMA(&hsd1, sd_scratch, (uint32_t)sector + index, 1U);
+    BYTE *read_buffer = &buff[index * SD_DISK_BLOCK_SIZE];
+
+    if ((((uintptr_t)read_buffer) & 0x03U) != 0U)
+    {
+      read_buffer = sd_scratch;
+    }
+
+    status = HAL_SD_ReadBlocks_DMA(&hsd1, read_buffer, (uint32_t)sector + index, 1U);
     if (status != HAL_OK)
     {
-      return SdDisk_SetResult(RES_ERROR, status);
+      return SdDisk_SetError(status);
     }
     if (SdDisk_WaitDma() != RES_OK)
     {
-      return SdDisk_SetResult(RES_ERROR, status);
+      return SdDisk_SetError(status);
     }
-    memcpy(&buff[index * SD_DISK_BLOCK_SIZE], sd_scratch, SD_DISK_BLOCK_SIZE);
+
+    if (read_buffer == sd_scratch)
+    {
+      memcpy(&buff[index * SD_DISK_BLOCK_SIZE], sd_scratch, SD_DISK_BLOCK_SIZE);
+    }
   }
 
   return SdDisk_SetResult(RES_OK, HAL_OK);
@@ -162,28 +169,24 @@ DRESULT disk_write(BYTE pdrv, const BYTE *buff, LBA_t sector, UINT count)
     return RES_NOTRDY;
   }
 
-  if ((((uintptr_t)buff) & 0x03U) == 0U)
-  {
-    status = HAL_SD_WriteBlocks_DMA(&hsd1, buff, (uint32_t)sector, count);
-    if (status != HAL_OK)
-    {
-      return SdDisk_SetResult(RES_ERROR, status);
-    }
-
-    return SdDisk_SetResult(SdDisk_WaitDma(), status);
-  }
-
   for (UINT index = 0U; index < count; index++)
   {
-    memcpy(sd_scratch, &buff[index * SD_DISK_BLOCK_SIZE], SD_DISK_BLOCK_SIZE);
-    status = HAL_SD_WriteBlocks_DMA(&hsd1, sd_scratch, (uint32_t)sector + index, 1U);
+    const BYTE *write_buffer = &buff[index * SD_DISK_BLOCK_SIZE];
+
+    if ((((uintptr_t)write_buffer) & 0x03U) != 0U)
+    {
+      memcpy(sd_scratch, write_buffer, SD_DISK_BLOCK_SIZE);
+      write_buffer = sd_scratch;
+    }
+
+    status = HAL_SD_WriteBlocks_DMA(&hsd1, write_buffer, (uint32_t)sector + index, 1U);
     if (status != HAL_OK)
     {
-      return SdDisk_SetResult(RES_ERROR, status);
+      return SdDisk_SetError(status);
     }
     if (SdDisk_WaitDma() != RES_OK)
     {
-      return SdDisk_SetResult(RES_ERROR, status);
+      return SdDisk_SetError(status);
     }
   }
 

@@ -243,6 +243,9 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
     case REG_SD_CURRENT_FILE_ID:
       return sd_status.current_file_id;
 
+    case REG_SD_FILE_LIST_COUNT:
+      return sd_status.file_list_count;
+
     case REG_SD_DISK_LAST_RESULT:
       return (uint16_t)sd_disk_last_result;
 
@@ -314,6 +317,30 @@ static uint16_t Modbus_ReadHoldingRegister(uint16_t reg_addr)
   if ((reg_addr >= REG_SD_LAST_FILENAME) && (reg_addr < (REG_SD_LAST_FILENAME + REG_SD_FILENAME_REG_COUNT)))
   {
     return Modbus_ReadStringReg(sd_status.last_filename, (uint16_t)(reg_addr - REG_SD_LAST_FILENAME));
+  }
+
+  if ((reg_addr >= REG_SD_FILE_LIST_START) && (reg_addr <= REG_SD_FILE_LIST_END))
+  {
+    uint16_t offset = (uint16_t)(reg_addr - REG_SD_FILE_LIST_START);
+    uint16_t list_index = (uint16_t)(offset / REG_SD_FILE_LIST_STRIDE);
+    uint16_t item_offset = (uint16_t)(offset % REG_SD_FILE_LIST_STRIDE);
+
+    if (list_index < sd_status.file_list_count)
+    {
+      if (item_offset < REG_SD_FILE_LIST_NAME_REGS)
+      {
+        return Modbus_ReadStringReg(sd_status.file_list_names[list_index], item_offset);
+      }
+
+      if ((item_offset >= REG_SD_FILE_LIST_SIZE_OFFSET) &&
+          (item_offset < (REG_SD_FILE_LIST_SIZE_OFFSET + MODBUS_REGS_U64)))
+      {
+        return Modbus_ReadU64Reg(sd_status.file_list_sizes[list_index],
+                                 (uint16_t)(item_offset - REG_SD_FILE_LIST_SIZE_OFFSET));
+      }
+    }
+
+    return 0U;
   }
 
   if ((reg_addr >= REG_SD_TOTAL_SIZE_MB) && (reg_addr <= REG_SD_STATUS_END))
@@ -534,6 +561,10 @@ static ModbusResult_t Modbus_HandleWriteMultipleRegs(uint8_t response_addr,
     else if (command == CMD_SD_RESET)
     {
       SdLog_RequestReset();
+    }
+    else if (command == CMD_SD_SCAN_LOG)
+    {
+      SdLog_RequestScanLog();
     }
   }
   else

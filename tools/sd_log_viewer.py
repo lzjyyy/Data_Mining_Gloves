@@ -37,6 +37,14 @@ REG_SD_CURRENT_WRITE_CNT = 0x0090
 REG_SD_DISK_LAST_RESULT = 0x0094
 REG_SD_DISK_HAL_STATUS = 0x0095
 REG_SD_DISK_HAL_ERROR = 0x0096
+REG_SD_CURRENT_FILENAME = 0x00A0
+REG_SD_FILENAME_REG_COUNT = 16
+REG_SD_FILE_LIST_COUNT = 0x00C0
+REG_SD_FILE_LIST_START = 0x00C1
+REG_SD_FILE_LIST_STRIDE = 20
+REG_SD_FILE_LIST_NAME_REGS = 16
+REG_SD_FILE_LIST_SIZE_OFFSET = 16
+SD_LOG_FILE_LIST_MAX = 16
 
 SD_LOG_STATUS_IDLE = 0x0000
 SD_LOG_STATUS_RECORDING = 0x0001
@@ -44,6 +52,7 @@ REG_CMD = 0x0020
 CMD_LOG_START = 0x0094
 CMD_LOG_STOP = 0x0096
 CMD_SD_RESET = 0x0098
+CMD_SD_SCAN_LOG = 0x009A
 FRESULT_NAMES = {
     0x00: "FR_OK",
     0x01: "FR_DISK_ERR",
@@ -111,6 +120,30 @@ QGroupBox::title {
     left: 14px;
     padding: 0 6px;
     color: #243b53;
+}
+QTabWidget::pane {
+    border: 1px solid #d7dde5;
+    border-radius: 8px;
+    background: #ffffff;
+    top: -1px;
+}
+QTabBar::tab {
+    background: #e8eef5;
+    border: 1px solid #c6d0dc;
+    padding: 8px 22px;
+    margin-right: 4px;
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    color: #243b53;
+    font-weight: 600;
+}
+QTabBar::tab:selected {
+    background: #ffffff;
+    border-bottom-color: #ffffff;
+    color: #0f172a;
+}
+QTabBar::tab:hover {
+    background: #f2f7fd;
 }
 QLabel {
     background: transparent;
@@ -254,6 +287,14 @@ def words_to_u64(words: list[int]) -> int:
     return words[0] | (words[1] << 16) | (words[2] << 32) | (words[3] << 48)
 
 
+def words_to_string(words: list[int]) -> str:
+    raw = bytearray()
+    for word in words:
+        raw.append(word & 0xFF)
+        raw.append((word >> 8) & 0xFF)
+    return raw.split(b"\x00", 1)[0].decode("ascii", errors="replace")
+
+
 def check_crc(frame: bytes) -> None:
     if len(frame) < 4:
         raise ValueError("response too short")
@@ -299,17 +340,27 @@ class SerialPanel(QtWidgets.QGroupBox):
         self.start_btn = QtWidgets.QPushButton("开始记录")
         self.stop_btn = QtWidgets.QPushButton("停止记录")
         self.reset_sd_btn = QtWidgets.QPushButton("SD驱动复位")
+        self.scan_log_btn = QtWidgets.QPushButton("读取日志文件")
         self.status_btn = QtWidgets.QPushButton("查询状态")
+        self.clear_log_btn = QtWidgets.QPushButton("清空日志")
 
         self.state_label = QtWidgets.QLabel("状态: -")
         self.size_label = QtWidgets.QLabel("长度: -")
         self.count_label = QtWidgets.QLabel("块数: -")
         self.error_label = QtWidgets.QLabel("错误: -")
         self.disk_label = QtWidgets.QLabel("底层: -")
+        self.file_label = QtWidgets.QLabel("文件: -")
         self.log = QtWidgets.QPlainTextEdit()
         self.log.setReadOnly(True)
         self.log.setMaximumBlockCount(200)
         self.log.setPlaceholderText("通信日志")
+
+        self.file_table = QtWidgets.QTableWidget()
+        self.file_table.setColumnCount(3)
+        self.file_table.setHorizontalHeaderLabels(["序号", "文件名", "大小"])
+        self.file_table.setAlternatingRowColors(True)
+        self.file_table.horizontalHeader().setStretchLastSection(True)
+        self.file_table.setMinimumHeight(220)
 
         self.port_combo.setMinimumWidth(130)
         self.baud_combo.setMinimumWidth(120)
@@ -321,9 +372,12 @@ class SerialPanel(QtWidgets.QGroupBox):
             self.start_btn,
             self.stop_btn,
             self.reset_sd_btn,
+            self.scan_log_btn,
             self.status_btn,
+            self.clear_log_btn,
         ):
             button.setMinimumHeight(34)
+            button.setMaximumWidth(150)
 
         top = QtWidgets.QGridLayout()
         top.setHorizontalSpacing(12)
@@ -337,10 +391,13 @@ class SerialPanel(QtWidgets.QGroupBox):
         top.addWidget(self.refresh_btn, 0, 6)
         top.addWidget(self.open_btn, 0, 7)
         top.addWidget(self.query_addr_btn, 0, 8)
-        top.addWidget(self.start_btn, 1, 0, 1, 3)
-        top.addWidget(self.stop_btn, 1, 3, 1, 3)
-        top.addWidget(self.reset_sd_btn, 1, 6, 1, 2)
-        top.addWidget(self.status_btn, 1, 8, 1, 1)
+        top.addWidget(self.start_btn, 1, 0, 1, 1)
+        top.addWidget(self.stop_btn, 1, 1, 1, 1)
+        top.addWidget(self.reset_sd_btn, 1, 2, 1, 1)
+        top.addWidget(self.scan_log_btn, 1, 3, 1, 1)
+        top.addWidget(self.status_btn, 1, 4, 1, 1)
+        top.addWidget(self.clear_log_btn, 1, 5, 1, 1)
+        top.setColumnStretch(9, 1)
 
         status = QtWidgets.QGridLayout()
         status.setHorizontalSpacing(10)
@@ -349,11 +406,25 @@ class SerialPanel(QtWidgets.QGroupBox):
         status.addWidget(self.make_metric("写入块数", self.count_label), 0, 2)
         status.addWidget(self.make_metric("错误码", self.error_label), 0, 3)
         status.addWidget(self.make_metric("底层诊断", self.disk_label), 0, 4)
+        status.addWidget(self.make_metric("日志文件", self.file_label), 1, 0, 1, 5)
 
         layout = QtWidgets.QVBoxLayout(self)
         layout.addLayout(top)
         layout.addLayout(status)
-        layout.addWidget(self.log)
+
+        io_splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Horizontal if hasattr(QtCore.Qt, "Orientation") else QtCore.Qt.Horizontal)
+        log_box = QtWidgets.QGroupBox("通信日志")
+        log_layout = QtWidgets.QVBoxLayout(log_box)
+        log_layout.addWidget(self.log)
+        file_box = QtWidgets.QGroupBox("SD 文件列表")
+        file_layout = QtWidgets.QVBoxLayout(file_box)
+        file_layout.addWidget(self.file_table)
+        io_splitter.addWidget(log_box)
+        io_splitter.addWidget(file_box)
+        io_splitter.setStretchFactor(0, 2)
+        io_splitter.setStretchFactor(1, 3)
+        io_splitter.setSizes([520, 820])
+        layout.addWidget(io_splitter, 1)
 
         self.refresh_btn.clicked.connect(self.refresh_ports)
         self.open_btn.clicked.connect(self.toggle_open)
@@ -361,7 +432,9 @@ class SerialPanel(QtWidgets.QGroupBox):
         self.start_btn.clicked.connect(self.start_record)
         self.stop_btn.clicked.connect(self.stop_record)
         self.reset_sd_btn.clicked.connect(self.reset_sd_driver)
+        self.scan_log_btn.clicked.connect(self.scan_log_file)
         self.status_btn.clicked.connect(self.query_status)
+        self.clear_log_btn.clicked.connect(self.log.clear)
         self.refresh_ports()
         self.update_buttons()
 
@@ -398,6 +471,7 @@ class SerialPanel(QtWidgets.QGroupBox):
         self.start_btn.setEnabled(opened)
         self.stop_btn.setEnabled(opened)
         self.reset_sd_btn.setEnabled(opened)
+        self.scan_log_btn.setEnabled(opened)
         self.status_btn.setEnabled(opened)
 
     def toggle_open(self) -> None:
@@ -457,12 +531,18 @@ class SerialPanel(QtWidgets.QGroupBox):
     def reset_sd_driver(self) -> None:
         self.write_command(CMD_SD_RESET)
 
-    def write_command(self, command: int) -> None:
+    def scan_log_file(self) -> None:
+        self.write_command(CMD_SD_SCAN_LOG, query_after=False)
+        QtCore.QTimer.singleShot(300, self.query_status)
+        QtCore.QTimer.singleShot(450, self.query_file_list)
+
+    def write_command(self, command: int, query_after: bool = True) -> None:
         request = write_one_register_with_fc16(self.slave_spin.value(), REG_CMD, command)
         try:
             self.append_log(f"CMD: 0x{command:04X}")
             self.transaction(request, 8)
-            self.query_status()
+            if query_after:
+                self.query_status()
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, "命令失败", str(exc))
 
@@ -501,6 +581,7 @@ class SerialPanel(QtWidgets.QGroupBox):
             disk_result = self.query_u16(REG_SD_DISK_LAST_RESULT)
             hal_status = self.query_u16(REG_SD_DISK_HAL_STATUS)
             hal_error = words_to_u32(self.query_words(REG_SD_DISK_HAL_ERROR, 2))
+            filename = words_to_string(self.query_words(REG_SD_CURRENT_FILENAME, REG_SD_FILENAME_REG_COUNT))
         except Exception as exc:
             QtWidgets.QMessageBox.warning(self, "查询失败", str(exc))
             return
@@ -511,6 +592,28 @@ class SerialPanel(QtWidgets.QGroupBox):
         self.size_label.setText(f"{size / 1024:.1f} KB")
         self.count_label.setText(str(count))
         self.disk_label.setText(f"D:{disk_result} H:{hal_status} E:0x{hal_error:08X}")
+        self.file_label.setText(filename if filename else "-")
+
+    def query_file_list(self) -> None:
+        try:
+            count = self.query_u16(REG_SD_FILE_LIST_COUNT)
+            count = min(count, SD_LOG_FILE_LIST_MAX)
+            files = []
+            for index in range(count):
+                base = REG_SD_FILE_LIST_START + index * REG_SD_FILE_LIST_STRIDE
+                name = words_to_string(self.query_words(base, REG_SD_FILE_LIST_NAME_REGS))
+                size = words_to_u64(self.query_words(base + REG_SD_FILE_LIST_SIZE_OFFSET, 4))
+                files.append((index + 1, name, size))
+        except Exception as exc:
+            QtWidgets.QMessageBox.warning(self, "文件列表读取失败", str(exc))
+            return
+
+        self.file_table.setRowCount(len(files))
+        for row, (number, name, size) in enumerate(files):
+            values = [str(number), name, f"{size} B / {size / 1024:.1f} KB"]
+            for col, text in enumerate(values):
+                self.file_table.setItem(row, col, QtWidgets.QTableWidgetItem(text))
+        self.file_table.resizeColumnsToContents()
 
 
 class LogTablePanel(QtWidgets.QGroupBox):
@@ -604,14 +707,12 @@ class MainWindow(QtWidgets.QWidget):
         self.resize(1360, 820)
         self.setStyleSheet(APP_STYLE)
 
-        splitter = QtWidgets.QSplitter(QtCore.Qt.Orientation.Vertical if hasattr(QtCore.Qt, "Orientation") else QtCore.Qt.Vertical)
-        splitter.addWidget(SerialPanel())
-        splitter.addWidget(LogTablePanel())
-        splitter.setStretchFactor(0, 0)
-        splitter.setStretchFactor(1, 1)
+        tabs = QtWidgets.QTabWidget()
+        tabs.addTab(SerialPanel(), "SD卡记录")
+        tabs.addTab(LogTablePanel(), "BIN表格查看")
 
         layout = QtWidgets.QVBoxLayout(self)
-        layout.addWidget(splitter)
+        layout.addWidget(tabs)
 
 
 def main() -> None:

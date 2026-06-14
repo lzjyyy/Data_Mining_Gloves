@@ -14,6 +14,7 @@
 #define SD_LOG_EVT_STOP            (1UL << 2)
 #define SD_LOG_EVT_TICK            (1UL << 3)
 #define SD_LOG_EVT_RESET           (1UL << 4)
+#define SD_LOG_EVT_SCAN            (1UL << 5)
 
 #define SD_LOG_CONTENT_SIZE        1021U
 #define SD_LOG_FRAME_HEAD          0xA5U
@@ -30,11 +31,13 @@
 #define SD_LOG_TICK_BATCH_LIMIT    16U
 #define SD_LOG_MOUNT_RETRY_COUNT   5U
 #define SD_LOG_MOUNT_RETRY_DELAY_MS 100U
+#define SD_LOG_SYNC_INTERVAL_BYTES (64U * 1024U)
 
 static osThreadId_t sd_log_task_id;
 static FATFS sd_log_fs;
 static FIL sd_log_file;
 static volatile uint32_t sd_log_pending_ticks;
+static uint32_t sd_log_unsynced_bytes;
 
 static SdLogStatusSnapshot_t sd_log_status = {
   .fs_status = SD_LOG_FS_NOT_MOUNTED,
@@ -48,6 +51,8 @@ static uint8_t sd_log_write_frames;
 static float sd_log_imu[160];
 static float sd_log_joint[21];
 static uint16_t sd_log_adc[132];
+
+static FRESULT SdLog_Mount(void);
 
 static uint16_t SdLog_Crc16(const uint8_t *data, uint16_t len)
 {
@@ -238,6 +243,103 @@ static void SdLog_UpdateNextFileId(void)
   sd_log_status.current_file_id = max_file_id;
 }
 
+static FRESULT SdLog_ScanLatestFile(void)
+{
+  DIR dir;
+  FILINFO info;
+  FILINFO latest_info;
+  FRESULT result;
+  uint16_t file_id;
+  uint16_t max_file_id = 0U;
+  uint16_t list_count = 0U;
+
+  if (sd_log_status.log_status == SD_LOG_RECORD_RECORDING)
+  {
+    return FR_DENIED;
+  }
+
+  if (sd_log_status.fs_status != SD_LOG_FS_MOUNTED)
+  {
+    result = SdLog_Mount();
+    if (result != FR_OK)
+    {
+      return result;
+    }
+  }
+
+  memset(&latest_info, 0, sizeof(latest_info));
+  sd_log_status.file_list_count = 0U;
+  memset(sd_log_status.file_list_names, 0, sizeof(sd_log_status.file_list_names));
+  memset(sd_log_status.file_list_sizes, 0, sizeof(sd_log_status.file_list_sizes));
+
+  result = f_opendir(&dir, "0:/");
+  if (result != FR_OK)
+  {
+    SdLog_SetError((uint16_t)result);
+    return result;
+  }
+
+  for (;;)
+  {
+    result = f_readdir(&dir, &info);
+    if ((result != FR_OK) || (info.fname[0] == '\0'))
+    {
+      break;
+    }
+
+    file_id = SdLog_ParseLogFileId(info.fname);
+    if ((file_id != 0U) && (list_count < SD_LOG_FILE_LIST_MAX))
+    {
+      snprintf(sd_log_status.file_list_names[list_count],
+               sizeof(sd_log_status.file_list_names[list_count]),
+               "0:/%s",
+               info.fname);
+      sd_log_status.file_list_sizes[list_count] = info.fsize;
+      list_count++;
+    }
+
+    if (file_id > max_file_id)
+    {
+      max_file_id = file_id;
+      latest_info = info;
+    }
+  }
+
+  (void)f_closedir(&dir);
+
+  if (result != FR_OK)
+  {
+    SdLog_SetError((uint16_t)result);
+    return result;
+  }
+
+  if (max_file_id == 0U)
+  {
+    sd_log_status.current_file_id = 0U;
+    sd_log_status.current_file_size = 0U;
+    sd_log_status.current_write_count = 0U;
+    sd_log_status.current_filename[0] = '\0';
+    sd_log_status.file_list_count = list_count;
+    sd_log_status.error_code = SD_ERROR_NONE;
+    return FR_OK;
+  }
+
+  sd_log_status.current_file_id = max_file_id;
+  sd_log_status.current_file_size = latest_info.fsize;
+  sd_log_status.current_write_count = (uint32_t)(latest_info.fsize / SD_LOG_BLOCK_SIZE);
+  snprintf(sd_log_status.current_filename,
+           sizeof(sd_log_status.current_filename),
+           "0:/%s",
+           latest_info.fname);
+  strncpy(sd_log_status.last_filename,
+          sd_log_status.current_filename,
+          sizeof(sd_log_status.last_filename));
+  sd_log_status.file_list_count = list_count;
+  sd_log_status.error_code = SD_ERROR_NONE;
+
+  return FR_OK;
+}
+
 static FRESULT SdLog_Mount(void)
 {
   FRESULT result = f_mount(&sd_log_fs, "0:", 1U);
@@ -298,6 +400,7 @@ static FRESULT SdLog_CreateFile(void)
     sd_log_status.error_code = SD_ERROR_NONE;
     sd_log_status.log_status = SD_LOG_RECORD_IDLE;
     sd_log_write_frames = 0U;
+    sd_log_unsynced_bytes = 0U;
   }
   else
   {
@@ -334,12 +437,20 @@ static void SdLog_FlushWriteBuffer(uint8_t force)
 
   sd_log_status.current_file_size += written;
   sd_log_status.current_write_count += sd_log_write_frames;
+  sd_log_unsynced_bytes += written;
   sd_log_write_frames = 0U;
 
-  result = f_sync(&sd_log_file);
-  if (result != FR_OK)
+  if ((force != 0U) || (sd_log_unsynced_bytes >= SD_LOG_SYNC_INTERVAL_BYTES))
   {
-    SdLog_SetError((uint16_t)result);
+    result = f_sync(&sd_log_file);
+    if (result != FR_OK)
+    {
+      SdLog_SetError((uint16_t)result);
+    }
+    else
+    {
+      sd_log_unsynced_bytes = 0U;
+    }
   }
 }
 
@@ -385,6 +496,7 @@ static void SdLog_StartRecording(void)
   }
 
   sd_log_pending_ticks = 0U;
+  sd_log_unsynced_bytes = 0U;
   sd_log_status.log_status = SD_LOG_RECORD_RECORDING;
   sd_log_status.error_code = SD_ERROR_NONE;
   if (HAL_TIM_Base_Start_IT(&htim3) != HAL_OK)
@@ -406,9 +518,13 @@ static void SdLog_StopRecording(void)
   SdLog_FlushWriteBuffer(1U);
   if (sd_log_status.log_status != SD_LOG_RECORD_ERROR)
   {
-    if (f_sync(&sd_log_file) != FR_OK)
+    if ((sd_log_unsynced_bytes != 0U) && (f_sync(&sd_log_file) != FR_OK))
     {
       SdLog_SetError(CMD_ERROR_STOP_FAILED);
+    }
+    else
+    {
+      sd_log_unsynced_bytes = 0U;
     }
   }
 
@@ -439,6 +555,7 @@ static void SdLog_ResetDriver(void)
   (void)HAL_TIM_Base_Stop_IT(&htim3);
   sd_log_pending_ticks = 0U;
   sd_log_write_frames = 0U;
+  sd_log_unsynced_bytes = 0U;
 
   if (sd_log_file.obj.fs != NULL)
   {
@@ -500,6 +617,14 @@ void SdLog_RequestReset(void)
   }
 }
 
+void SdLog_RequestScanLog(void)
+{
+  if (sd_log_task_id != NULL)
+  {
+    (void)osThreadFlagsSet(sd_log_task_id, SD_LOG_EVT_SCAN);
+  }
+}
+
 void SdLog_OnTimPeriodElapsed(TIM_HandleTypeDef *htim)
 {
   if ((htim != NULL) && (htim->Instance == TIM3))
@@ -532,10 +657,6 @@ void StartSdTask(void *argument)
   (void)argument;
   osDelay(500U);
   SdLog_Init();
-  if (SdLog_CreateFile() == FR_OK)
-  {
-    SdLog_StartRecording();
-  }
 
   for (;;)
   {
@@ -543,7 +664,8 @@ void StartSdTask(void *argument)
                                        SD_LOG_EVT_START |
                                        SD_LOG_EVT_STOP |
                                        SD_LOG_EVT_TICK |
-                                       SD_LOG_EVT_RESET,
+                                       SD_LOG_EVT_RESET |
+                                       SD_LOG_EVT_SCAN,
                                        osFlagsWaitAny,
                                        osWaitForever);
     if ((flags & osFlagsError) != 0U)
@@ -555,6 +677,11 @@ void StartSdTask(void *argument)
     {
       SdLog_ResetDriver();
       continue;
+    }
+
+    if ((flags & SD_LOG_EVT_SCAN) != 0U)
+    {
+      (void)SdLog_ScanLatestFile();
     }
 
     if ((flags & SD_LOG_EVT_CREATE) != 0U)

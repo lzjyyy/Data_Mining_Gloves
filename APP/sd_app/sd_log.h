@@ -9,9 +9,10 @@ extern "C" {
 #include <stdint.h>
 
 #define SD_LOG_BLOCK_SIZE          1024U
-#define SD_LOG_WRITE_BLOCKS        2U
+#define SD_LOG_WRITE_BLOCKS        1U
 #define SD_LOG_WRITE_SIZE          (SD_LOG_BLOCK_SIZE * SD_LOG_WRITE_BLOCKS)
 #define SD_LOG_FILENAME_BYTES      32U
+#define SD_LOG_FILE_LIST_MAX       16U
 
 typedef enum
 {
@@ -40,6 +41,9 @@ typedef struct
   uint32_t used_size_mb;
   char current_filename[SD_LOG_FILENAME_BYTES];
   char last_filename[SD_LOG_FILENAME_BYTES];
+  uint16_t file_list_count;
+  char file_list_names[SD_LOG_FILE_LIST_MAX][SD_LOG_FILENAME_BYTES];
+  uint64_t file_list_sizes[SD_LOG_FILE_LIST_MAX];
 } SdLogStatusSnapshot_t;
 
 void SdLog_Init(void);
@@ -47,6 +51,7 @@ void SdLog_RequestCreateFile(void);
 void SdLog_RequestStart(void);
 void SdLog_RequestStop(void);
 void SdLog_RequestReset(void);
+void SdLog_RequestScanLog(void);
 void SdLog_OnTimPeriodElapsed(TIM_HandleTypeDef *htim);
 void SdLog_GetStatus(SdLogStatusSnapshot_t *status);
 

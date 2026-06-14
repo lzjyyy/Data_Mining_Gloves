@@ -92,10 +92,16 @@ extern "C" {
 #define REG_SD_RESERVED1_END           0x009FU
 #define REG_SD_CURRENT_FILENAME        0x00A0U
 #define REG_SD_LAST_FILENAME           0x00B0U
+#define REG_SD_FILE_LIST_COUNT         0x00C0U
+#define REG_SD_FILE_LIST_START         0x00C1U
+#define REG_SD_FILE_LIST_STRIDE        20U
+#define REG_SD_FILE_LIST_NAME_REGS     16U
+#define REG_SD_FILE_LIST_SIZE_OFFSET   16U
+#define REG_SD_FILE_LIST_END           0x01FFU
 
 #define REG_SD_STATUS_START            REG_SD_FS_STATUS
-#define REG_SD_STATUS_END              0x00BFU
-#define REG_SD_STATUS_COUNT            63U
+#define REG_SD_STATUS_END              REG_SD_FILE_LIST_END
+#define REG_SD_STATUS_COUNT            383U
 #define REG_SD_FILENAME_REG_COUNT      16U
 
 /* SD and log status values. */
@@ -155,6 +161,7 @@ extern "C" {
 #define CMD_LOG_START                  0x0094U
 #define CMD_LOG_STOP                   0x0096U
 #define CMD_SD_RESET                   0x0098U
+#define CMD_SD_SCAN_LOG                0x009AU
 #define CMD_ACQ_START                  0x0501U
 #define CMD_ACQ_STOP                   0x0502U
 
