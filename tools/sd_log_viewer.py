@@ -550,10 +550,10 @@ class SerialPanel(QtWidgets.QGroupBox):
         request = read_holding(0x00, 0x0000, 1)
         try:
             response = self.transaction(request, 7)
-            address = response[0]
-            value = parse_read_u16_response(response)
-            if address != value:
-                self.append_log(f"地址查询提示: 回包地址={address}, 寄存器值={value}")
+            response_addr = response[0]
+            address = parse_read_u16_response(response)
+            if response_addr != 0x00:
+                self.append_log(f"地址查询提示: 回包地址={response_addr}, 期望=0")
             if 1 <= address <= 247:
                 self.slave_spin.setValue(address)
                 self.append_log(f"当前从机地址: {address}")

@@ -16,7 +16,7 @@
         <TargetCommonOption>
           <Device>STM32H562RGTx</Device>
           <Vendor>STMicroelectronics</Vendor>
-          <PackID>Keil.STM32H5xx_DFP.2.0.0</PackID>
+          <PackID>Keil.STM32H5xx_DFP.2.2.0</PackID>
           <PackURL>https://www.keil.com/pack/</PackURL>
           <Cpu>IRAM(0x20000000-0x2009FFFF) IROM(0x08000000-0x80FFFFF)  CLOCK(8000000) FPU3(SFPU) CPUTYPE("Cortex-M33") ELITTLE TZ DSP</Cpu>
           <FlashUtilSpec></FlashUtilSpec>
@@ -184,8 +184,6 @@
             <hadXRAM>0</hadXRAM>
             <uocXRam>0</uocXRam>
             <RvdsVP>2</RvdsVP>
-            <RvdsMve>0</RvdsMve>
-            <RvdsCdeCp>0</RvdsCdeCp>
             <hadIRAM2>0</hadIRAM2>
             <hadIROM2>0</hadIROM2>
             <StupSel>8</StupSel>
@@ -352,7 +350,7 @@
             <NoWarn>0</NoWarn>
             <uSurpInc>0</uSurpInc>
             <useXO>0</useXO>
-            <ClangAsOpt>4</ClangAsOpt>
+            <uClangAs>0</uClangAs>
             <VariousControls>
               <MiscControls></MiscControls>
               <Define></Define>
@@ -1384,9 +1382,6 @@
           </Files>
         </Group>
         <Group>
-          <GroupName>::CMSIS</GroupName>
-        </Group>
-        <Group>
           <GroupName>Middlewares/RTOS2/CMSIS/RTOS2/Core/TZ_Non_Supported</GroupName>
           <GroupOption>
             <CommonProperty>
@@ -1447,7 +1442,7 @@
                 <NoWarn>2</NoWarn>
                 <uSurpInc>2</uSurpInc>
                 <useXO>2</useXO>
-                <ClangAsOpt>1</ClangAsOpt>
+                <uClangAs>2</uClangAs>
                 <VariousControls>
                   <MiscControls></MiscControls>
                   <Define></Define>
@@ -2081,7 +2076,7 @@
                 <NoWarn>2</NoWarn>
                 <uSurpInc>2</uSurpInc>
                 <useXO>2</useXO>
-                <ClangAsOpt>1</ClangAsOpt>
+                <uClangAs>2</uClangAs>
                 <VariousControls>
                   <MiscControls></MiscControls>
                   <Define></Define>
@@ -2149,6 +2144,9 @@
               </FileOption>
             </File>
           </Files>
+        </Group>
+        <Group>
+          <GroupName>::CMSIS</GroupName>
         </Group>
       </Groups>
     </Target>

@@ -718,12 +718,12 @@ ModbusResult_t Modbus_ProcessRequest(const uint8_t *rx_buf,
     start_reg = Modbus_ReadU16(&rx_buf[2]);
     reg_count = Modbus_ReadU16(&rx_buf[4]);
 
-    response_addr = (request_addr == MODBUS_BROADCAST_ADDR) ? modbus_slave_address : request_addr;
     if ((request_addr == MODBUS_BROADCAST_ADDR) &&
         ((start_reg != REG_SLAVE_ADDR) || (reg_count != 1U)))
     {
       return MODBUS_RESULT_NO_RESPONSE;
     }
+    response_addr = request_addr;
 
     return Modbus_HandleReadHoldingRegs(response_addr,
                                         start_reg,

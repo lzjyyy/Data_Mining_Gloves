@@ -19,12 +19,20 @@
 
 本系统使用标准 Modbus-RTU 一问一答格式。所有请求帧和回复帧末尾均带 `CRC_L CRC_H`，CRC 采用 Modbus-RTU CRC16，低字节在前。
 
+示例规则：除地址发现流程按协议使用 `0x00` 外，本文新增示例帧均固定从机地址为 `0x01`。变量数据区采用文中给出的业务示例值或全 `0x00` 示例值计算 CRC；`[N bytes of 00]` 表示压缩写法，实际发送或回复时应展开为 N 个 `00` 字节，数据变化后 CRC 必须重新计算。
+
 #### 1.1.1 `0x03` 读保持寄存器
 
 请求帧：
 
 ```plain
 [SlaveAddr] [0x03] [StartReg_H StartReg_L] [RegCount_H RegCount_L] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+读取系统状态区: 01 03 00 40 00 0A C4 19
 ```
 
 回复帧：
@@ -36,6 +44,12 @@
 ...
 [DataN_H DataN_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+1 个寄存器数据全 0: 01 03 02 00 00 B8 44
 ```
 
 约定：
@@ -53,10 +67,22 @@ N = RegCount - 1
 [SlaveAddr] [0x06] [RegAddr_H RegAddr_L] [Value_H Value_L] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+写 0x0001 = 0x0001: 01 06 00 01 00 01 19 CA
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x06] [RegAddr_H RegAddr_L] [Value_H Value_L] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+写 0x0001 = 0x0001: 01 06 00 01 00 01 19 CA
 ```
 
 约定：
@@ -78,10 +104,22 @@ N = RegCount - 1
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+写 REG_CMD/REG_CMD_PARAM/REG_CMD_SEQ: 01 10 00 20 00 03 06 00 94 00 00 00 01 17 F7
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [StartReg_H StartReg_L] [RegCount_H RegCount_L] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+写 0x0020 起始的 3 个寄存器回复: 01 10 00 20 00 03 81 C2
 ```
 
 约定：
@@ -102,6 +140,12 @@ N = RegCount - 1
 [SlaveAddr] [FuncCode | 0x80] [ExceptionCode] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+0x10 异常码 0x03: 01 90 03 0C 01
+```
+
 常用异常码：
 
 | 异常码 | 名称 | 使用场景 |
@@ -116,6 +160,12 @@ N = RegCount - 1
 
 ```plain
 [SlaveAddr] [0x90] [0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 90 03 0C 01
 ```
 
 不回复的情况：
@@ -180,6 +230,12 @@ Modbus 数据区字节顺序：
 [0x00] [0x03] [0x00 0x00] [0x00 0x01] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+00 03 00 00 00 01 85 DB
+```
+
 含义：
 
 ```plain
@@ -195,14 +251,20 @@ Modbus 数据区字节顺序：
 #define REG_SLAVE_ADDR  0x0000
 ```
 
-### 2.2 从机回复真实地址
-假设从机真实地址为 `0x01`，从机回复：
+### 2.2 从机使用 `0x00` 回复，并在数据区返回真实地址
+假设从机真实地址为 `0x01`，从机回复帧的地址仍保持为主机请求中的 `0x00`，真实地址放在 `REG_SLAVE_ADDR` 数据区：
 
 ```plain
-[0x01] [0x03] [0x02] [0x00 0x01] [CRC_L] [CRC_H]
+[0x00] [0x03] [0x02] [0x00 0x01] [CRC_L] [CRC_H]
 ```
 
-主机解析后记录：
+示例帧：
+
+```plain
+00 03 02 00 01 44 44
+```
+
+主机解析寄存器值后记录：
 
 ```c
 slave_addr = 0x01;
@@ -227,6 +289,12 @@ slave_addr = 0x01;
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x00] [0x00 0x0E] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 00 00 0E C4 0E
 ```
 
 读取内容：
@@ -255,6 +323,12 @@ REG_TIME_SYNC_UTC_US    0x000A  // 主机写入同步 UTC us，uint64，占 4 re
 [SlaveAddr] [0x03] [0x00 0x40] [0x00 0x0A] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 00 40 00 0A C4 19
+```
+
 回复帧：
 
 ```plain
@@ -270,6 +344,12 @@ REG_TIME_SYNC_UTC_US    0x000A  // 主机写入同步 UTC us，uint64，占 4 re
 [Data8_H Data8_L]
 [Data9_H Data9_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 14 [20 bytes of 00] A3 67
 ```
 
 读取内容：
@@ -301,6 +381,12 @@ REG_TEMPERATURE_BOARD   0x0048  // 板载温度，float32，占 2 regs
 [SlaveAddr] [0x03] [0x00 0x60] [0x00 0x04] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 00 60 00 04 44 17
+```
+
 回复帧：
 
 ```plain
@@ -310,6 +396,12 @@ REG_TEMPERATURE_BOARD   0x0048  // 板载温度，float32，占 2 regs
 [Data2_H Data2_L]
 [Data3_H Data3_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 08 [8 bytes of 00] 95 D7
 ```
 
 读取内容：
@@ -343,6 +435,12 @@ REG_BAT_CURRENT         0x0062  // 电池电流 A，float32，占 2 regs
 [SlaveAddr] [0x03] [0x00 0x81] [0x00 0x3F] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 00 81 00 3F 55 F2
+```
+
 回复帧：
 
 ```plain
@@ -352,6 +450,12 @@ REG_BAT_CURRENT         0x0062  // 电池电流 A，float32，占 2 regs
 ...
 [Data62_H Data62_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 7E [126 bytes of 00] 47 83
 ```
 
 读取内容：
@@ -404,12 +508,24 @@ SD 是否存在错误；
 [SlaveAddr] [0x03] [0x11 0x44] [0x00 0x01] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 11 44 00 01 C1 23
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x03] [0x02]
 [Data0_H Data0_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 02 [2 bytes of 00] B8 44
 ```
 
 读取内容：
@@ -450,6 +566,12 @@ bit15 = IMU15 状态
 [SlaveAddr] [0x03] [0x20 0x88] [0x00 0x09] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 20 88 00 09 0E 26
+```
+
 回复帧：
 
 ```plain
@@ -464,6 +586,12 @@ bit15 = IMU15 状态
 [Data7_H Data7_L]
 [Data8_H Data8_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 12 [18 bytes of 00] F2 82
 ```
 
 读取内容：
@@ -550,10 +678,22 @@ bit = 0：对应电阻点异常、离线或数据无效
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 0A 00 04 08 60 00 0B B9 1A 83 00 06 42 18
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x0A] [0x00 0x04] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 10 00 0A 00 04 E1 C8
 ```
 
 其中：
@@ -578,6 +718,13 @@ UTC_Reg3 = bit[63:48]
 [SlaveAddr] [0x03] [0x00 0x40] [0x00 0x0A] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+读取当前 UTC: 01 03 00 02 00 04 E5 C9
+或者读取系统状态: 01 03 00 40 00 0A C4 19
+```
+
 读取当前 UTC 回复帧：
 
 ```plain
@@ -587,6 +734,12 @@ UTC_Reg3 = bit[63:48]
 [Data2_H Data2_L]
 [Data3_H Data3_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 08 [8 bytes of 00] 95 D7
 ```
 
 读取系统状态回复帧：
@@ -604,6 +757,12 @@ UTC_Reg3 = bit[63:48]
 [Data8_H Data8_L]
 [Data9_H Data9_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 14 [20 bytes of 00] A3 67
 ```
 
 主机判断同步是否成功：
@@ -655,6 +814,14 @@ Frame 1:
 
 Frame 2:
 [SlaveAddr] [0x03] [0x10 0xF0] [0x00 0x50] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+Frame 0: 01 03 10 00 00 78 41 28
+Frame 1: 01 03 10 78 00 78 C1 31
+Frame 2: 01 03 10 F0 00 50 41 05
 ```
 
 对应：
@@ -727,6 +894,12 @@ joint_angle[i] = scale[i] * joint_angle_raw[i] + offset[i]
 [SlaveAddr] [0x03] [0x1F 0xAC] [0x00 0x2A] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 1F AC 00 2A 03 E0
+```
+
 对应：
 
 ```plain
@@ -742,6 +915,12 @@ joint_angle[i] = scale[i] * joint_angle_raw[i] + offset[i]
 ...
 [OffsetReg41_H OffsetReg41_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+数据区全 0: 01 10 1F AC 00 2A 54 [84 bytes of 00] A3 43
 ```
 
 从机运行时根据该 offset 输出校准后的关节角度：
@@ -766,6 +945,12 @@ joint_angle[i] = joint_angle_raw[i] - joint_angle_offset[i]
 
 ```plain
 [SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x2A] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 1F D6 00 2A 22 39
 ```
 
 对应：
@@ -813,10 +998,22 @@ i = 0 ~ 15
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+i = 0，Offset 数据全 0: 01 10 11 54 00 14 28 [40 bytes of 00] 13 6F
+```
+
 写入成功后，从机按标准 `0x10` 回复：
 
 ```plain
 [SlaveAddr] [0x10] [IMU_i_OFFSET_BASE_H IMU_i_OFFSET_BASE_L] [0x00 0x14] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+i = 0: 01 10 11 54 00 14 84 EA
 ```
 
 ---
@@ -850,6 +1047,14 @@ Frame 1:
 
 Frame 2:
 [SlaveAddr] [0x03] [0x20 0x78] [0x00 0x0C] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+Frame 0: 01 03 20 00 00 3C 4E 1B
+Frame 1: 01 03 20 3C 00 3C 8E 17
+Frame 2: 01 03 20 78 00 0C CE 16
 ```
 
 对应：
@@ -886,10 +1091,22 @@ Frame 2：R_ADC[120] ~ R_ADC[131]
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 92 00 01 02 00 01 7B 22
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x92] [0x00 0x01] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 10 00 92 00 01 A0 24
 ```
 
 从机创建新的日志文件，并更新：
@@ -905,6 +1122,12 @@ REG_SD_LOG_STATUS
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x81] [0x00 0x3F] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 81 00 3F 55 F2
 ```
 
 ---
@@ -928,10 +1151,22 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 06 00 94 00 00 00 01 17 F7
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
 ```
 
 主机读取 ACK：
@@ -940,12 +1175,24 @@ REG_CMD_SEQ   0x0022 = seq
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
+```
+
 从机开始将 IMU、电阻点阵、时间戳、电池状态等数据写入 SD 卡。
 
 主机读取：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x82] [0x00 0x01] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 82 00 01 24 22
 ```
 
 确认：
@@ -973,10 +1220,22 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 06 00 96 00 00 00 02 2E 36
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
 ```
 
 主机读取 ACK：
@@ -985,10 +1244,22 @@ REG_CMD_SEQ   0x0022 = seq
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
+```
+
 主机读取日志状态确认：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x82] [0x00 0x01] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 82 00 01 24 22
 ```
 
 确认：
@@ -1018,16 +1289,30 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例说明：`CMD_SD_LIST_FILES` 命令字尚未分配，请求帧 CRC 需在命令字确定后重算。
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
+```
+
 主机读取 ACK：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
 ```
 
 若 ACK 成功，则从机已准备好该页文件列表。文件列表数据区需在后续协议中补充定义；当前命令仅定义触发方式和参数。
@@ -1053,16 +1338,30 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例说明：`CMD_SD_DOWNLOAD_FILE` 命令字尚未分配，请求帧 CRC 需在命令字确定后重算。
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
+```
+
 主机读取 ACK：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
 ```
 
 若 ACK 成功，则从机已准备好指定文件下载。文件下载数据区、分片大小和分片读取寄存器需在后续协议中补充定义。
@@ -1373,16 +1672,34 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 06 05 01 00 00 00 03 9A 7E
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
+```
+
 主机读取 ACK：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
 ```
 
 从机收到后：
@@ -1400,6 +1717,12 @@ REG_CMD_SEQ   0x0022 = seq
 
 ```plain
 [SlaveAddr] [0x03] [0x05 0x00] [0x00 0x01] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 05 00 00 01 84 C6
 ```
 
 若返回 `REG_WORK_STATE = WORK_STATE_ACQUIRING`，则进入高频数据交互阶段。
@@ -1424,16 +1747,34 @@ REG_CMD_SEQ   0x0022 = seq
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 06 05 02 00 00 00 04 9F BC
+```
+
 回复帧：
 
 ```plain
 [SlaveAddr] [0x10] [0x00 0x20] [0x00 0x03] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 10 00 20 00 03 81 C2
+```
+
 主机读取 ACK：
 
 ```plain
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 00 23 00 03 F4 01
 ```
 
 从机收到后：
@@ -1453,12 +1794,18 @@ REG_CMD_SEQ   0x0022 = seq
 [SlaveAddr] [0x03] [0x05 0x00] [0x00 0x01] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 05 00 00 01 84 C6
+```
+
 若返回 `REG_WORK_STATE = WORK_STATE_IDLE`，则退出高频数据交互阶段。
 
 ---
 
 ## 9. 高频数据交互任务
-采集任务开启后，主机以 100 Hz 周期读取 6 帧数据。
+采集任务开启后，主机以 100 Hz 周期读取 7 帧数据。
 
 ### 9.1 高频数据内容
 ```plain
@@ -1482,7 +1829,7 @@ IMU 数据：
     988 byte
 ```
 
-### 9.2 高频数据 6 帧读取表
+### 9.2 高频数据 7 帧读取表
 ```c
 typedef struct
 {
@@ -1490,24 +1837,31 @@ typedef struct
     uint16_t reg_count;
 } ModbusReadSegment_t;
 
-static const ModbusReadSegment_t g_high_rate_segments[6] =
+static const ModbusReadSegment_t g_high_rate_segments[7] =
 {
     {0x1000, 120},   // IMU float[0]    ~ float[59]
     {0x1078, 120},   // IMU float[60]   ~ float[119]
     {0x10F0,  80},   // IMU float[120]  ~ float[159]
-    {0x1FD6,  54},   // Joint angle[0]  ~ angle[20]  + R_ADC[0]  ~ R_ADC[11]
-    {0x200C,  60},   // R_ADC[12]       ~ R_ADC[71]
-    {0x2048,  60},   // R_ADC[72]       ~ R_ADC[131]
+    {0x1FD6,  42},   // Joint angle[0]  ~ angle[20]
+    {0x2000,  60},   // R_ADC[0]        ~ R_ADC[59]
+    {0x203C,  60},   // R_ADC[60]       ~ R_ADC[119]
+    {0x2078,  12},   // R_ADC[120]      ~ R_ADC[131]
 };
 ```
 
 ### 9.3 高频读取请求帧
-采集任务开始后，主机以 100 Hz 周期读取 6 帧高频数据。读取功能码统一为 `0x03`，即读取保持寄存器。
+采集任务开始后，主机以 100 Hz 周期读取 7 帧高频数据。读取功能码统一为 `0x03`，即读取保持寄存器。
 
 标准 Modbus `0x03` 响应帧格式如下：
 
 ```plain
 [SlaveAddr] [0x03] [ByteCount] [Data...] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+1 个寄存器数据全 0: 01 03 02 00 00 B8 44
 ```
 
 其中：
@@ -1523,6 +1877,12 @@ ByteCount = RegisterCount × 2
 
 ```plain
 [SlaveAddr] [0x03] [0x10 0x00] [0x00 0x78] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 10 00 00 78 41 28
 ```
 
 含义：
@@ -1543,6 +1903,12 @@ ByteCount = RegisterCount × 2
 ...
 [Reg1077_H Reg1077_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 F0 [240 bytes of 00] 8C DB
 ```
 
 对应 IMU 数据范围：
@@ -1576,6 +1942,12 @@ CC DD AA BB
 [SlaveAddr] [0x03] [0x10 0x78] [0x00 0x78] [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 10 78 00 78 C1 31
+```
+
 含义：
 
 ```plain
@@ -1596,6 +1968,12 @@ CC DD AA BB
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 F0 [240 bytes of 00] 8C DB
+```
+
 对应 IMU 数据范围：
 
 ```plain
@@ -1609,6 +1987,12 @@ IMU float[60] ~ IMU float[119]
 
 ```plain
 [SlaveAddr] [0x03] [0x10 0xF0] [0x00 0x50] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 10 F0 00 50 41 05
 ```
 
 含义：
@@ -1631,6 +2015,12 @@ IMU float[60] ~ IMU float[119]
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 A0 [160 bytes of 00] A5 89
+```
+
 对应 IMU 数据范围：
 
 ```plain
@@ -1639,53 +2029,70 @@ IMU float[120] ~ IMU float[159]
 
 ---
 
-#### Frame 3：读取 21 个关节角度和前 12 个电阻 ADC 原始值
+#### Frame 3：读取 21 个关节角度
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x36] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x2A] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 1F D6 00 2A 22 39
 ```
 
 含义：
 
 ```plain
 起始寄存器：0x1FD6
-寄存器数量：0x0036 = 54
-数据长度：54 × 2 = 108 byte = 0x6C
-对应数据：21 个 joint angle float32 + 12 个 uint16 ADC
+寄存器数量：0x002A = 42
+数据长度：42 × 2 = 84 byte = 0x54
+对应数据：21 个 joint angle float32
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x6C]
+[SlaveAddr] [0x03] [0x54]
 [Reg1FD6_H Reg1FD6_L]
 [Reg1FD7_H Reg1FD7_L]
 ...
-[Reg200B_H Reg200B_L]
+[Reg1FFF_H Reg1FFF_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 54 [84 bytes of 00] 99 95
 ```
 
 对应数据范围：
 
 ```plain
-0x1FD6 ~ 0x1FFF：joint_angle[0]        ~ joint_angle[20]，float32，共 42 regs
-0x2000 ~ 0x200B：R_ADC[0]       ~ R_ADC[11]，uint16，共 12 regs
+0x1FD6 ~ 0x1FFF：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
 ```
 
 ---
 
-#### Frame 4：读取电阻点阵 ADC 原始值 R_ADC[12] ~ R_ADC[71]
+#### Frame 4：读取电阻点阵 ADC 原始值 R_ADC[0] ~ R_ADC[59]
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x0C] [0x00 0x3C] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x00] [0x00 0x3C] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 20 00 00 3C 4E 1B
 ```
 
 含义：
 
 ```plain
-起始寄存器：0x200C
+起始寄存器：0x2000
 寄存器数量：0x003C = 60
 数据长度：60 × 2 = 120 byte = 0x78
 对应数据：60 个 uint16 ADC 原始值
@@ -1695,32 +2102,44 @@ IMU float[120] ~ IMU float[159]
 
 ```plain
 [SlaveAddr] [0x03] [0x78]
-[Reg200C_H Reg200C_L]
-[Reg200D_H Reg200D_L]
+[Reg2000_H Reg2000_L]
+[Reg2001_H Reg2001_L]
 ...
-[Reg2047_H Reg2047_L]
+[Reg203B_H Reg203B_L]
 [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 78 [120 bytes of 00] D1 07
 ```
 
 对应数据范围：
 
 ```plain
-R_ADC[12] ~ R_ADC[71]
+R_ADC[0] ~ R_ADC[59]
 ```
 
 ---
 
-#### Frame 5：读取电阻点阵 ADC 原始值 R_ADC[72] ~ R_ADC[131]
+#### Frame 5：读取电阻点阵 ADC 原始值 R_ADC[60] ~ R_ADC[119]
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x48] [0x00 0x3C] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x3C] [0x00 0x3C] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 20 3C 00 3C 8E 17
 ```
 
 含义：
 
 ```plain
-起始寄存器：0x2048
+起始寄存器：0x203C
 寄存器数量：0x003C = 60
 数据长度：60 × 2 = 120 byte = 0x78
 对应数据：60 个 uint16 ADC 原始值
@@ -1730,35 +2149,89 @@ R_ADC[12] ~ R_ADC[71]
 
 ```plain
 [SlaveAddr] [0x03] [0x78]
-[Reg2048_H Reg2048_L]
-[Reg2049_H Reg2049_L]
+[Reg203C_H Reg203C_L]
+[Reg203D_H Reg203D_L]
+...
+[Reg2077_H Reg2077_L]
+[CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 78 [120 bytes of 00] D1 07
+```
+
+对应数据范围：
+
+```plain
+R_ADC[60] ~ R_ADC[119]
+```
+
+---
+
+#### Frame 6：读取电阻点阵 ADC 原始值 R_ADC[120] ~ R_ADC[131]
+请求帧：
+
+```plain
+[SlaveAddr] [0x03] [0x20 0x78] [0x00 0x0C] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+01 03 20 78 00 0C CE 16
+```
+
+含义：
+
+```plain
+起始寄存器：0x2078
+寄存器数量：0x000C = 12
+数据长度：12 × 2 = 24 byte = 0x18
+对应数据：12 个 uint16 ADC 原始值
+```
+
+回复帧：
+
+```plain
+[SlaveAddr] [0x03] [0x18]
+[Reg2078_H Reg2078_L]
+[Reg2079_H Reg2079_L]
 ...
 [Reg2083_H Reg2083_L]
 [CRC_L] [CRC_H]
 ```
 
+示例帧：
+
+```plain
+01 03 18 [24 bytes of 00] 6C F4
+```
+
 对应数据范围：
 
 ```plain
-R_ADC[72] ~ R_ADC[131]
+R_ADC[120] ~ R_ADC[131]
 ```
 
 ---
 
-#### 6 帧响应数据长度汇总
+#### 7 帧响应数据长度汇总
 | 帧号 | 起始寄存器 | 寄存器数量 | ByteCount | 数据内容 |
 | --- | --- | --- | --- | --- |
 | Frame 0 | 0x1000 | 120 | 0xF0 / 240 byte | IMU float[0] ~ float[59] |
 | Frame 1 | 0x1078 | 120 | 0xF0 / 240 byte | IMU float[60] ~ float[119] |
 | Frame 2 | 0x10F0 | 80 | 0xA0 / 160 byte | IMU float[120] ~ float[159] |
-| Frame 3 | 0x1FD6 | 54 | 0x6C / 108 byte | joint_angle[0] ~ joint_angle[20] + R_ADC[0] ~ R_ADC[11] |
-| Frame 4 | 0x200C | 60 | 0x78 / 120 byte | R_ADC[12] ~ R_ADC[71] |
-| Frame 5 | 0x2048 | 60 | 0x78 / 120 byte | R_ADC[72] ~ R_ADC[131] |
+| Frame 3 | 0x1FD6 | 42 | 0x54 / 84 byte | joint_angle[0] ~ joint_angle[20] |
+| Frame 4 | 0x2000 | 60 | 0x78 / 120 byte | R_ADC[0] ~ R_ADC[59] |
+| Frame 5 | 0x203C | 60 | 0x78 / 120 byte | R_ADC[60] ~ R_ADC[119] |
+| Frame 6 | 0x2078 | 12 | 0x18 / 24 byte | R_ADC[120] ~ R_ADC[131] |
 
-6 帧数据区总长度为：
+7 帧数据区总长度为：
 
 ```plain
-240 + 240 + 160 + 108 + 120 + 120 = 988 byte
+240 + 240 + 160 + 84 + 120 + 120 + 24 = 988 byte
 ```
 
 其中：
@@ -1808,23 +2281,28 @@ Frame 3 写入：
 
 ```plain
 joint_angle[0] ~ joint_angle[20]
-r_adc[0]       ~ r_adc[11]
 ```
 
 Frame 4 写入：
 
 ```plain
-r_adc[12] ~ r_adc[71]
+r_adc[0] ~ r_adc[59]
 ```
 
 Frame 5 写入：
 
 ```plain
-r_adc[72] ~ r_adc[131]
+r_adc[60] ~ r_adc[119]
+```
+
+Frame 6 写入：
+
+```plain
+r_adc[120] ~ r_adc[131]
 ```
 
 ### 9.4 主机解析任务
-主机收到 6 帧后：
+主机收到 7 帧后：
 
 ```plain
 1. 校验每帧 CRC；
@@ -1893,8 +2371,8 @@ RS485 CRC 或超时错误过多；
 1. 地址发现
    - 主机使用 0x00 发送地址发现帧；
    - 读取 0x0000，即 REG_SLAVE_ADDR；
-   - 从机回复真实从机地址；
-   - 主机记录 slave_addr。
+   - 从机回复帧地址保持 0x00，REG_SLAVE_ADDR 数据区返回真实从机地址；
+   - 主机从寄存器值记录 slave_addr。
 
 2. 设备状态查询
    - 读取基础通信与时间寄存器；
@@ -1937,7 +2415,7 @@ RS485 CRC 或超时错误过多；
    - 工作状态为空闲后退出高频采集通信。
 
 8. 高频数据交互
-   - 主机以 100 Hz 周期读取 6 帧数据；
+   - 主机以 100 Hz 周期读取 7 帧数据；
    - 解析 IMU float 数据；
    - 解析 21 个关节角度 float 数据；
    - 解析 132 个电阻点阵 uint16 ADC 原始值；
@@ -1950,7 +2428,7 @@ RS485 CRC 或超时错误过多；
 ```plain
 1. 地址发现请求：
    - 若收到地址 0x00，功能码 0x03，读取 0x0000，数量 1；
-   - 从机使用真实地址回复 REG_SLAVE_ADDR。
+   - 从机回复帧地址保持 0x00，并在 REG_SLAVE_ADDR 数据区返回真实地址。
 
 2. 读寄存器请求：
    - 根据起始地址判断属于哪个区域；
@@ -2073,6 +2551,13 @@ REG_CMD_ERROR:
 
 读 ACK：
 [SlaveAddr] [0x03] [0x00 0x23] [0x00 0x03] [CRC_L] [CRC_H]
+```
+
+示例帧：
+
+```plain
+写命令回复: 01 10 00 20 00 03 81 C2
+读 ACK: 01 03 00 23 00 03 F4 01
 ```
 
 ACK 回复数据区：

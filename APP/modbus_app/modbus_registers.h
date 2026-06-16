@@ -156,6 +156,23 @@ extern "C" {
 #define REG_JOINT_ANGLE_OFFSET_ADDR(index) (REG_JOINT_ANGLE_OFFSET_START + ((uint16_t)(index) * MODBUS_REGS_FLOAT32))
 #define REG_JOINT_ANGLE_ADDR(index)        (REG_JOINT_ANGLE_START + ((uint16_t)(index) * MODBUS_REGS_FLOAT32))
 
+/* High-rate read segments used by the master at 100 Hz. */
+#define MODBUS_HIGH_RATE_SEGMENT_COUNT      7U
+#define MODBUS_HIGH_RATE_SEG0_START         REG_IMU_DATA_START
+#define MODBUS_HIGH_RATE_SEG0_COUNT         120U
+#define MODBUS_HIGH_RATE_SEG1_START         0x1078U
+#define MODBUS_HIGH_RATE_SEG1_COUNT         120U
+#define MODBUS_HIGH_RATE_SEG2_START         0x10F0U
+#define MODBUS_HIGH_RATE_SEG2_COUNT         80U
+#define MODBUS_HIGH_RATE_SEG3_START         REG_JOINT_ANGLE_START
+#define MODBUS_HIGH_RATE_SEG3_COUNT         MODBUS_JOINT_ANGLE_REG_COUNT
+#define MODBUS_HIGH_RATE_SEG4_START         REG_R_DATA_START
+#define MODBUS_HIGH_RATE_SEG4_COUNT         60U
+#define MODBUS_HIGH_RATE_SEG5_START         0x203CU
+#define MODBUS_HIGH_RATE_SEG5_COUNT         60U
+#define MODBUS_HIGH_RATE_SEG6_START         0x2078U
+#define MODBUS_HIGH_RATE_SEG6_COUNT         12U
+
 /* Command values written to REG_CMD. */
 #define CMD_NONE                       0x0000U
 #define CMD_LOG_START                  0x0094U
