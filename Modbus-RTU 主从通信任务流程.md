@@ -201,6 +201,18 @@ float32：
 uint64：
     占 4 个寄存器，采用小端寄存器序。
     单个寄存器内部仍采用 Modbus 大端字节序。
+
+ros_timestamp：
+    占 4 个 Modbus 寄存器，共 8 byte。
+    seconds 字段为 32 bit，由 2 个连续的 16 bit Modbus 寄存器组成。
+    microseconds 字段为 32 bit，由 2 个连续的 16 bit Modbus 寄存器组成。
+    字段顺序固定为 seconds 在前，microseconds 在后。
+    每个 32 bit 字段内部采用小端寄存器序；单个寄存器内部仍采用 Modbus 大端字节序。
+    注意：ros_timestamp 不按 uint64 拼接，不表示“高 32 bit 为秒、低 32 bit 为微秒”的单个整数。
+    它是两个独立的 uint32 字段，解析后应得到 timestamp.sec 和 timestamp.usec。
+    如需计算绝对微秒数，应在上位机或固件中使用 uint64 计算：
+        total_us = (uint64)timestamp.sec * 1000000 + timestamp.usec
+    timestamp.usec 的合法范围为 0 ~ 999999。
 ```
 
 例如：
@@ -216,6 +228,29 @@ Reg + 3 = 0x1122
 
 Modbus 数据区字节顺序：
 77 88 55 66 33 44 11 22
+```
+
+`ros_timestamp` 示例：
+
+```plain
+timestamp.sec  = 0x12345678
+timestamp.usec = 0x000F423F  // 999999 us
+
+寄存器排列：
+Reg + 0 = 0x5678  // seconds bit[15:0]
+Reg + 1 = 0x1234  // seconds bit[31:16]
+Reg + 2 = 0x423F  // microseconds bit[15:0]
+Reg + 3 = 0x000F  // microseconds bit[31:16]
+
+Modbus 数据区字节顺序：
+56 78 12 34 42 3F 00 0F
+
+解析方式：
+timestamp.sec  = ((uint32)Reg1 << 16) | Reg0
+timestamp.usec = ((uint32)Reg3 << 16) | Reg2
+
+不要按如下方式解释：
+timestamp_u64 = ((uint64)seconds << 32) | microseconds
 ```
 
 ---
@@ -302,9 +337,9 @@ slave_addr = 0x01;
 ```c
 REG_SLAVE_ADDR          0x0000  // 从站地址
 REG_BAUDRATE_CODE       0x0001  // 波特率编码
-REG_UTC_TIMESTAMP_US    0x0002  // 当前系统 UTC 时间戳 us，uint64，占 4 regs
+REG_UTC_TIMESTAMP       0x0002  // 当前系统 UTC 时间戳，ROS 格式，占 4 regs
 REG_LOCAL_UPTIME_MS     0x0006  // 本地运行时间 us，uint64，占 4 regs
-REG_TIME_SYNC_UTC_US    0x000A  // 主机写入同步 UTC us，uint64，占 4 regs
+REG_TIME_SYNC_UTC       0x000A  // 主机写入同步 UTC，ROS 格式，占 4 regs
 ```
 
 ---
@@ -473,13 +508,17 @@ REG_SD_CURRENT_FILE_ID      0x008A  // 当前日志文件编号
 REG_SD_CURRENT_FILE_SIZE    0x008C  // 当前日志文件大小 byte，uint64
 REG_SD_CURRENT_WRITE_CNT    0x0090  // 当前文件已写入帧数，uint32
 CMD_LOG_CREATE_FILE         0x0092  // 从机创建新的日志文件，读取返回创建成功状态
-REG_SD_RESERVED             0x0093 ~ 0x0099
+REG_SD_RESERVED             0x0093  // 保留
+REG_SD_DISK_LAST_RESULT     0x0094  // 最近一次 diskio DRESULT
+REG_SD_DISK_HAL_STATUS      0x0095  // 最近一次 HAL_SD 操作返回状态
+REG_SD_DISK_HAL_ERROR       0x0096  // 最近一次 HAL_SD 错误码，uint32，占 2 regs：0x0096 ~ 0x0097
+REG_SD_RESERVED             0x0098 ~ 0x0099
 CMD_LOG_LENGTH              0x009A  // 查询指定文件长度，读取返回文件长度，占 4 regs
 REG_SD_CURRENT_FILENAME     0x00A0  // 当前文件名
 REG_SD_LAST_FILENAME        0x00B0  // 上一个文件名
 ```
 
-日志开始/停止不在 SD 状态区直接写寄存器触发，而是通过命令寄存器区写入 `CMD_LOG_START 0x0094` / `CMD_LOG_STOP 0x0096`。
+注意：SD 状态区地址 `0x0094` / `0x0096` 是磁盘诊断寄存器；日志开始/停止不在 SD 状态区直接写寄存器触发，而是通过命令寄存器区 `REG_CMD 0x0020` 写入命令值 `CMD_LOG_START 0x0094` / `CMD_LOG_STOP 0x0096`。
 
 主机应检查：
 
@@ -874,92 +913,101 @@ joint_angle[i] = scale[i] * joint_angle_raw[i] + offset[i]
 
 ---
 
-### 5.5 关节角度 Offset 寄存器区
-关节角度 offset 区位于关节角度数据区 `0x1FD6` 前面的 84 byte，即 42 个 Modbus 寄存器，因此关节角度 offset 起始寄存器为：
+### 5.5 关节角度校准值寄存器区
+关节角度相关寄存器统一从 `0x1E00` 开始排列，顺序为：关节角度、ROS 时间戳、关节角度状态、校准后的关节角度校准值。
 
 ```plain
-0x1FD6 - 42 regs = 0x1FAC
+0x1E00 ~ 0x1E29：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
+0x1E2A ~ 0x1E2D：joint_timestamp，ROS 格式时间戳，共 4 regs
+    0x1E2A：seconds bit[15:0]
+    0x1E2B：seconds bit[31:16]
+    0x1E2C：microseconds bit[15:0]
+    0x1E2D：microseconds bit[31:16]
+0x1E2E ~ 0x1E2F：joint_angle_status，当前先用 2 个寄存器表示 21 个关节角度状态
+0x1E30 ~ 0x1E59：joint_angle_calib[0] ~ joint_angle_calib[20]，float32，共 42 regs
 ```
+
+其中 `joint_timestamp` 是两个独立的 `uint32` 字段，不按单个 `uint64` 拼接；详见 1.1.4 中的 `ros_timestamp` 约定。
 
 读取范围：
 
 ```plain
-起始寄存器：0x1FAC
+起始寄存器：0x1E30
 寄存器数量：42
 ```
 
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x1F 0xAC] [0x00 0x2A] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x1E 0x30] [0x00 0x2A] [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 1F AC 00 2A 03 E0
+01 03 1E 30 00 2A C2 32
 ```
 
 对应：
 
 ```plain
-0x1FAC ~ 0x1FD5：joint_angle_offset[0] ~ joint_angle_offset[20]，float32，共 42 regs
+0x1E30 ~ 0x1E59：joint_angle_calib[0] ~ joint_angle_calib[20]，float32，共 42 regs
 ```
 
-保存关节角度 offset 时，主机可使用 `0x10` 写多个寄存器：
+保存关节角度校准值时，主机可使用 `0x10` 写多个寄存器：
 
 ```plain
-[SlaveAddr] [0x10] [0x1F 0xAC] [0x00 0x2A] [0x54]
-[OffsetReg0_H OffsetReg0_L]
-[OffsetReg1_H OffsetReg1_L]
+[SlaveAddr] [0x10] [0x1E 0x30] [0x00 0x2A] [0x54]
+[CalibReg0_H CalibReg0_L]
+[CalibReg1_H CalibReg1_L]
 ...
-[OffsetReg41_H OffsetReg41_L]
+[CalibReg41_H CalibReg41_L]
 [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-数据区全 0: 01 10 1F AC 00 2A 54 [84 bytes of 00] A3 43
+数据区全 0: 01 10 1E 30 00 2A 54 [84 bytes of 00] 04 13
 ```
 
-从机运行时根据该 offset 输出校准后的关节角度：
+从机运行时根据该校准值输出校准后的关节角度：
 
 ```plain
-joint_angle[i] = joint_angle_raw[i] - joint_angle_offset[i]
+joint_angle[i] = joint_angle_raw[i] - joint_angle_calib[i]
 ```
 
 ---
 
 ### 5.6 关节角度数据寄存器区
-关节角度数据区起始寄存器仍为 `0x1FD6`，用于返回从机运行时输出的 21 个关节角度。
+关节角度数据区起始寄存器为 `0x1E00`，用于返回从机运行时输出的 21 个关节角度。
 
 读取范围：
 
 ```plain
-起始寄存器：0x1FD6
+起始寄存器：0x1E00
 寄存器数量：42
 ```
 
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x2A] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x1E 0x00] [0x00 0x2A] [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 1F D6 00 2A 22 39
+01 03 1E 00 00 2A C2 3D
 ```
 
 对应：
 
 ```plain
-0x1FD6 ~ 0x1FFF：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
+0x1E00 ~ 0x1E29：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
 ```
 
-关节角度数据是运行时输出值，主机不通过该区域写入校准参数；校准参数应写入 `0x1FAC ~ 0x1FD5` 的关节角度 offset 区。
+关节角度数据是运行时输出值，主机不通过该区域写入校准参数；校准参数应写入 `0x1E30 ~ 0x1E59` 的关节角度校准值区。
 
 ---
 
@@ -1385,7 +1433,7 @@ SD 卡记录采用固定 `1024 byte` 数据块。每个数据块由 3 个业务�
 每个业务子帧格式如下：
 
 ```plain
-[FrameHead] [DataId] [Payload...] [TimestampUs] [FrameTail]
+[FrameHead] [DataId] [Payload...] [RosTimestamp] [FrameTail]
 ```
 
 字段说明：
@@ -1395,7 +1443,7 @@ SD 卡记录采用固定 `1024 byte` 数据块。每个数据块由 3 个业务�
 | `FrameHead` | 1 byte | 固定为 `0xA5` |
 | `DataId` | 1 byte | 数据标识符，区分左右手和数据类型 |
 | `Payload` | N byte | 数据载荷 |
-| `TimestampUs` | 8 byte | uint64，单位 us |
+| `RosTimestamp` | 8 byte | ROS 时间戳：seconds uint32 + microseconds uint32 |
 | `FrameTail` | 1 byte | 固定为 `0x5A` |
 
 #### 7.6.2 数据标识符
@@ -1423,21 +1471,21 @@ IMU 子帧：
     0xA5
     DataId = 0x01 / 0x81
     IMU 数据 640 byte
-    IMU timestamp_us 8 byte
+    IMU ROS timestamp 8 byte
     0x5A
 
 关节角度子帧：
     0xA5
     DataId = 0x02 / 0x82
     关节角度数据 84 byte
-    joint timestamp_us 8 byte
+    joint ROS timestamp 8 byte
     0x5A
 
 触觉数据子帧：
     0xA5
     DataId = 0x03 / 0x83
     触觉 / 电阻点阵 ADC 原始值 264 byte
-    tactile timestamp_us 8 byte
+    tactile ROS timestamp 8 byte
     0x5A
 
 块尾：
@@ -1473,20 +1521,21 @@ IMU float32[160]：
 触觉 / 电阻点阵 ADC uint16[132]：
     memcpy 264 byte
 
-timestamp_us uint64：
+ROS timestamp：
     memcpy 8 byte
+    其中前 4 byte 为 seconds uint32，后 4 byte 为 microseconds uint32
 ```
 
-SD 卡记录保存的是运行时关节角度数据；`0x1FAC ~ 0x1FD5` 的关节角度 offset 仅作为校准参数区，不直接作为 SD 关节角度子帧写入。
+SD 卡记录保存的是运行时关节角度数据；`0x1E30 ~ 0x1E59` 的关节角度校准值仅作为校准参数区，不直接作为 SD 关节角度子帧写入。
 
-本系统 MCU 为小端序，因此 SD 卡文件中的 `float32`、`uint16`、`uint64` 均按小端内存布局保存。
+本系统 MCU 为小端序，因此 SD 卡文件中的 `float32`、`uint16`、`uint32` 均按小端内存布局保存。
 
 解析 SD 卡文件时，上位机应按小端序还原数据：
 
 ```plain
 float32：低地址字节为最低有效字节
 uint16：低地址字节为最低有效字节
-uint64：低地址字节为最低有效字节
+uint32：低地址字节为最低有效字节
 ```
 
 示例代码：
@@ -1507,6 +1556,12 @@ uint64：低地址字节为最低有效字节
 #define SD_LOG_ID_LEFT_IMU         0x81U
 #define SD_LOG_ID_LEFT_JOINT       0x82U
 #define SD_LOG_ID_LEFT_TACTILE     0x83U
+
+typedef struct
+{
+  uint32_t sec;
+  uint32_t usec;
+} SdLog_RosTimestamp_t;
 
 static uint16_t SdLog_Crc16(const uint8_t *data, uint32_t len)
 {
@@ -1536,7 +1591,7 @@ static uint32_t SdLog_AppendSubFrame(uint8_t *block,
                                      uint8_t data_id,
                                      const void *payload,
                                      uint32_t payload_len,
-                                     const uint64_t *timestamp_us)
+                                     const SdLog_RosTimestamp_t *timestamp)
 {
   block[offset++] = SD_LOG_FRAME_HEAD;
   block[offset++] = data_id;
@@ -1544,8 +1599,8 @@ static uint32_t SdLog_AppendSubFrame(uint8_t *block,
   memcpy(&block[offset], payload, payload_len);
   offset += payload_len;
 
-  memcpy(&block[offset], timestamp_us, sizeof(*timestamp_us));
-  offset += (uint32_t)sizeof(*timestamp_us);
+  memcpy(&block[offset], timestamp, sizeof(*timestamp));
+  offset += (uint32_t)sizeof(*timestamp);
 
   block[offset++] = SD_LOG_FRAME_TAIL;
 
@@ -1555,11 +1610,11 @@ static uint32_t SdLog_AppendSubFrame(uint8_t *block,
 void SdLog_BuildBlock(uint8_t block[SD_LOG_BLOCK_SIZE],
                       uint8_t is_left_hand,
                       const float imu_data[160],
-                      uint64_t imu_timestamp_us,
+                      SdLog_RosTimestamp_t imu_timestamp,
                       const float joint_angle[21],
-                      uint64_t joint_timestamp_us,
+                      SdLog_RosTimestamp_t joint_timestamp,
                       const uint16_t tactile_adc[132],
-                      uint64_t tactile_timestamp_us)
+                      SdLog_RosTimestamp_t tactile_timestamp)
 {
   uint32_t offset = 0U;
   uint16_t crc;
@@ -1572,21 +1627,21 @@ void SdLog_BuildBlock(uint8_t block[SD_LOG_BLOCK_SIZE],
                                 imu_id,
                                 imu_data,
                                 160U * sizeof(float),
-                                &imu_timestamp_us);
+                                &imu_timestamp);
 
   offset = SdLog_AppendSubFrame(block,
                                 offset,
                                 joint_id,
                                 joint_angle,
                                 21U * sizeof(float),
-                                &joint_timestamp_us);
+                                &joint_timestamp);
 
   offset = SdLog_AppendSubFrame(block,
                                 offset,
                                 tactile_id,
                                 tactile_adc,
                                 132U * sizeof(uint16_t),
-                                &tactile_timestamp_us);
+                                &tactile_timestamp);
 
   /* offset should be 1021 here. */
   crc = SdLog_Crc16(block, SD_LOG_CONTENT_SIZE);
@@ -1814,19 +1869,36 @@ IMU 数据：
     320 个寄存器
     640 byte
 
+IMU 时间戳：
+    ROS 格式：seconds uint32 + microseconds uint32
+    4 个寄存器
+    8 byte
+
 关节角度数据：
     21 个 float
     42 个寄存器
     84 byte
+
+关节角度时间戳：
+    ROS 格式：seconds uint32 + microseconds uint32
+    seconds 字段由 2 个 16 bit 寄存器组成
+    microseconds 字段由 2 个 16 bit 寄存器组成
+    4 个寄存器
+    8 byte
 
 电阻点阵 ADC 原始值：
     132 个 uint16
     132 个寄存器
     264 byte
 
+电阻点阵时间戳：
+    ROS 格式：seconds uint32 + microseconds uint32
+    4 个寄存器
+    8 byte
+
 总计：
-    494 个寄存器
-    988 byte
+    506 个寄存器
+    1012 byte
 ```
 
 ### 9.2 高频数据 7 帧读取表
@@ -1841,11 +1913,11 @@ static const ModbusReadSegment_t g_high_rate_segments[7] =
 {
     {0x1000, 120},   // IMU float[0]    ~ float[59]
     {0x1078, 120},   // IMU float[60]   ~ float[119]
-    {0x10F0,  80},   // IMU float[120]  ~ float[159]
-    {0x1FD6,  42},   // Joint angle[0]  ~ angle[20]
+    {0x10F0,  84},   // IMU float[120]  ~ float[159] + ROS timestamp
+    {0x1E00,  46},   // Joint angle[0]  ~ angle[20] + ROS timestamp
     {0x2000,  60},   // R_ADC[0]        ~ R_ADC[59]
     {0x203C,  60},   // R_ADC[60]       ~ R_ADC[119]
-    {0x2078,  12},   // R_ADC[120]      ~ R_ADC[131]
+    {0x2078,  16},   // R_ADC[120]      ~ R_ADC[131] + ROS timestamp
 };
 ```
 
@@ -1982,96 +2054,111 @@ IMU float[60] ~ IMU float[119]
 
 ---
 
-#### Frame 2：读取 IMU float[120] ~ float[159]
+#### Frame 2：读取 IMU float[120] ~ float[159] 和时间戳
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x10 0xF0] [0x00 0x50] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x10 0xF0] [0x00 0x54] [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 10 F0 00 50 41 05
+01 03 10 F0 00 54 40 C6
 ```
 
 含义：
 
 ```plain
 起始寄存器：0x10F0
-寄存器数量：0x0050 = 80
-数据长度：80 × 2 = 160 byte = 0xA0
-对应数据：40 个 float32
+寄存器数量：0x0054 = 84
+数据长度：84 × 2 = 168 byte = 0xA8
+对应数据：40 个 float32 + 1 个 ROS 时间戳
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0xA0]
+[SlaveAddr] [0x03] [0xA8]
 [Reg10F0_H Reg10F0_L]
 [Reg10F1_H Reg10F1_L]
 ...
-[Reg113F_H Reg113F_L]
+[Reg1143_H Reg1143_L]
 [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 A0 [160 bytes of 00] A5 89
+01 03 A8 [168 bytes of 00] [CRC_L CRC_H]
 ```
 
 对应 IMU 数据范围：
 
 ```plain
-IMU float[120] ~ IMU float[159]
+0x10F0 ~ 0x113F：IMU float[120] ~ IMU float[159]，float32，共 80 regs
+0x1140：imu_timestamp.seconds bit[15:0]
+0x1141：imu_timestamp.seconds bit[31:16]
+0x1142：imu_timestamp.microseconds bit[15:0]
+0x1143：imu_timestamp.microseconds bit[31:16]
 ```
 
 ---
 
-#### Frame 3：读取 21 个关节角度
+#### Frame 3：读取 21 个关节角度和时间戳
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x1F 0xD6] [0x00 0x2A] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x1E 0x00] [0x00 0x2E] [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 1F D6 00 2A 22 39
+01 03 1E 00 00 2E C3 FE
 ```
 
 含义：
 
 ```plain
-起始寄存器：0x1FD6
-寄存器数量：0x002A = 42
-数据长度：42 × 2 = 84 byte = 0x54
-对应数据：21 个 joint angle float32
+起始寄存器：0x1E00
+寄存器数量：0x002E = 46
+数据长度：46 × 2 = 92 byte = 0x5C
+对应数据：21 个 joint angle float32 + 1 个 ROS 时间戳
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x54]
-[Reg1FD6_H Reg1FD6_L]
-[Reg1FD7_H Reg1FD7_L]
+[SlaveAddr] [0x03] [0x5C]
+[Reg1E00_H Reg1E00_L]
+[Reg1E01_H Reg1E01_L]
 ...
-[Reg1FFF_H Reg1FFF_L]
+[Reg1E2D_H Reg1E2D_L]
 [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 54 [84 bytes of 00] 99 95
+01 03 5C [92 bytes of 00] [CRC_L CRC_H]
 ```
 
 对应数据范围：
 
 ```plain
-0x1FD6 ~ 0x1FFF：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
+0x1E00 ~ 0x1E29：joint_angle[0] ~ joint_angle[20]，float32，共 42 regs
+0x1E2A：joint_timestamp.seconds bit[15:0]
+0x1E2B：joint_timestamp.seconds bit[31:16]
+0x1E2C：joint_timestamp.microseconds bit[15:0]
+0x1E2D：joint_timestamp.microseconds bit[31:16]
+```
+
+`joint_timestamp` 解析为两个独立字段：
+
+```plain
+joint_timestamp.seconds      = ((uint32)Reg1E2B << 16) | Reg1E2A
+joint_timestamp.microseconds = ((uint32)Reg1E2D << 16) | Reg1E2C
 ```
 
 ---
@@ -2170,49 +2257,53 @@ R_ADC[60] ~ R_ADC[119]
 
 ---
 
-#### Frame 6：读取电阻点阵 ADC 原始值 R_ADC[120] ~ R_ADC[131]
+#### Frame 6：读取电阻点阵 ADC 原始值 R_ADC[120] ~ R_ADC[131] 和时间戳
 请求帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x20 0x78] [0x00 0x0C] [CRC_L] [CRC_H]
+[SlaveAddr] [0x03] [0x20 0x78] [0x00 0x10] [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 20 78 00 0C CE 16
+01 03 20 78 00 10 CF DF
 ```
 
 含义：
 
 ```plain
 起始寄存器：0x2078
-寄存器数量：0x000C = 12
-数据长度：12 × 2 = 24 byte = 0x18
-对应数据：12 个 uint16 ADC 原始值
+寄存器数量：0x0010 = 16
+数据长度：16 × 2 = 32 byte = 0x20
+对应数据：12 个 uint16 ADC 原始值 + 1 个 ROS 时间戳
 ```
 
 回复帧：
 
 ```plain
-[SlaveAddr] [0x03] [0x18]
+[SlaveAddr] [0x03] [0x20]
 [Reg2078_H Reg2078_L]
 [Reg2079_H Reg2079_L]
 ...
-[Reg2083_H Reg2083_L]
+[Reg2087_H Reg2087_L]
 [CRC_L] [CRC_H]
 ```
 
 示例帧：
 
 ```plain
-01 03 18 [24 bytes of 00] 6C F4
+01 03 20 [32 bytes of 00] [CRC_L CRC_H]
 ```
 
 对应数据范围：
 
 ```plain
-R_ADC[120] ~ R_ADC[131]
+0x2078 ~ 0x2083：R_ADC[120] ~ R_ADC[131]，uint16，共 12 regs
+0x2084：r_timestamp.seconds bit[15:0]
+0x2085：r_timestamp.seconds bit[31:16]
+0x2086：r_timestamp.microseconds bit[15:0]
+0x2087：r_timestamp.microseconds bit[31:16]
 ```
 
 ---
@@ -2222,25 +2313,28 @@ R_ADC[120] ~ R_ADC[131]
 | --- | --- | --- | --- | --- |
 | Frame 0 | 0x1000 | 120 | 0xF0 / 240 byte | IMU float[0] ~ float[59] |
 | Frame 1 | 0x1078 | 120 | 0xF0 / 240 byte | IMU float[60] ~ float[119] |
-| Frame 2 | 0x10F0 | 80 | 0xA0 / 160 byte | IMU float[120] ~ float[159] |
-| Frame 3 | 0x1FD6 | 42 | 0x54 / 84 byte | joint_angle[0] ~ joint_angle[20] |
+| Frame 2 | 0x10F0 | 84 | 0xA8 / 168 byte | IMU float[120] ~ float[159] + ROS timestamp |
+| Frame 3 | 0x1E00 | 46 | 0x5C / 92 byte | joint_angle[0] ~ joint_angle[20] + ROS timestamp |
 | Frame 4 | 0x2000 | 60 | 0x78 / 120 byte | R_ADC[0] ~ R_ADC[59] |
 | Frame 5 | 0x203C | 60 | 0x78 / 120 byte | R_ADC[60] ~ R_ADC[119] |
-| Frame 6 | 0x2078 | 12 | 0x18 / 24 byte | R_ADC[120] ~ R_ADC[131] |
+| Frame 6 | 0x2078 | 16 | 0x20 / 32 byte | R_ADC[120] ~ R_ADC[131] + ROS timestamp |
 
 7 帧数据区总长度为：
 
 ```plain
-240 + 240 + 160 + 84 + 120 + 120 + 24 = 988 byte
+240 + 240 + 168 + 92 + 120 + 120 + 32 = 1012 byte
 ```
 
 其中：
 
 ```plain
 IMU 数据：640 byte
+IMU 时间戳：8 byte
 关节角度数据：84 byte
+关节角度时间戳：8 byte
 电阻点阵 ADC 原始值：264 byte
-总计：988 byte
+电阻点阵时间戳：8 byte
+总计：1012 byte
 ```
 
 ---
@@ -2275,12 +2369,16 @@ Frame 2 写入：
 
 ```plain
 imu_data[120] ~ imu_data[159]
+imu_timestamp.seconds
+imu_timestamp.microseconds
 ```
 
 Frame 3 写入：
 
 ```plain
 joint_angle[0] ~ joint_angle[20]
+joint_timestamp.seconds
+joint_timestamp.microseconds
 ```
 
 Frame 4 写入：
@@ -2299,6 +2397,8 @@ Frame 6 写入：
 
 ```plain
 r_adc[120] ~ r_adc[131]
+r_timestamp.seconds
+r_timestamp.microseconds
 ```
 
 ### 9.4 主机解析任务
@@ -2309,10 +2409,9 @@ r_adc[120] ~ r_adc[131]
 2. 根据帧号拼接 IMU 数据、关节角度和电阻点阵 ADC 原始值；
 3. 按 float32 小端寄存器序解析 160 个 IMU float；
 4. 按 float32 小端寄存器序解析 21 个关节角度 float；
-5. 按 uint16 解析 132 个电阻点阵 ADC 原始值；
-6. 读取或缓存 IMU 时间戳 0x1140；
-7. 读取或缓存电阻点阵时间戳 0x2084；
-8. 更新上位机显示和算法输入。
+5. 按 ROS 格式解析 IMU、关节角度和电阻点阵时间戳：seconds uint32 + microseconds uint32；
+6. 按 uint16 解析 132 个电阻点阵 ADC 原始值；
+7. 更新上位机显示和算法输入。
 ```
 
 ---
@@ -2437,7 +2536,7 @@ RS485 CRC 或超时错误过多；
    - uint64 按小端寄存器序打包。
 
 3. 写 UTC 请求：
-   - 主机写入 REG_TIME_SYNC_UTC_US；
+   - 主机写入 REG_TIME_SYNC_UTC；
    - 从机结合 GPIO 同步中断记录的本地计时零点建立 UTC 基准。
 
 4. 写控制寄存器请求：
@@ -2461,7 +2560,7 @@ RS485 CRC 或超时错误过多；
 ---
 
 ## 附录 A. Holding Register 对照表
-本附录用于和正文任务流程中的寄存器地址进行对照。每个 Holding Register 为 16 bit；`float32` 占 2 个寄存器，`uint64` 占 4 个寄存器，均采用小端寄存器序；单个寄存器内部仍采用标准 Modbus 大端字节序。
+本附录用于和正文任务流程中的寄存器地址进行对照。每个 Holding Register 为 16 bit；`float32` 占 2 个寄存器，`uint64` 占 4 个寄存器，均采用小端寄存器序；`ros_timestamp` 占 4 个寄存器，其中 seconds uint32 占 2 个寄存器、microseconds uint32 占 2 个寄存器；单个寄存器内部仍采用标准 Modbus 大端字节序。
 
 ### A.1 基础通信与时间寄存器区
 
@@ -2469,9 +2568,9 @@ RS485 CRC 或超时错误过多；
 | --- | --- | --- | --- |
 | `0x0000` | `REG_SLAVE_ADDR` | `uint16` | 从站地址 |
 | `0x0001` | `REG_BAUDRATE_CODE` | `uint16` | 波特率编码 |
-| `0x0002 ~ 0x0005` | `REG_UTC_TIMESTAMP_US` | `uint64` | 当前系统 UTC 时间戳，单位 us |
+| `0x0002 ~ 0x0005` | `REG_UTC_TIMESTAMP` | `ros_timestamp` | 当前系统 UTC 时间戳：seconds uint32 + microseconds uint32 |
 | `0x0006 ~ 0x0009` | `REG_LOCAL_UPTIME_MS` | `uint64` | 本地运行时间，单位 us |
-| `0x000A ~ 0x000D` | `REG_TIME_SYNC_UTC_US` | `uint64` | 主机写入的同步 UTC，单位 us |
+| `0x000A ~ 0x000D` | `REG_TIME_SYNC_UTC` | `ros_timestamp` | 主机写入的同步 UTC：seconds uint32 + microseconds uint32 |
 
 ### A.2 命令寄存器区
 
@@ -2617,18 +2716,24 @@ ACK 回复数据区：
 | `0x008C ~ 0x008F` | `REG_SD_CURRENT_FILE_SIZE` | `uint64` | 当前日志文件大小，单位 byte |
 | `0x0090 ~ 0x0091` | `REG_SD_CURRENT_WRITE_CNT` | `uint32` | 当前文件已写入帧数 |
 | `0x0092` | `CMD_LOG_CREATE_FILE` | `uint16` | 写入触发从机创建新的日志文件，读取返回创建成功状态 |
-| `0x0093 ~ 0x0099` | `REG_SD_RESERVED` | `uint16[7]` | 保留；日志开始/停止通过命令寄存器区的 `CMD_LOG_START 0x0094` / `CMD_LOG_STOP 0x0096` 执行 |
+| `0x0093` | `REG_SD_RESERVED` | `uint16` | 保留 |
+| `0x0094` | `REG_SD_DISK_LAST_RESULT` | `uint16` | 最近一次 FatFs diskio `DRESULT` |
+| `0x0095` | `REG_SD_DISK_HAL_STATUS` | `uint16` | 最近一次 HAL_SD 操作返回状态 |
+| `0x0096 ~ 0x0097` | `REG_SD_DISK_HAL_ERROR` | `uint32` | 最近一次 HAL_SD 错误码 |
+| `0x0098 ~ 0x0099` | `REG_SD_RESERVED` | `uint16[2]` | 保留 |
 | `0x009A ~ 0x009D` | `CMD_LOG_LENGTH` | `uint64` | 查询指定文件长度，读取返回文件长度 |
 | `0x009E ~ 0x009F` | `REG_SD_RESERVED` | `uint16[2]` | 保留 |
 | `0x00A0 ~ 0x00AF` | `REG_SD_CURRENT_FILENAME` | `uint16[16]` | 当前日志文件名 |
 | `0x00B0 ~ 0x00BF` | `REG_SD_LAST_FILENAME` | `uint16[16]` | 上一个日志文件名 |
+
+说明：`0x0094` 和 `0x0096` 在这里是 SD 状态区的寄存器地址；`CMD_LOG_START 0x0094` / `CMD_LOG_STOP 0x0096` 是写入命令寄存器 `REG_CMD 0x0020` 的命令值，二者含义不同。
 
 ### A.7 IMU 数据、时间戳、状态与 Offset 区
 
 | 地址 | 名称 | 类型 | 说明 |
 | --- | --- | --- | --- |
 | `0x1000 ~ 0x113F` | `REG_IMU_DATA_START ~ REG_IMU_DATA_END` | `float32[160]` | 16 个 IMU，每个 IMU 10 个 float32 |
-| `0x1140 ~ 0x1143` | `REG_IMU_TIMESTAMP_US` | `uint64` | 当前 IMU 数据帧时间戳，单位 us |
+| `0x1140 ~ 0x1143` | `REG_IMU_TIMESTAMP` | `ros_timestamp` | 当前 IMU 数据帧时间戳：seconds uint32 + microseconds uint32 |
 | `0x1144` | `REG_IMU_STATUS_BITS` | `uint16` | IMU 状态位，bit0~bit15 对应 IMU0~IMU15 |
 | `0x1154 ~ 0x1293` | `REG_IMU_OFFSET_START ~ REG_IMU_OFFSET_END` | `float32[160]` | 16 个 IMU 的初始 Offset，每个 IMU 10 个 float32 |
 
@@ -2705,25 +2810,56 @@ REG_IMU14_OFFSET_START  0x126C    REG_IMU14_OFFSET_END  0x127F
 REG_IMU15_OFFSET_START  0x1280    REG_IMU15_OFFSET_END  0x1293
 ```
 
-### A.8 关节角度 Offset、电阻点阵 ADC、时间戳与状态区
+### A.8 关节角度、时间戳与状态区
 
 | 地址 | 名称 | 类型 | 说明 |
 | --- | --- | --- | --- |
-| `0x1FAC ~ 0x1FD5` | `REG_JOINT_ANGLE_OFFSET_START ~ REG_JOINT_ANGLE_OFFSET_END` | `float32[21]` | 21 个关节角度 offset |
-| `0x1FD6 ~ 0x1FFF` | `REG_JOINT_ANGLE_START ~ REG_JOINT_ANGLE_END` | `float32[21]` | 21 个关节角度 |
-| `0x2000 ~ 0x2083` | `REG_R_ADC_START ~ REG_R_ADC_END` | `uint16[132]` | 132 个电阻点 ADC 原始值 |
-| `0x2084 ~ 0x2087` | `REG_R_TIMESTAMP_US` | `uint64` | 当前电阻点阵数据帧时间戳，单位 us |
-| `0x2088 ~ 0x2090` | `REG_R_STATUS_START ~ REG_R_STATUS_END` | `uint16[9]` | 132 个电阻点状态位 |
-| `0x2091 ~ 0x20C3` | `REG_R_STATUS_RESERVED_START ~ REG_R_STATUS_RESERVED_END` | `uint16[]` | 电阻点阵状态扩展保留区 |
+| `0x1E00 ~ 0x1E29` | `REG_JOINT_ANGLE_START ~ REG_JOINT_ANGLE_END` | `float32[21]` | 21 个关节角度 |
+| `0x1E2A ~ 0x1E2D` | `REG_JOINT_TIMESTAMP` | `ros_timestamp` | 当前关节角度数据帧时间戳：seconds uint32 + microseconds uint32 |
+| `0x1E2E ~ 0x1E2F` | `REG_JOINT_ANGLE_STATUS_START ~ REG_JOINT_ANGLE_STATUS_END` | `uint16[2]` | 当前先用 2 个寄存器表示 21 个关节角度状态 |
+| `0x1E30 ~ 0x1E59` | `REG_JOINT_ANGLE_CALIB_START ~ REG_JOINT_ANGLE_CALIB_END` | `float32[21]` | 21 个校准后的关节角度校准值 |
+| `0x1E5A ~ 0x1FFF` | `REG_JOINT_RESERVED` | `uint16[]` | 关节角度区扩展保留 |
 
-关节角度 offset 区按每个 offset 2 个寄存器排列：
+关节角度 ROS 时间戳寄存器排列：
 
 ```plain
-REG_JOINT_ANGLE_OFFSET0_START   0x1FAC    REG_JOINT_ANGLE_OFFSET0_END   0x1FAD
-REG_JOINT_ANGLE_OFFSET1_START   0x1FAE    REG_JOINT_ANGLE_OFFSET1_END   0x1FAF
-...
-REG_JOINT_ANGLE_OFFSET20_START  0x1FD4    REG_JOINT_ANGLE_OFFSET20_END  0x1FD5
+REG_JOINT_TIMESTAMP_SEC_L      0x1E2A
+REG_JOINT_TIMESTAMP_SEC_H      0x1E2B
+REG_JOINT_TIMESTAMP_USEC_L     0x1E2C
+REG_JOINT_TIMESTAMP_USEC_H     0x1E2D
+
+joint_timestamp.seconds      = ((uint32)REG_JOINT_TIMESTAMP_SEC_H  << 16) | REG_JOINT_TIMESTAMP_SEC_L
+joint_timestamp.microseconds = ((uint32)REG_JOINT_TIMESTAMP_USEC_H << 16) | REG_JOINT_TIMESTAMP_USEC_L
 ```
+
+ROS 时间戳是 `seconds` 与 `microseconds` 两个独立 `uint32` 字段，不按单个 `uint64` 打包或比较。
+
+关节角度状态当前使用 2 个寄存器按 bit 表示：
+
+```plain
+0x1E2E：joint_angle[0]  ~ joint_angle[15] 状态位
+0x1E2F：joint_angle[16] ~ joint_angle[20] 状态位，bit5 ~ bit15 保留为 0
+bit = 1：对应关节角度有效
+bit = 0：对应关节角度无效、异常或未更新
+```
+
+关节角度校准值区按每个校准值 2 个寄存器排列：
+
+```plain
+REG_JOINT_ANGLE_CALIB0_START   0x1E30    REG_JOINT_ANGLE_CALIB0_END   0x1E31
+REG_JOINT_ANGLE_CALIB1_START   0x1E32    REG_JOINT_ANGLE_CALIB1_END   0x1E33
+...
+REG_JOINT_ANGLE_CALIB20_START  0x1E58    REG_JOINT_ANGLE_CALIB20_END  0x1E59
+```
+
+### A.9 电阻点阵 ADC、时间戳与状态区
+
+| 地址 | 名称 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| `0x2000 ~ 0x2083` | `REG_R_ADC_START ~ REG_R_ADC_END` | `uint16[132]` | 132 个电阻点 ADC 原始值 |
+| `0x2084 ~ 0x2087` | `REG_R_TIMESTAMP` | `ros_timestamp` | 当前电阻点阵数据帧时间戳：seconds uint32 + microseconds uint32 |
+| `0x2088 ~ 0x2090` | `REG_R_STATUS_START ~ REG_R_STATUS_END` | `uint16[9]` | 132 个电阻点状态位 |
+| `0x2091 ~ 0x20C3` | `REG_R_STATUS_RESERVED_START ~ REG_R_STATUS_RESERVED_END` | `uint16[]` | 电阻点阵状态扩展保留区 |
 
 电阻点阵 ADC 原始值区按每个电阻点 1 个寄存器排列：
 

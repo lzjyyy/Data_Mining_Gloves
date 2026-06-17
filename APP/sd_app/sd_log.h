@@ -8,7 +8,7 @@ extern "C" {
 #include "main.h"
 #include <stdint.h>
 
-#define SDLOG_FRAME_SIZE            512U
+#define SDLOG_FRAME_SIZE            1024U
 #define SDLOG_WRITE_BUFFER_SIZE     (16U * 1024U)
 #define SDLOG_QUEUE_LENGTH          128U
 #define SDLOG_FILE_LIST_MAX         32U

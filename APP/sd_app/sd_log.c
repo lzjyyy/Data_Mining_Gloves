@@ -2,7 +2,9 @@
 
 #include "cmsis_os2.h"
 #include "ff.h"
+#include "modbus_time_sync.h"
 #include "sdmmc.h"
+#include "tim.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -14,6 +16,19 @@
 #define SDLOG_FILE_ID_DIGITS       4U
 #define SDLOG_MAX_PATH_BYTES       260U
 #define SDLOG_FLUSH_THRESHOLD      SDLOG_WRITE_BUFFER_SIZE
+#define SDLOG_PENDING_TICK_LIMIT   256U
+#define SDLOG_TICK_BATCH_LIMIT     16U
+
+#define SDLOG_CONTENT_SIZE         1021U
+#define SDLOG_FRAME_HEAD           0xA5U
+#define SDLOG_FRAME_TAIL           0x5AU
+#define SDLOG_SEPARATOR            0x00U
+#define SDLOG_ID_RIGHT_IMU         0x01U
+#define SDLOG_ID_RIGHT_JOINT       0x02U
+#define SDLOG_ID_RIGHT_TACTILE     0x03U
+#define SDLOG_IMU_FLOAT_COUNT      160U
+#define SDLOG_JOINT_FLOAT_COUNT    21U
+#define SDLOG_TACTILE_U16_COUNT    132U
 
 #define SDLOG_EVT_WAKE             (1UL << 0)
 #define SDLOG_EVT_STOP_DONE        (1UL << 1)
@@ -51,9 +66,11 @@ static volatile uint8_t sdlog_stop_pending;
 static volatile uint8_t sdlog_file_open;
 static volatile SdLogResult_t sdlog_last_error = SDLOG_OK;
 static volatile uint16_t sdlog_last_fresult = FR_OK;
+static volatile uint32_t sdlog_pending_ticks;
 
 static SdLogRuntime_t sdlog_rt;
 static SdLogStatusSnapshot_t sdlog_snapshot;
+static uint32_t sdlog_test_frame_seq;
 
 static __ALIGNED(4) uint8_t sdlog_write_buffer[SDLOG_WRITE_BUFFER_SIZE];
 static uint32_t sdlog_write_buffer_used;
@@ -97,6 +114,14 @@ static int SDLog_RefreshCapacityLocked(void);
 static uint64_t SDLog_CurrentLogicalSizeLocked(void);
 static int SDLog_RefreshSnapshotLocked(void);
 static int SDLog_ListFilesLocked(void);
+static void SDLog_WriteU16Le(uint8_t *data, uint16_t value);
+static void SDLog_WriteU32Le(uint8_t *data, uint32_t value);
+static void SDLog_WriteU64Le(uint8_t *data, uint64_t value);
+static void SDLog_WriteFloatLe(uint8_t *data, float value);
+static uint16_t SDLog_Crc16(const uint8_t *data, uint32_t len);
+static void SDLog_BuildTestFrame(uint8_t frame[SDLOG_FRAME_SIZE]);
+static int SDLog_AppendFrameLocked(const uint8_t *data, uint32_t len);
+static void SDLog_ProcessPendingTicksLocked(void);
 
 static void SDLog_SetError(SdLogResult_t error_code, FRESULT fr)
 {
@@ -374,6 +399,191 @@ static int SDLog_ListFilesLocked(void)
   return SDLOG_OK;
 }
 
+static void SDLog_WriteU16Le(uint8_t *data, uint16_t value)
+{
+  data[0] = (uint8_t)(value & 0xFFU);
+  data[1] = (uint8_t)((value >> 8) & 0xFFU);
+}
+
+static void SDLog_WriteU32Le(uint8_t *data, uint32_t value)
+{
+  data[0] = (uint8_t)(value & 0xFFU);
+  data[1] = (uint8_t)((value >> 8) & 0xFFU);
+  data[2] = (uint8_t)((value >> 16) & 0xFFU);
+  data[3] = (uint8_t)((value >> 24) & 0xFFU);
+}
+
+static void SDLog_WriteU64Le(uint8_t *data, uint64_t value)
+{
+  for (uint32_t index = 0U; index < 8U; index++)
+  {
+    data[index] = (uint8_t)((value >> (index * 8U)) & 0xFFU);
+  }
+}
+
+static void SDLog_WriteFloatLe(uint8_t *data, float value)
+{
+  union
+  {
+    float f;
+    uint32_t u;
+  } raw;
+
+  raw.f = value;
+  SDLog_WriteU32Le(data, raw.u);
+}
+
+static uint16_t SDLog_Crc16(const uint8_t *data, uint32_t len)
+{
+  uint16_t crc = 0xFFFFU;
+
+  for (uint32_t index = 0U; index < len; index++)
+  {
+    crc ^= data[index];
+    for (uint8_t bit = 0U; bit < 8U; bit++)
+    {
+      if ((crc & 0x0001U) != 0U)
+      {
+        crc = (uint16_t)((crc >> 1) ^ 0xA001U);
+      }
+      else
+      {
+        crc >>= 1;
+      }
+    }
+  }
+
+  return crc;
+}
+
+static void SDLog_BuildTestFrame(uint8_t frame[SDLOG_FRAME_SIZE])
+{
+  uint64_t timestamp_us = ModbusTimeSync_GetUtcTimestampUs();
+  uint32_t seq = sdlog_test_frame_seq++;
+  uint32_t offset = 0U;
+  uint16_t crc;
+
+  if (timestamp_us == 0U)
+  {
+    timestamp_us = ModbusTimeSync_GetLocalUptimeUs();
+  }
+
+  memset(frame, 0, SDLOG_FRAME_SIZE);
+
+  frame[offset++] = SDLOG_FRAME_HEAD;
+  frame[offset++] = SDLOG_ID_RIGHT_IMU;
+  for (uint32_t index = 0U; index < SDLOG_IMU_FLOAT_COUNT; index++)
+  {
+    SDLog_WriteFloatLe(&frame[offset], (float)seq + ((float)index * 0.001f));
+    offset += sizeof(float);
+  }
+  SDLog_WriteU64Le(&frame[offset], timestamp_us);
+  offset += 8U;
+  frame[offset++] = SDLOG_FRAME_TAIL;
+
+  frame[offset++] = SDLOG_FRAME_HEAD;
+  frame[offset++] = SDLOG_ID_RIGHT_JOINT;
+  for (uint32_t index = 0U; index < SDLOG_JOINT_FLOAT_COUNT; index++)
+  {
+    SDLog_WriteFloatLe(&frame[offset], (float)index + ((float)(seq % 1000U) * 0.01f));
+    offset += sizeof(float);
+  }
+  SDLog_WriteU64Le(&frame[offset], timestamp_us);
+  offset += 8U;
+  frame[offset++] = SDLOG_FRAME_TAIL;
+
+  frame[offset++] = SDLOG_FRAME_HEAD;
+  frame[offset++] = SDLOG_ID_RIGHT_TACTILE;
+  for (uint32_t index = 0U; index < SDLOG_TACTILE_U16_COUNT; index++)
+  {
+    SDLog_WriteU16Le(&frame[offset], (uint16_t)((seq + index) & 0x0FFFU));
+    offset += sizeof(uint16_t);
+  }
+  SDLog_WriteU64Le(&frame[offset], timestamp_us);
+  offset += 8U;
+  frame[offset++] = SDLOG_FRAME_TAIL;
+
+  crc = SDLog_Crc16(frame, SDLOG_CONTENT_SIZE);
+  frame[offset++] = (uint8_t)(crc & 0xFFU);
+  frame[offset++] = (uint8_t)(crc >> 8);
+  frame[offset++] = SDLOG_SEPARATOR;
+}
+
+static int SDLog_AppendFrameLocked(const uint8_t *data, uint32_t len)
+{
+  if ((data == NULL) || (len != SDLOG_FRAME_SIZE))
+  {
+    return SDLOG_ERR_PARAM;
+  }
+
+  if ((sdlog_recording == 0U) || (sdlog_file_open == 0U))
+  {
+    return SDLOG_ERR_NOT_RECORDING;
+  }
+
+  if ((sdlog_write_buffer_used + len) > SDLOG_WRITE_BUFFER_SIZE)
+  {
+    if (SDLog_FlushBufferLocked(0) != SDLOG_OK)
+    {
+      return sdlog_last_error;
+    }
+  }
+
+  if ((sdlog_write_buffer_used + len) > SDLOG_WRITE_BUFFER_SIZE)
+  {
+    SDLog_SetError(SDLOG_ERR_INTERNAL, FR_INT_ERR);
+    return SDLOG_ERR_INTERNAL;
+  }
+
+  memcpy(&sdlog_write_buffer[sdlog_write_buffer_used], data, len);
+  sdlog_write_buffer_used += len;
+
+  if (sdlog_write_buffer_used >= SDLOG_FLUSH_THRESHOLD)
+  {
+    if (SDLog_FlushBufferLocked(0) != SDLOG_OK)
+    {
+      return sdlog_last_error;
+    }
+  }
+
+  return SDLOG_OK;
+}
+
+static void SDLog_ProcessPendingTicksLocked(void)
+{
+  uint8_t frame[SDLOG_FRAME_SIZE];
+  uint32_t processed_ticks = 0U;
+
+  while ((sdlog_recording != 0U) && (sdlog_stopping == 0U))
+  {
+    __disable_irq();
+    if (sdlog_pending_ticks == 0U)
+    {
+      __enable_irq();
+      break;
+    }
+    sdlog_pending_ticks--;
+    __enable_irq();
+
+    SDLog_BuildTestFrame(frame);
+    if (SDLog_AppendFrameLocked(frame, sizeof(frame)) != SDLOG_OK)
+    {
+      break;
+    }
+
+    processed_ticks++;
+    if (processed_ticks >= SDLOG_TICK_BATCH_LIMIT)
+    {
+      break;
+    }
+  }
+
+  if ((sdlog_pending_ticks != 0U) && (sdlog_task_id != NULL))
+  {
+    (void)osThreadFlagsSet(sdlog_task_id, SDLOG_EVT_WAKE);
+  }
+}
+
 static int SDLog_EnsureMounted(void)
 {
   FRESULT fr;
@@ -548,36 +758,13 @@ static void SDLog_Task(void *argument)
 
     while (osMessageQueueGet(sdlog_queue_id, &frame_msg, NULL, 0U) == osOK)
     {
-      if ((sdlog_recording == 0U) || (sdlog_file_open == 0U))
+      if (SDLog_AppendFrameLocked(frame_msg.data, frame_msg.len) != SDLOG_OK)
       {
-        continue;
-      }
-
-      if ((sdlog_write_buffer_used + frame_msg.len) > SDLOG_WRITE_BUFFER_SIZE)
-      {
-        if (SDLog_FlushBufferLocked(0) != SDLOG_OK)
-        {
-          break;
-        }
-      }
-
-      if ((sdlog_write_buffer_used + frame_msg.len) > SDLOG_WRITE_BUFFER_SIZE)
-      {
-        SDLog_SetError(SDLOG_ERR_INTERNAL, FR_INT_ERR);
         break;
       }
-
-      memcpy(&sdlog_write_buffer[sdlog_write_buffer_used], frame_msg.data, frame_msg.len);
-      sdlog_write_buffer_used += frame_msg.len;
-
-      if (sdlog_write_buffer_used >= SDLOG_FLUSH_THRESHOLD)
-      {
-        if (SDLog_FlushBufferLocked(0) != SDLOG_OK)
-        {
-          break;
-        }
-      }
     }
+
+    SDLog_ProcessPendingTicksLocked();
 
     if (sdlog_recording != 0U)
     {
@@ -745,9 +932,21 @@ int SDLog_Start(void)
   sdlog_stopping = 0U;
   sdlog_sync_pending = 0U;
   sdlog_stop_pending = 0U;
+  sdlog_pending_ticks = 0U;
+  sdlog_test_frame_seq = 0U;
   sdlog_snapshot.log_status = SD_LOG_RECORD_RECORDING;
   sdlog_snapshot.error_code = 0U;
   (void)osEventFlagsClear(sdlog_event_id, SDLOG_EVT_STOP_DONE | SDLOG_EVT_SYNC_DONE);
+
+  if (HAL_TIM_Base_Start_IT(&htim3) != HAL_OK)
+  {
+    sdlog_recording = 0U;
+    sdlog_snapshot.log_status = SD_LOG_RECORD_ERROR;
+    SDLog_SetError(SDLOG_ERR_INTERNAL, FR_INT_ERR);
+    SDLog_Unlock();
+    return SDLOG_ERR_INTERNAL;
+  }
+
   SDLog_Unlock();
   return SDLOG_OK;
 }
@@ -777,7 +976,9 @@ int SDLog_Stop(void)
 
   sdlog_stopping = 1U;
   sdlog_stop_pending = 1U;
+  sdlog_pending_ticks = 0U;
   sdlog_snapshot.log_status = SD_LOG_RECORD_STOPPING;
+  (void)HAL_TIM_Base_Stop_IT(&htim3);
   SDLog_Unlock();
 
   (void)osThreadFlagsSet(sdlog_task_id, SDLOG_EVT_WAKE);
@@ -1149,12 +1350,14 @@ void SdLog_RequestReset(void)
   }
 
   (void)SDLog_CloseFileLocked(1);
+  (void)HAL_TIM_Base_Stop_IT(&htim3);
   (void)f_mount(NULL, SDLOG_VOLUME_PATH, 0U);
   sdlog_fs_mounted = 0U;
   sdlog_recording = 0U;
   sdlog_stopping = 0U;
   sdlog_sync_pending = 0U;
   sdlog_stop_pending = 0U;
+  sdlog_pending_ticks = 0U;
   sdlog_snapshot.fs_status = SD_LOG_FS_NOT_MOUNTED;
   sdlog_snapshot.log_status = SD_LOG_RECORD_IDLE;
   sdlog_rt.committed_size = 0U;
@@ -1180,7 +1383,22 @@ void SdLog_RequestScanLog(void)
 
 void SdLog_OnTimPeriodElapsed(TIM_HandleTypeDef *htim)
 {
-  (void)htim;
+  if ((htim != NULL) && (htim->Instance == TIM3))
+  {
+    if ((sdlog_recording != 0U) &&
+        (sdlog_stopping == 0U) &&
+        (sdlog_pending_ticks < SDLOG_PENDING_TICK_LIMIT))
+    {
+      sdlog_pending_ticks++;
+    }
+
+    if ((sdlog_recording != 0U) &&
+        (sdlog_stopping == 0U) &&
+        (sdlog_task_id != NULL))
+    {
+      (void)osThreadFlagsSet(sdlog_task_id, SDLOG_EVT_WAKE);
+    }
+  }
 }
 
 void SdLog_GetStatus(SdLogStatusSnapshot_t *status)

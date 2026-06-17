@@ -1359,6 +1359,11 @@
               <FileType>1</FileType>
               <FilePath>..\task\src\rs485_task.c</FilePath>
             </File>
+            <File>
+              <FileName>sd_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\task\src\sd_task.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
