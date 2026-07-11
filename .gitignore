@@ -1,0 +1,36 @@
+# Python cache and local environments
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+.venv*/
+venv/
+env/
+
+# Build and packaging output
+build/
+dist/
+*.spec.log
+*.manifest
+*.exe
+*.dll
+*.pyd
+*.zip
+*.7z
+*.rar
+
+# IDE and local machine files
+.idea/
+.vscode/
+*.swp
+*.swo
+Thumbs.db
+Desktop.ini
+
+# Logs and temporary files
+*.log
+*.tmp
+*.temp
+
+# Generated URDF helper output
+*_resolved.urdf

@@ -1,0 +1,1149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="youshou_urdf">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="-0.0044884 -0.003141 0.046765"
+        rpy="0 0 0" />
+      <mass
+        value="0.077896" />
+      <inertia
+        ixx="0.00012199"
+        ixy="-6.1075E-07"
+        ixz="1.4805E-05"
+        iyy="8.2516E-05"
+        iyz="-1.7371E-07"
+        izz="5.2781E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.79216 0.81961 0.93333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="thumb_link1">
+    <inertial>
+      <origin
+        xyz="0.0105644013997104 0.000665145003611756 -0.00152850738343248"
+        rpy="0 0 0" />
+      <mass
+        value="0.00400599320088145" />
+      <inertia
+        ixx="2.97371602399895E-07"
+        ixy="3.36524961820821E-08"
+        ixz="1.93877827874905E-08"
+        iyy="5.36198138639355E-07"
+        iyz="-6.63592493378815E-09"
+        izz="6.7033970321324E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.843137254901961 0.815686274509804 0.752941176470588 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="thumb_joint1"
+    type="revolute">
+    <origin
+      xyz="0.0089888 0.02104 0.03253"
+      rpy="0.081325 -0.42093 1.0728" />
+    <parent
+      link="base_link" />
+    <child
+      link="thumb_link1" />
+    <axis
+      xyz="0.26091 0 0.96536" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="thumb_link2">
+    <inertial>
+      <origin
+        xyz="0.0247566484026018 0.00445709491305678 0.000334963330072605"
+        rpy="0 0 0" />
+      <mass
+        value="0.0070317570366135" />
+      <inertia
+        ixx="3.2102773670361E-07"
+        ixy="-1.50879757048375E-08"
+        ixz="-2.02219159376493E-08"
+        iyy="1.86766800324974E-06"
+        iyz="3.96182751993749E-09"
+        izz="2.09124042542766E-06" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="thumb_joint2"
+    type="revolute">
+    <origin
+      xyz="0.026829 0 0"
+      rpy="-1.5708 -0.22988 0" />
+    <parent
+      link="thumb_link1" />
+    <child
+      link="thumb_link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="thumb_link3">
+    <inertial>
+      <origin
+        xyz="0.0155537518434531 0.0030449133151744 0.000462672846270155"
+        rpy="0 0 0" />
+      <mass
+        value="0.00485038536648811" />
+      <inertia
+        ixx="1.47898576400049E-07"
+        ixy="1.21285767750724E-08"
+        ixz="-1.76653118622882E-09"
+        iyy="5.65366898729192E-07"
+        iyz="6.45933950407243E-10"
+        izz="6.51279090935193E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/thumb_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="thumb_jinot3"
+    type="revolute">
+    <origin
+      xyz="0.048354 0 0"
+      rpy="0 0 -0.10848" />
+    <parent
+      link="thumb_link2" />
+    <child
+      link="thumb_link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="index_link1">
+    <inertial>
+      <origin
+        xyz="0.00180502929835984 9.78143017849042E-06 0.00171111284564738"
+        rpy="0 0 0" />
+      <mass
+        value="0.000506372322576598" />
+      <inertia
+        ixx="3.91689534474703E-09"
+        ixy="4.18381361556145E-11"
+        ixz="4.59557412246727E-10"
+        iyy="2.28106843665353E-08"
+        iyz="-3.65910214672703E-12"
+        izz="2.37263594138529E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="index_joint1"
+    type="revolute">
+    <origin
+      xyz="-0.01136 0.025025 0.10781"
+      rpy="-1.5708 -1.3786 1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="index_link1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="index_link2">
+    <inertial>
+      <origin
+        xyz="0.0131638991858953 -0.000134091451138813 9.28507631227371E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.00345302981537233" />
+      <inertia
+        ixx="1.01835429130366E-07"
+        ixy="1.16657937757201E-08"
+        ixz="-1.26894577819915E-09"
+        iyy="2.71501849238998E-07"
+        iyz="-2.47290356952604E-09"
+        izz="3.47694756891176E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="index_joint2"
+    type="revolute">
+    <origin
+      xyz="0.0065 0 0"
+      rpy="-1.5708 0.15559 0" />
+    <parent
+      link="index_link1" />
+    <child
+      link="index_link2" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="index_link3">
+    <inertial>
+      <origin
+        xyz="0.0142876873396355 -0.000476751504743619 0.000136085605124368"
+        rpy="0 0 0" />
+      <mass
+        value="0.0036450287103129" />
+      <inertia
+        ixx="9.59760908235186E-08"
+        ixy="6.62019069089263E-09"
+        ixz="2.35792470177538E-10"
+        iyy="4.11723439720304E-07"
+        iyz="2.26985517189384E-09"
+        izz="4.59969781877025E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="index_joint3"
+    type="revolute">
+    <origin
+      xyz="0.025774 0 0"
+      rpy="0 0 0.053634" />
+    <parent
+      link="index_link2" />
+    <child
+      link="index_link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="index_link4">
+    <inertial>
+      <origin
+        xyz="0.0119030681382838 -0.00163381076764928 1.52445357668035E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.0026929659514876" />
+      <inertia
+        ixx="4.69351722463665E-08"
+        ixy="4.11797359226837E-09"
+        ixz="7.51846653497127E-10"
+        iyy="1.68423880321269E-07"
+        iyz="-3.62494102260887E-10"
+        izz="1.93893382910466E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/index_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="index_joint4"
+    type="revolute">
+    <origin
+      xyz="0.030024 0 0"
+      rpy="0 0 -0.16885" />
+    <parent
+      link="index_link3" />
+    <child
+      link="index_link4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="middle_link1">
+    <inertial>
+      <origin
+        xyz="0.00180503080028392 9.77964183454527E-06 0.00171111281648477"
+        rpy="0 0 0" />
+      <mass
+        value="0.000506372480959062" />
+      <inertia
+        ixx="3.91689658391293E-09"
+        ixy="4.18425388087464E-11"
+        ixz="4.59557519512627E-10"
+        iyy="2.28106886437778E-08"
+        iyz="-3.65930627711545E-12"
+        izz="2.37263642798645E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="middle_joint1"
+    type="revolute">
+    <origin
+      xyz="-0.01186 0.0010533 0.11017"
+      rpy="1.5708 -1.4986 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="middle_link1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="middle_link2">
+    <inertial>
+      <origin
+        xyz="0.0131554602406874 -0.000127689039948246 7.87766989550701E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.00345232521621099" />
+      <inertia
+        ixx="1.01534804893343E-07"
+        ixy="1.15749258006347E-08"
+        ixz="-1.22029669303735E-09"
+        iyy="2.71797830955692E-07"
+        iyz="-2.57801065727095E-09"
+        izz="3.47777916134917E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="middle_joint2"
+    type="revolute">
+    <origin
+      xyz="0.0065 0 0"
+      rpy="-1.5708 0.14927 0" />
+    <parent
+      link="middle_link1" />
+    <child
+      link="middle_link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="middle_link3">
+    <inertial>
+      <origin
+        xyz="0.0142875816338803 -0.000472713774058425 0.000148720641083722"
+        rpy="0 0 0" />
+      <mass
+        value="0.00364491777294207" />
+      <inertia
+        ixx="9.59741644173144E-08"
+        ixy="6.62182847304696E-09"
+        ixz="5.72764019173714E-11"
+        iyy="4.11881519394947E-07"
+        iyz="3.56696715343117E-09"
+        izz="4.59810447818723E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="middle_joint3"
+    type="revolute">
+    <origin
+      xyz="0.025774 0 0"
+      rpy="0.026963 0 0.04351" />
+    <parent
+      link="middle_link2" />
+    <child
+      link="middle_link3" />
+    <axis
+      xyz="0 0.026959 0.99964" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="middle_link4">
+    <inertial>
+      <origin
+        xyz="0.0119030710650629 -0.00163379243199091 1.51918817322752E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.00269294724348482" />
+      <inertia
+        ixx="4.6935441721063E-08"
+        ixy="4.11775297252604E-09"
+        ixz="7.51968984009852E-10"
+        iyy="1.68423491241322E-07"
+        iyz="-3.62469970189448E-10"
+        izz="1.93893117961862E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/middle_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="middle_joint4"
+    type="revolute">
+    <origin
+      xyz="0.030024 0 0"
+      rpy="-0.026842 0.0025446 0.094492" />
+    <parent
+      link="middle_link3" />
+    <child
+      link="middle_link4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="ring_link1">
+    <inertial>
+      <origin
+        xyz="0.00180503002226125 9.7788360816399E-06 0.00171111294466987"
+        rpy="0 0 0" />
+      <mass
+        value="0.000506372393328027" />
+      <inertia
+        ixx="3.91689564979804E-09"
+        ixy="4.18443540104963E-11"
+        ixz="4.59557086153676E-10"
+        iyy="2.28106862754964E-08"
+        iyz="-3.65933297907781E-12"
+        izz="2.37263616129444E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ring_joint1"
+    type="revolute">
+    <origin
+      xyz="-0.01136 -0.021686 0.10816"
+      rpy="1.5708 -1.3588 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="ring_link1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="ring_link2">
+    <inertial>
+      <origin
+        xyz="0.0132042161967991 -0.000140801482555716 6.3040074833251E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.00345266308805285" />
+      <inertia
+        ixx="1.00700887685403E-07"
+        ixy="1.25875778926334E-08"
+        ixz="-1.25338204025674E-09"
+        iyy="2.72536015181941E-07"
+        iyz="-2.56270987664952E-09"
+        izz="3.47652580383347E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ring_joint2"
+    type="revolute">
+    <origin
+      xyz="0.0065 0 0"
+      rpy="-1.5708 0.039703 0" />
+    <parent
+      link="ring_link1" />
+    <child
+      link="ring_link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="ring_link3">
+    <inertial>
+      <origin
+        xyz="0.0142875805286722 -0.000476633492086204 0.000135858555142551"
+        rpy="0 0 0" />
+      <mass
+        value="0.00364505694449512" />
+      <inertia
+        ixx="9.59774208983785E-08"
+        ixy="6.6204222350462E-09"
+        ixz="2.3542341451103E-10"
+        iyy="4.11731061151002E-07"
+        iyz="2.26975718811213E-09"
+        izz="4.5997789508883E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ring_joint3"
+    type="revolute">
+    <origin
+      xyz="0.025774 0 0"
+      rpy="0 0 -0.1443" />
+    <parent
+      link="ring_link2" />
+    <child
+      link="ring_link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="ring_link4">
+    <inertial>
+      <origin
+        xyz="0.0119030434898505 -0.00163380503629014 1.52302260153295E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.00269297019500591" />
+      <inertia
+        ixx="4.6935431144443E-08"
+        ixy="4.1180088928635E-09"
+        ixz="7.51574076185329E-10"
+        iyy="1.68423597815438E-07"
+        iyz="-3.62529978760255E-10"
+        izz="1.93893304619314E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/ring_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ring_joint4"
+    type="revolute">
+    <origin
+      xyz="0.030024 0 0"
+      rpy="0 0 0.25092" />
+    <parent
+      link="ring_link3" />
+    <child
+      link="ring_link4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="pinky_link1">
+    <inertial>
+      <origin
+        xyz="0.00180502885071403 9.77931627182613E-06 0.00171111276918051"
+        rpy="0 0 0" />
+      <mass
+        value="0.000506372234478961" />
+      <inertia
+        ixx="3.91689547620094E-09"
+        ixy="4.18430084288519E-11"
+        ixz="4.59557590983486E-10"
+        iyy="2.28106835205895E-08"
+        iyz="-3.65935013123053E-12"
+        izz="2.37263589057041E-08" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link1.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.898039215686275 0.917647058823529 0.929411764705882 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link1.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pinky_joint1"
+    type="revolute">
+    <origin
+      xyz="-0.01056 -0.041874 0.10042"
+      rpy="1.5708 -1.0226 -1.5708" />
+    <parent
+      link="base_link" />
+    <child
+      link="pinky_link1" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="pinky_link2">
+    <inertial>
+      <origin
+        xyz="0.0131807533570299 -0.000135435451898041 7.43386901881984E-06"
+        rpy="0 0 0" />
+      <mass
+        value="0.003453545083389" />
+      <inertia
+        ixx="1.0153755015447E-07"
+        ixy="1.20289063216063E-08"
+        ixz="-1.29965775235775E-09"
+        iyy="2.71830766284133E-07"
+        iyz="-2.47956890897381E-09"
+        izz="3.47711015663519E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link2.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link2.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pinky_joint2"
+    type="revolute">
+    <origin
+      xyz="0.0065 0 0"
+      rpy="-1.5708 0.11954 0" />
+    <parent
+      link="pinky_link1" />
+    <child
+      link="pinky_link2" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="pinky_link3">
+    <inertial>
+      <origin
+        xyz="0.0142876042070571 -0.000476662116451745 0.000136005609380332"
+        rpy="0 0 0" />
+      <mass
+        value="0.00364505639261196" />
+      <inertia
+        ixx="9.59760987058404E-08"
+        ixy="6.61824897436439E-09"
+        ixz="2.358443687188E-10"
+        iyy="4.11729856110318E-07"
+        iyz="2.26944518170853E-09"
+        izz="4.59975728130113E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link3.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link3.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pinky_joint3"
+    type="revolute">
+    <origin
+      xyz="0.025774 0 0"
+      rpy="0 0 -0.0050623" />
+    <parent
+      link="pinky_link2" />
+    <child
+      link="pinky_link3" />
+    <axis
+      xyz="0 0 1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+  <link
+    name="pinky_link4">
+    <inertial>
+      <origin
+        xyz="0.0119030399362338 -0.0016338089088145 1.52854511393796E-05"
+        rpy="0 0 0" />
+      <mass
+        value="0.00269296872221513" />
+      <inertia
+        ixx="4.69352927638944E-08"
+        ixy="4.11793558800962E-09"
+        ixz="7.51572353387996E-10"
+        iyy="1.68423144415166E-07"
+        iyz="-3.62531169143434E-10"
+        izz="1.93892846207205E-07" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link4.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://youshou_urdf/meshes/pinky_link4.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="pinky_joint4"
+    type="revolute">
+    <origin
+      xyz="0.030024 0 0"
+      rpy="0 0 -0.10156" />
+    <parent
+      link="pinky_link3" />
+    <child
+      link="pinky_link4" />
+    <axis
+      xyz="0 0 -1" />
+    <limit
+      lower="0"
+      upper="0"
+      effort="0"
+      velocity="0" />
+  </joint>
+</robot>

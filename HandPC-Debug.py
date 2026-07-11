@@ -25,7 +25,8 @@ from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QRect
 from PySide6.QtSerialPort import QSerialPort, QSerialPortInfo
 import pyqtgraph as pg
 
-from PySide6.QtGui import QStandardItemModel, QStandardItem, QIcon, QPixmap, QPainter, QColor, QBrush, QFont, QFontMetrics
+from PySide6.QtGui import QStandardItemModel, QStandardItem, QIcon, QPixmap, QPainter, QColor, QBrush, QFont, \
+    QFontMetrics
 from pathlib import Path
 
 # ---- PyInstaller 通用资源路径 ----
@@ -35,7 +36,6 @@ from Crypto.PublicKey import RSA
 
 from PySide6.QtWidgets import QGraphicsDropShadowEffect
 from PySide6.QtGui import QColor
-
 
 
 def resource_path(rel: str) -> str:
@@ -1380,6 +1380,224 @@ class StepPlanDialog(QDialog):
         # 不关对话框
 
 
+class FistTestDialog(QDialog):
+    FINGER_INFOS = [
+        ("拇指-弯曲", 43.5),
+        ("拇指-侧摆", 86.0),
+        ("食指", 80.0),
+        ("中指", 80.0),
+        ("无名指", 80.0),
+        ("小指", 80.0),
+    ]
+
+    def __init__(self, parent=None, main=None):
+        super().__init__(parent)
+        self.setWindowTitle("握拳测试")
+        self.resize(920, 560)
+        self.main = main
+        if main:
+            self.setStyleSheet(main.build_qss())
+
+        root = QVBoxLayout(self)
+        root.setSpacing(10)
+        root.setContentsMargins(10, 10, 10, 10)
+
+        self.table = QTableWidget(len(self.FINGER_INFOS), 5, self)
+        self.table.setHorizontalHeaderLabels([
+            "手指",
+            "初始张开角度(°)",
+            "目标握拳角度(°)",
+            "闭合速度(°/s)",
+            "张开速度(°/s)",
+        ])
+        self.table.verticalHeader().setVisible(False)
+        self.table.setSelectionMode(QAbstractItemView.NoSelection)
+        self.table.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.table.setColumnWidth(0, 120)
+        self.table.setColumnWidth(1, 150)
+        self.table.setColumnWidth(2, 150)
+        self.table.setColumnWidth(3, 140)
+        self.table.setColumnWidth(4, 140)
+        try:
+            self.table.horizontalHeader().setSectionResizeMode(QHeaderView.Stretch)
+            self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeToContents)
+        except Exception:
+            pass
+
+        self.open_angle_boxes = []
+        self.close_angle_boxes = []
+        self.close_speed_boxes = []
+        self.open_speed_boxes = []
+
+        for row, (name, ang_max) in enumerate(self.FINGER_INFOS):
+            item = QTableWidgetItem(name)
+            item.setFlags(Qt.ItemIsEnabled)
+            self.table.setItem(row, 0, item)
+
+            open_spin = QDoubleSpinBox()
+            open_spin.setDecimals(2)
+            open_spin.setRange(0.0, ang_max)
+            open_spin.setValue(0.0)
+            open_spin.setObjectName("InputSpin")
+            open_spin.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            open_spin.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table.setCellWidget(row, 1, open_spin)
+            self.open_angle_boxes.append(open_spin)
+
+            close_spin = QDoubleSpinBox()
+            close_spin.setDecimals(2)
+            close_spin.setRange(0.0, ang_max)
+            close_spin.setValue(0.0)
+            close_spin.setObjectName("InputSpin")
+            close_spin.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            close_spin.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table.setCellWidget(row, 2, close_spin)
+            self.close_angle_boxes.append(close_spin)
+
+            close_speed_spin = QDoubleSpinBox()
+            close_speed_spin.setDecimals(1)
+            close_speed_spin.setRange(0.0, 90.0)
+            close_speed_spin.setValue(50.0)
+            close_speed_spin.setObjectName("InputSpin")
+            close_speed_spin.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            close_speed_spin.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table.setCellWidget(row, 3, close_speed_spin)
+            self.close_speed_boxes.append(close_speed_spin)
+
+            open_speed_spin = QDoubleSpinBox()
+            open_speed_spin.setDecimals(1)
+            open_speed_spin.setRange(0.0, 90.0)
+            open_speed_spin.setValue(50.0)
+            open_speed_spin.setObjectName("InputSpin")
+            open_speed_spin.setButtonSymbols(QAbstractSpinBox.NoButtons)
+            open_speed_spin.setAlignment(Qt.AlignRight | Qt.AlignVCenter)
+            self.table.setCellWidget(row, 4, open_speed_spin)
+            self.open_speed_boxes.append(open_speed_spin)
+
+        root.addWidget(self.table, 1)
+
+        form = QFormLayout()
+        form.setLabelAlignment(Qt.AlignRight)
+        form.setHorizontalSpacing(12)
+        form.setVerticalSpacing(6)
+
+        self.spin_close_hold = QSpinBox()
+        self.spin_close_hold.setRange(0, 600000)
+        self.spin_close_hold.setValue(2000)
+        self.spin_close_hold.setObjectName("InputSpin")
+        self.spin_close_hold.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        form.addRow("闭合保持(ms):", self.spin_close_hold)
+
+        self.spin_open_hold = QSpinBox()
+        self.spin_open_hold.setRange(0, 600000)
+        self.spin_open_hold.setValue(2000)
+        self.spin_open_hold.setObjectName("InputSpin")
+        self.spin_open_hold.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        form.addRow("张开保持(ms):", self.spin_open_hold)
+
+        self.spin_loop_count = QSpinBox()
+        self.spin_loop_count.setRange(1, 100000)
+        self.spin_loop_count.setValue(1)
+        self.spin_loop_count.setObjectName("InputSpin")
+        self.spin_loop_count.setButtonSymbols(QAbstractSpinBox.NoButtons)
+        self.spin_loop_count.valueChanged.connect(self._on_loop_count_changed)
+        form.addRow("循环次数(抓握次数):", self.spin_loop_count)
+
+        self.lab_loop_progress = QLabel("当前循环次数：0 / 1")
+        self.lab_loop_progress.setObjectName("FormLabel")
+        form.addRow("当前循环次数:", self.lab_loop_progress)
+
+        root.addLayout(form)
+
+        self.lab_status = QLabel("状态：待命")
+        self.lab_status.setObjectName("FormLabel")
+        root.addWidget(self.lab_status)
+
+        btn_row = QHBoxLayout()
+        btn_row.addStretch(1)
+        self.btn_apply = QPushButton("应用初始角度")
+        self.btn_apply.setObjectName("SecondaryButton")
+        self.btn_apply.clicked.connect(self.on_apply_initial)
+        self.btn_start = QPushButton("开始测试")
+        self.btn_start.setObjectName("PrimaryButton")
+        self.btn_start.clicked.connect(self.on_start)
+        self.btn_stop = QPushButton("停止测试")
+        self.btn_stop.setObjectName("SecondaryButton")
+        self.btn_stop.setEnabled(False)
+        self.btn_stop.clicked.connect(self.on_stop)
+        self.btn_close = QPushButton("关闭")
+        self.btn_close.clicked.connect(self.reject)
+        btn_row.addWidget(self.btn_apply)
+        btn_row.addWidget(self.btn_start)
+        btn_row.addWidget(self.btn_stop)
+        btn_row.addWidget(self.btn_close)
+        root.addLayout(btn_row)
+
+    def _on_loop_count_changed(self, value: int):
+        self.set_loop_progress(0, max(1, int(value)))
+
+    def build_plan_data(self):
+        return {
+            "open_angles": [sp.value() for sp in self.open_angle_boxes],
+            "close_angles": [sp.value() for sp in self.close_angle_boxes],
+            "close_speeds": [sp.value() for sp in self.close_speed_boxes],
+            "open_speeds": [sp.value() for sp in self.open_speed_boxes],
+            "close_hold_ms": int(self.spin_close_hold.value()),
+            "open_hold_ms": int(self.spin_open_hold.value()),
+            "loop_count": int(self.spin_loop_count.value()),
+        }
+
+    def load_from_plan(self, plan: dict):
+        open_angles = plan.get("open_angles", [])
+        close_angles = plan.get("close_angles", [])
+        close_speeds = plan.get("close_speeds", [])
+        open_speeds = plan.get("open_speeds", [])
+
+        for i, sp in enumerate(self.open_angle_boxes):
+            if i < len(open_angles):
+                sp.setValue(float(open_angles[i]))
+        for i, sp in enumerate(self.close_angle_boxes):
+            if i < len(close_angles):
+                sp.setValue(float(close_angles[i]))
+        for i, sp in enumerate(self.close_speed_boxes):
+            if i < len(close_speeds):
+                sp.setValue(float(close_speeds[i]))
+        for i, sp in enumerate(self.open_speed_boxes):
+            if i < len(open_speeds):
+                sp.setValue(float(open_speeds[i]))
+
+        self.spin_close_hold.setValue(int(plan.get("close_hold_ms", 2000)))
+        self.spin_open_hold.setValue(int(plan.get("open_hold_ms", 2000)))
+        self.spin_loop_count.setValue(max(1, int(plan.get("loop_count", 1))))
+        self.set_loop_progress(0, max(1, int(plan.get("loop_count", 1))))
+
+    def on_apply_initial(self):
+        if self.main is not None:
+            self.main.apply_fist_test_initial_to_ui(self.build_plan_data())
+            self.lab_status.setText("状态：已应用初始角度到左侧控制区")
+
+    def on_start(self):
+        if self.main is not None:
+            self.main.start_fist_test(self.build_plan_data(), dialog=self)
+
+    def on_stop(self):
+        if self.main is not None:
+            self.main.stop_fist_test(from_user=True)
+
+    def set_loop_progress(self, current_loop: int, total_loop: int):
+        total_loop = max(1, int(total_loop))
+        current_loop = max(0, min(int(current_loop), total_loop))
+        self.lab_loop_progress.setText(f"{current_loop} / {total_loop}")
+
+    def set_running(self, running: bool, status: str = ""):
+        self.btn_start.setEnabled(not running)
+        self.btn_stop.setEnabled(running)
+        if status:
+            self.lab_status.setText(status)
+        else:
+            self.lab_status.setText("状态：运行中" if running else "状态：待命")
+
+
 # =============== 嵌入式 URDF 视图封装 ===============
 # =============== 动作序列对话框（记录/导入/保存/播放） ===============
 class ActionSequenceDialog(QDialog):
@@ -2244,7 +2462,6 @@ class CommConfigDialog(QDialog):
         if hasattr(self, "lab_addr_hex") and self.lab_addr_hex is not None:
             self.lab_addr_hex.setText(f"(0x{val:02X})")
 
-
     def _update_conn_addr_label(self, addr: int):
         """更新 485 串口连接区域中显示的从机地址输入框"""
         if hasattr(self, "spin_conn_addr") and self.spin_conn_addr is not None:
@@ -2407,7 +2624,6 @@ class OTAUpgradeDialog(QDialog):
         # 根据主窗口当前版本初始化显示
         self.sync_current_version_from_main()
 
-
         # 状态
         self.active = False
         self.expect = None
@@ -2447,7 +2663,6 @@ class OTAUpgradeDialog(QDialog):
             text = f"当前固件版本：{self.main.current_fw_version}"
         if hasattr(self, "lab_current_fw"):
             self.lab_current_fw.setText(text)
-
 
     # ---------- UI/日志 ----------
     def log(self, s: str):
@@ -2670,9 +2885,23 @@ class OTAUpgradeDialog(QDialog):
                 self.upgrade_seq_pos = 2
                 self.log("✔ 收到升级应答 2/2")
                 try:
-                    self.log("读取固件中 ...")
-                    data = self.decrypt_firmware(self.file_path)
-                    self.log(f"✔ 读取成功，固件大小 {len(data)} 字节")
+                    file_lower = (self.file_path or "").lower()
+                    if file_lower.endswith(".enc"):
+                        # 加密固件：按原来的流程先解密再烧录
+                        self.log("正在处理固件 ...")
+                        data = self.decrypt_firmware(self.file_path)
+                        self.log(f"✔ 处理成功，固件大小 {len(data)} 字节")
+                    elif file_lower.endswith(".bin"):
+                        # 未加密固件：直接读取
+                        self.log("正在处理固件 ...")
+                        with open(self.file_path, "rb") as f:
+                            data = f.read()
+                        self.log(f"✔ 处理成功，固件大小 {len(data)} 字节")
+                    else:
+                        # 只允许 .bin / .enc，其他后缀直接报错
+                        self.log("❌ 不支持的固件，请重新选择文件。")
+                        self._done(False)
+                        return True
                 except Exception as e:
                     self.log(f"❌ 读取失败：{e}")
                     self._done(False)
@@ -2965,6 +3194,7 @@ class CircleMultiComboBox(QComboBox):
         all_on = all(self._checked) if self._checked else False
         self._set_row_icon(0, self._icon_on if all_on else self._icon_off)
 
+
 class ModelDriveToggle(QWidget):
     """
     胶囊形状的两端切换控件：
@@ -2976,7 +3206,7 @@ class ModelDriveToggle(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
-        self._value = 0.0      # 0 = 左侧，1 = 右侧，用于动画插值
+        self._value = 0.0  # 0 = 左侧，1 = 右侧，用于动画插值
         self._use_recv = False
 
         self.setFixedHeight(34)
@@ -3044,7 +3274,7 @@ class ModelDriveToggle(QWidget):
 
         # 外层胶囊
         radius = rect.height() / 2
-        bg = QColor(255, 255, 255, 35)          # 外层淡白
+        bg = QColor(255, 255, 255, 35)  # 外层淡白
         border = QColor(0, 0, 0, 110)
         painter.setPen(border)
         painter.setBrush(bg)
@@ -3060,7 +3290,7 @@ class ModelDriveToggle(QWidget):
         slider_rect = QRectF(x, pad, slot_width, slot_height)
 
         painter.setPen(Qt.NoPen)
-        painter.setBrush(QColor(79, 217, 200))   # #4fd9c8 左右
+        painter.setBrush(QColor(79, 217, 200))  # #4fd9c8 左右
         painter.drawRoundedRect(slider_rect, slider_radius, slider_radius)
 
         # 文本
@@ -3086,7 +3316,6 @@ class ModelDriveToggle(QWidget):
         painter.drawText(right_rect, Qt.AlignCenter, right_text)
 
 
-
 # =============== 主窗口 ===============
 class MainWindow(QWidget):
     def __init__(self):
@@ -3107,7 +3336,6 @@ class MainWindow(QWidget):
         # 3D 模型驱动来源：False=UI 滑动条/角度框，True=串口接收的 6 个角度
         self.use_recv_angles_for_model = False
 
-
         # 规划相关
         self.last_step_plan = None
         self.step_plan_dialog = None
@@ -3117,6 +3345,25 @@ class MainWindow(QWidget):
         self.plan_executing = False
         self.plan_exec_index = 0
         self.plan_exec_loop_done = 0
+
+        self.last_fist_test_plan = {
+            "open_angles": [0.0] * 6,
+            "close_angles": [0.0] * 6,
+            "close_speeds": [50.0] * 6,
+            "open_speeds": [50.0] * 6,
+            "close_hold_ms": 2000,
+            "open_hold_ms": 2000,
+            "loop_count": 1,
+        }
+        self.fist_test_dialog = None
+        self.fist_test_timer = QTimer(self)
+        self.fist_test_timer.setSingleShot(True)
+        self.fist_test_timer.timeout.connect(self.fist_test_next)
+        self.fist_test_running = False
+        self.fist_test_frames = []
+        self.fist_test_index = 0
+        self.fist_test_current_loop = 0
+        self.fist_test_total_loop = int(self.last_fist_test_plan.get("loop_count", 1))
         # —— 动作序列相关 ——
         self.action_seq = []
         self.action_seq_dialog = None
@@ -3197,7 +3444,6 @@ class MainWindow(QWidget):
 
         # 程序复位冷却状态
         self._soft_reset_cooldown = False
-
 
         self.btn_ota = QPushButton("⬆ OTA升级…")
         self.btn_ota.setObjectName("SecondaryButton")
@@ -3544,7 +3790,6 @@ class MainWindow(QWidget):
                            expect="fw-version",
                            priority=1)
 
-
     def open_config(self):
         dlg = CommConfigDialog(self, main=self)
         self.comm_config_dialog = dlg
@@ -3552,7 +3797,6 @@ class MainWindow(QWidget):
             dlg.exec()
         finally:
             self.comm_config_dialog = None
-
 
     # ========== 1. 手指控制 ==========
 
@@ -3576,6 +3820,11 @@ class MainWindow(QWidget):
         lay.setSpacing(8)
 
         top_bar = QHBoxLayout()
+        self.btn_open_fist_test = QPushButton("握拳测试")
+        self.btn_open_fist_test.setObjectName("SecondaryButton")
+        self.btn_open_fist_test.setFixedWidth(96)
+        self.btn_open_fist_test.clicked.connect(self.open_fist_test_dialog)
+        top_bar.addWidget(self.btn_open_fist_test)
         top_bar.addStretch(1)
         self.btn_open_action = QPushButton("动作序列")
         self.btn_open_action.setObjectName("SecondaryButton")
@@ -3691,6 +3940,160 @@ class MainWindow(QWidget):
         self.step_plan_dialog.raise_()
         self.step_plan_dialog.activateWindow()
 
+    def open_fist_test_dialog(self):
+        if self.fist_test_dialog is None:
+            self.fist_test_dialog = FistTestDialog(self, main=self)
+
+        if self.last_fist_test_plan is not None:
+            try:
+                self.fist_test_dialog.load_from_plan(self.last_fist_test_plan)
+            except Exception:
+                pass
+
+        self.fist_test_dialog.set_running(self.fist_test_running,
+                                          "状态：运行中" if self.fist_test_running else "状态：待命")
+        total_loop = max(1, int(self.last_fist_test_plan.get("loop_count", 1)))
+        current_loop = self.fist_test_current_loop if self.fist_test_running else 0
+        self.fist_test_dialog.set_loop_progress(current_loop, total_loop)
+        self.fist_test_dialog.show()
+        self.fist_test_dialog.raise_()
+        self.fist_test_dialog.activateWindow()
+
+    def apply_fist_test_initial_to_ui(self, plan: dict):
+        self.last_fist_test_plan = dict(plan)
+        if len(self.finger_angle_boxes) < 6 or len(self.finger_speed_boxes) < 6:
+            return
+
+        open_angles = list(plan.get("open_angles", [0.0] * 6))[:6]
+        close_speeds = list(plan.get("close_speeds", [50.0] * 6))[:6]
+
+        for i, sp in enumerate(self.finger_angle_boxes[:6]):
+            sp.setValue(float(open_angles[i]))
+        for i, sp in enumerate(self.finger_speed_boxes[:6]):
+            sp.setValue(float(close_speeds[i]))
+
+        self.log("[FIST] 已将握拳测试初始角度应用到左侧控制区")
+
+    def build_fist_test_frames(self, plan: dict):
+        open_angles = list(plan.get("open_angles", [0.0] * 6))[:6]
+        close_angles = list(plan.get("close_angles", [0.0] * 6))[:6]
+        close_speeds = list(plan.get("close_speeds", [50.0] * 6))[:6]
+        open_speeds = list(plan.get("open_speeds", [50.0] * 6))[:6]
+        close_hold_ms = max(0, int(plan.get("close_hold_ms", 2000)))
+        open_hold_ms = max(0, int(plan.get("open_hold_ms", 2000)))
+        loop_count = max(1, int(plan.get("loop_count", 1)))
+
+        while len(open_angles) < 6:
+            open_angles.append(0.0)
+        while len(close_angles) < 6:
+            close_angles.append(0.0)
+        while len(close_speeds) < 6:
+            close_speeds.append(50.0)
+        while len(open_speeds) < 6:
+            open_speeds.append(50.0)
+
+        final_open = open_angles[:6]
+        final_close = close_angles[:6]
+
+        frames = [{
+            "angles": final_open[:],
+            "speeds": open_speeds[:],
+            "delay_ms": open_hold_ms,
+            "phase": "open",
+            "label": "初始张开",
+            "loop_no": 0,
+        }]
+
+        for idx in range(loop_count):
+            loop_no = idx + 1
+            frames.append({
+                "angles": final_close[:],
+                "speeds": close_speeds[:],
+                "delay_ms": close_hold_ms,
+                "phase": "close",
+                "label": f"第{loop_no}次闭合",
+                "loop_no": loop_no,
+            })
+            frames.append({
+                "angles": final_open[:],
+                "speeds": open_speeds[:],
+                "delay_ms": open_hold_ms,
+                "phase": "open",
+                "label": f"第{loop_no}次张开",
+                "loop_no": loop_no,
+            })
+        return frames
+
+    def start_fist_test(self, plan: dict, dialog=None):
+        if not self.serial.isOpen():
+            QMessageBox.information(self, "提示", "请先连接串口，再开始握拳测试。")
+            self.log("[FIST] 串口未连接，无法开始握拳测试")
+            return
+        if self.plan_executing:
+            QMessageBox.information(self, "提示", "当前正在执行运动规划，请先中止规划。")
+            return
+        if self.action_playing or self.action_paused:
+            QMessageBox.information(self, "提示", "当前正在播放动作序列，请先停止动作播放。")
+            return
+
+        self.last_fist_test_plan = dict(plan)
+        self.fist_test_dialog = dialog or self.fist_test_dialog
+        self.fist_test_frames = self.build_fist_test_frames(plan)
+        self.fist_test_index = 0
+        self.fist_test_running = True
+        self.fist_test_current_loop = 0
+        self.fist_test_total_loop = max(1, int(plan.get("loop_count", 1)))
+
+        if self.fist_test_dialog is not None:
+            self.fist_test_dialog.set_running(True, "状态：握拳测试运行中")
+            self.fist_test_dialog.set_loop_progress(0, self.fist_test_total_loop)
+
+        self.log(f"[FIST] 开始握拳测试，循环次数={self.fist_test_total_loop}")
+        self.fist_test_next()
+
+    def fist_test_next(self):
+        if not self.fist_test_running:
+            return
+        if self.fist_test_index >= len(self.fist_test_frames):
+            self.stop_fist_test(from_user=False)
+            return
+
+        frame = self.fist_test_frames[self.fist_test_index]
+        self.send_joint_command(frame.get("angles", [0.0] * 6),
+                                frame.get("speeds", [50.0] * 6),
+                                expect="fist",
+                                priority=1)
+
+        delay_ms = max(1, int(frame.get("delay_ms", 10)))
+        label = frame.get("label", f"步骤{self.fist_test_index + 1}")
+        loop_no = max(0, int(frame.get("loop_no", 0)))
+        self.fist_test_current_loop = loop_no
+        self.log(f"[FIST] {label}，保持 {delay_ms} ms")
+
+        if self.fist_test_dialog is not None:
+            self.fist_test_dialog.set_running(True,
+                                              f"状态：{label}（{self.fist_test_index + 1}/{len(self.fist_test_frames)}）")
+            self.fist_test_dialog.set_loop_progress(loop_no, self.fist_test_total_loop)
+
+        self.fist_test_index += 1
+        self.fist_test_timer.start(delay_ms)
+
+    def stop_fist_test(self, from_user: bool = True):
+        self.fist_test_timer.stop()
+        was_running = self.fist_test_running
+        self.fist_test_running = False
+        self.fist_test_index = 0
+        self.fist_test_frames = []
+        final_loop = self.fist_test_total_loop if (not from_user and was_running) else self.fist_test_current_loop
+        self.fist_test_current_loop = 0
+
+        if self.fist_test_dialog is not None:
+            status = "状态：握拳测试已停止" if from_user and was_running else "状态：握拳测试已完成"
+            self.fist_test_dialog.set_running(False, status)
+            self.fist_test_dialog.set_loop_progress(final_loop, max(1, self.fist_test_total_loop))
+
+        if was_running:
+            self.log("[FIST] 握拳测试已停止" if from_user else "[FIST] 握拳测试已完成")
 
     def create_finger_row(self, idx: int, name: str, ang_max: float) -> QWidget:
         """
@@ -3987,6 +4390,19 @@ class MainWindow(QWidget):
             except Exception:
                 pass
 
+    def stop_action_play(self):
+        self.action_play_timer.stop()
+        self.action_playing = False
+        self.action_paused = False
+        self.action_play_index = 0
+        if self.action_seq_dialog is not None:
+            try:
+                self.action_seq_dialog.clear_highlight()
+                self.action_seq_dialog.update_toggle_label()
+            except Exception:
+                pass
+        self.log("[ACT] 已停止播放")
+
     def start_action_play(self, frames=None, dialog=None):
         """
         始终从头开始播放：
@@ -4239,7 +4655,8 @@ class MainWindow(QWidget):
         self.monitor_legend = self.monitor_plot.addLegend(offset=(10, 10))
         # 锁定 X 轴左边界不小于 0（防止鼠标滚轮缩小时把 <0 的时间缩进视图）
         try:
-            _pi = self.monitor_plot.getPlotItem() if hasattr(self.monitor_plot, "getPlotItem") else getattr(self.monitor_plot, "plotItem", None)
+            _pi = self.monitor_plot.getPlotItem() if hasattr(self.monitor_plot, "getPlotItem") else getattr(
+                self.monitor_plot, "plotItem", None)
             _vb = getattr(_pi, "vb", None)
             if _vb is None and _pi is not None and hasattr(_pi, "getViewBox"):
                 _vb = _pi.getViewBox()
@@ -4247,7 +4664,7 @@ class MainWindow(QWidget):
                 _vb.setLimits(xMin=0)
         except Exception:
             pass
-  # ← 保存返回的 LegendItem
+        # ← 保存返回的 LegendItem
 
         pens = [
             pg.mkPen("#5DA3FF", width=2),
@@ -4861,7 +5278,6 @@ class MainWindow(QWidget):
         date_str = f"{date_val:08d}"
         return f"V{major}.{minor}.{patch}_{date_str}"
 
-
     def apply_broadcast_values(self, slave_addr: int, baud_code: int):
         self.log(f"[BCAST] addr=0x{slave_addr:02X}, baud_code=0x{baud_code:02X}")
         self.current_slave_addr = slave_addr
@@ -4885,44 +5301,39 @@ class MainWindow(QWidget):
 
         # ========== 手动下发 0x10 ==========
 
-    def send_finger_motion(self):
+    def send_joint_command(self, angles, speeds, expect="plan", priority=1, desc=""):
         addr = self.current_slave_addr
         start_reg = 0x0002
         reg_count = 0x000C
         byte_count = 0x18
-        pos_vals = [spin.value() for spin in self.finger_angle_boxes]
-        spd_vals = [spin.value() for spin in self.finger_speed_boxes]
+
+        pos_vals = list(angles)[:6]
+        spd_vals = list(speeds)[:6]
+        while len(pos_vals) < 6:
+            pos_vals.append(0.0)
+        while len(spd_vals) < 6:
+            spd_vals.append(50.0)
+
         payload = b""
         for v in pos_vals:
-            payload += float_to_half_be(v)
+            payload += float_to_half_be(float(v))
         for v in spd_vals:
-            payload += float_to_half_be(v)
+            payload += float_to_half_be(float(v))
         frame_head = struct.pack(">B B H H B", addr, 0x10, start_reg, reg_count, byte_count)
         frame = frame_head + payload
         crc = modbus_crc16(frame)
         full = frame + crc
-        # 日志不要中文说明
-        self.enqueue_frame(full, desc="", expect="plan", priority=1)
+        self.enqueue_frame(full, desc=desc, expect=expect, priority=priority)
+
+    def send_finger_motion(self):
+        pos_vals = [spin.value() for spin in self.finger_angle_boxes]
+        spd_vals = [spin.value() for spin in self.finger_speed_boxes]
+        self.send_joint_command(pos_vals, spd_vals, expect="plan", priority=1, desc="")
 
     def reset_finger_command(self):
         """手指复位：不修改 UI，只下发 6 个关节角度为 0、速度为 50 的运动控制指令"""
         try:
-            addr = self.current_slave_addr
-            start_reg = 0x0002
-            reg_count = 0x000C
-            byte_count = 0x18
-            payload = b""
-            # 6 个角度全部置 0 度
-            for _ in range(6):
-                payload += float_to_half_be(0.0)
-            # 6 个速度全部置 50
-            for _ in range(6):
-                payload += float_to_half_be(50.0)
-            frame_head = struct.pack(">B B H H B", addr, 0x10, start_reg, reg_count, byte_count)
-            frame = frame_head + payload
-            crc = modbus_crc16(frame)
-            full = frame + crc
-            self.enqueue_frame(full, desc="", expect="plan", priority=1)
+            self.send_joint_command([0.0] * 6, [50.0] * 6, expect="plan", priority=1, desc="")
         except Exception as e:
             self.log_error(f"[ERR] 手指复位指令发送失败: {e}")
 
@@ -5132,7 +5543,7 @@ class MainWindow(QWidget):
                 background: rgba(124, 180, 255, 0.6);
                 border-radius: 3px;
             }
-            
+
              /* 模型驱动源：胶囊切换按钮 */
             QFrame#ModelDriveSegment {
                 background: rgba(255, 255, 255, 0.15);      /* 外层胶囊底色 */
@@ -5159,7 +5570,7 @@ class MainWindow(QWidget):
                 color: #0b1016;                              /* 选中一侧文字变深 */
                 font-weight: 600;
             }
-            
+
             #ModelPlaceholder {
                 background: rgba(255,255,255,0.015);
                 border: 1px dashed rgba(255,255,255,0.06);
