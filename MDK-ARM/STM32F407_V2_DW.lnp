@@ -1,8 +1,9 @@
---cpu=Cortex-M4.fp.sp
+--cpu=Cortex-M4.fp
 ".\startup_stm32f407xx.o"
 ".\rs485.o"
 ".\cjson.o"
 ".\servo.o"
+".\gripper.o"
 ".\main.o"
 ".\gpio.o"
 ".\freertos.o"

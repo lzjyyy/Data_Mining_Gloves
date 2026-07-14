@@ -1,9 +1,9 @@
 .\lss.o: ..\CANOpen\src\lss.c
 .\lss.o: ..\CANOpen\inc\data.h
 .\lss.o: ..\CANOpen\inc\stm32\applicfg.h
-.\lss.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\lss.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\lss.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\lss.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\lss.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\lss.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\lss.o: ..\CANOpen\inc\def.h
 .\lss.o: ..\CANOpen\hardware\config.h
 .\lss.o: ..\CANOpen\inc\can.h

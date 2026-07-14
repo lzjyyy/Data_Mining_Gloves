@@ -3,9 +3,9 @@
 .\servo.o: ..\CANOpen\hardware\timer5.h
 .\servo.o: ..\CANOpen\inc\stm32\timerscfg.h
 .\servo.o: ..\CANOpen\inc\stm32\applicfg.h
-.\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\servo.o: ..\CANOpen\inc\data.h
 .\servo.o: ..\CANOpen\inc\def.h
 .\servo.o: ..\CANOpen\hardware\config.h
@@ -41,7 +41,7 @@
 .\servo.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-.\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h
@@ -63,7 +63,7 @@
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 .\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 .\servo.o: ../Core/Inc/FreeRTOSConfig.h

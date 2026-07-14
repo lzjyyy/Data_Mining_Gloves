@@ -1,9 +1,9 @@
 .\nmtslave.o: ..\CANOpen\src\nmtSlave.c
 .\nmtslave.o: ..\CANOpen\inc\nmtSlave.h
 .\nmtslave.o: ..\CANOpen\inc\stm32\applicfg.h
-.\nmtslave.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\nmtslave.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\nmtslave.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\nmtslave.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\nmtslave.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\nmtslave.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\nmtslave.o: ..\CANOpen\inc\data.h
 .\nmtslave.o: ..\CANOpen\inc\def.h
 .\nmtslave.o: ..\CANOpen\hardware\config.h

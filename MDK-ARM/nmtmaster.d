@@ -2,9 +2,9 @@
 .\nmtmaster.o: ..\CANOpen\inc\nmtMaster.h
 .\nmtmaster.o: ..\CANOpen\inc\data.h
 .\nmtmaster.o: ..\CANOpen\inc\stm32\applicfg.h
-.\nmtmaster.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\nmtmaster.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\nmtmaster.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\nmtmaster.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\nmtmaster.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\nmtmaster.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\nmtmaster.o: ..\CANOpen\inc\def.h
 .\nmtmaster.o: ..\CANOpen\hardware\config.h
 .\nmtmaster.o: ..\CANOpen\inc\can.h

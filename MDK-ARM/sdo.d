@@ -1,12 +1,12 @@
 .\sdo.o: ..\CANOpen\src\sdo.c
-.\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+.\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 .\sdo.o: ..\CANOpen\inc\sysdep.h
 .\sdo.o: ..\CANOpen\hardware\config.h
 .\sdo.o: ..\CANOpen\inc\stm32\canfestival.h
 .\sdo.o: ..\CANOpen\inc\stm32\applicfg.h
-.\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\sdo.o: ..\CANOpen\inc\data.h
 .\sdo.o: ..\CANOpen\inc\def.h
 .\sdo.o: ..\CANOpen\inc\can.h

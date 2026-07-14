@@ -7,9 +7,9 @@
 .\mqttclient.o: ..\MQTT\MQTTUnsubscribe.h
 .\mqttclient.o: ..\MQTT\MQTTFormat.h
 .\mqttclient.o: ..\MQTT\StackTrace.h
-.\mqttclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqttclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\mqttclient.o: ..\MQTT\MQTTPacket.h
 .\mqttclient.o: ..\MQTT\mqtt_timer.h
-.\mqttclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\mqttclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\mqttclient.o: ..\MQTT\mqtt_network.h
-.\mqttclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\mqttclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

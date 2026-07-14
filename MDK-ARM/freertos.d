@@ -1,7 +1,7 @@
 .\freertos.o: ../Core/Src/freertos.c
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\freertos.o: ../Core/Inc/FreeRTOSConfig.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -46,11 +46,11 @@
 .\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\freertos.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os2.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\freertos.o: ../Core/Inc/gpio.h
 .\freertos.o: ../Core/Inc/usart.h
 .\freertos.o: ../Core/Inc/adc.h
@@ -76,7 +76,7 @@
 .\freertos.o: ../Core/Inc/gripper.h
 .\freertos.o: ..\MODBUS-LIB\Inc\Modbus.h
 .\freertos.o: ..\MODBUS-LIB\Config\ModbusConfig.h
-.\freertos.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\inttypes.h
+.\freertos.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 .\freertos.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 .\freertos.o: ..\CANOpen\hardware\Kinco_Ctrl.h

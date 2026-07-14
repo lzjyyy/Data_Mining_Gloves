@@ -2,9 +2,9 @@
 .\kinco_ctrl.o: ..\CANOpen\hardware\Kinco_Ctrl.h
 .\kinco_ctrl.o: ..\CANOpen\inc\data.h
 .\kinco_ctrl.o: ..\CANOpen\inc\stm32\applicfg.h
-.\kinco_ctrl.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\kinco_ctrl.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\kinco_ctrl.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\kinco_ctrl.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\kinco_ctrl.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\kinco_ctrl.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\kinco_ctrl.o: ..\CANOpen\inc\def.h
 .\kinco_ctrl.o: ..\CANOpen\hardware\config.h
 .\kinco_ctrl.o: ..\CANOpen\inc\can.h

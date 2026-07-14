@@ -6,6 +6,6 @@
 .\mqttsubscribeclient.o: ..\MQTT\MQTTUnsubscribe.h
 .\mqttsubscribeclient.o: ..\MQTT\MQTTFormat.h
 .\mqttsubscribeclient.o: ..\MQTT\StackTrace.h
-.\mqttsubscribeclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqttsubscribeclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\mqttsubscribeclient.o: ..\MQTT\MQTTPacket.h
-.\mqttsubscribeclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\mqttsubscribeclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

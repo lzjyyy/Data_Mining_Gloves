@@ -3,9 +3,9 @@ stm32f407_template\servo.o: ../Core/Inc/servo.h
 stm32f407_template\servo.o: ..\CANOpen\hardware\timer5.h
 stm32f407_template\servo.o: ..\CANOpen\inc\stm32\timerscfg.h
 stm32f407_template\servo.o: ..\CANOpen\inc\stm32\applicfg.h
-stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f407_template\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+stm32f407_template\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 stm32f407_template\servo.o: ..\CANOpen\inc\data.h
 stm32f407_template\servo.o: ..\CANOpen\inc\def.h
 stm32f407_template\servo.o: ..\CANOpen\hardware\config.h
@@ -41,7 +41,7 @@ stm32f407_template\servo.o: ../Drivers/CMSIS/Include/mpu_armv7.h
 stm32f407_template\servo.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+stm32f407_template\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h
@@ -63,7 +63,7 @@ stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_sp
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 stm32f407_template\servo.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-stm32f407_template\servo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+stm32f407_template\servo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 stm32f407_template\servo.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
 stm32f407_template\servo.o: ../Core/Inc/FreeRTOSConfig.h

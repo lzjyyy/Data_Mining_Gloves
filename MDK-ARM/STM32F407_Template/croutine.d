@@ -1,7 +1,7 @@
 stm32f407_template\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/croutine.c
 stm32f407_template\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-stm32f407_template\croutine.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
-stm32f407_template\croutine.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+stm32f407_template\croutine.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+stm32f407_template\croutine.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 stm32f407_template\croutine.o: ../Core/Inc/FreeRTOSConfig.h
 stm32f407_template\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 stm32f407_template\croutine.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

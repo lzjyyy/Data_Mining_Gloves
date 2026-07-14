@@ -1,12 +1,12 @@
 .\socket.o: ..\Ethernet\socket.c
 .\socket.o: ..\Ethernet\socket.h
 .\socket.o: ..\Ethernet\wizchip_conf.h
-.\socket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\socket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\socket.o: ..\Ethernet\w5500.h
 .\socket.o: ..\Ethernet\wizchip_conf.h
 .\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 .\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\socket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\socket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\socket.o: ../Core/Inc/FreeRTOSConfig.h
 .\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

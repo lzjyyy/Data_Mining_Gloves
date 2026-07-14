@@ -1,12 +1,12 @@
 stm32f407_template\socket.o: ..\Ethernet\socket.c
 stm32f407_template\socket.o: ..\Ethernet\socket.h
 stm32f407_template\socket.o: ..\Ethernet\wizchip_conf.h
-stm32f407_template\socket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+stm32f407_template\socket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 stm32f407_template\socket.o: ..\Ethernet\w5500.h
 stm32f407_template\socket.o: ..\Ethernet\wizchip_conf.h
 stm32f407_template\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS_V2/cmsis_os.h
 stm32f407_template\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-stm32f407_template\socket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+stm32f407_template\socket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 stm32f407_template\socket.o: ../Core/Inc/FreeRTOSConfig.h
 stm32f407_template\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 stm32f407_template\socket.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

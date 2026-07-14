@@ -6,6 +6,6 @@ stm32f407_template\mqttserializepublish.o: ..\MQTT\MQTTSubscribe.h
 stm32f407_template\mqttserializepublish.o: ..\MQTT\MQTTUnsubscribe.h
 stm32f407_template\mqttserializepublish.o: ..\MQTT\MQTTFormat.h
 stm32f407_template\mqttserializepublish.o: ..\MQTT\StackTrace.h
-stm32f407_template\mqttserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\mqttserializepublish.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f407_template\mqttserializepublish.o: ..\MQTT\MQTTPacket.h
-stm32f407_template\mqttserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\mqttserializepublish.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

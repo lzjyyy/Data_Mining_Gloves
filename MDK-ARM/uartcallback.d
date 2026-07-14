@@ -1,7 +1,7 @@
 .\uartcallback.o: ..\MODBUS-LIB\Src\UARTCallback.c
 .\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
-.\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\uartcallback.o: ../Core/Inc/FreeRTOSConfig.h
 .\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -48,9 +48,12 @@
 .\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\uartcallback.o: ..\MODBUS-LIB\Inc\Modbus.h
 .\uartcallback.o: ..\MODBUS-LIB\Config\ModbusConfig.h
-.\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\inttypes.h
+.\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 .\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 .\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+.\uartcallback.o: ../Core/Inc/gripper.h
+.\uartcallback.o: ../Core/Inc/rs485.h
+.\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

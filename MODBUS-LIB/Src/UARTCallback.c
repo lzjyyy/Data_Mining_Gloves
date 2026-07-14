@@ -10,6 +10,7 @@
 #include "task.h"
 #include "main.h"
 #include "Modbus.h"
+#include "gripper.h"
 
 
  /**
@@ -126,6 +127,11 @@ void HAL_UART_ErrorCallback(UART_HandleTypeDef* huart)
 void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef* huart, uint16_t Size)
 {
 	BaseType_t xHigherPriorityTaskWoken = pdFALSE;
+	if (Gripper_UARTEx_RxEventCallback(huart, Size) != 0U)
+	{
+		return;
+	}
+
 	/* Modbus RTU RX callback BEGIN */
 	int i;
 	for (i = 0; i < numberHandlers; i++)

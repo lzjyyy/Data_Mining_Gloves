@@ -1,6 +1,6 @@
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTPacket.c
 stm32f407_template\mqttpacket.o: ..\MQTT\StackTrace.h
-stm32f407_template\mqttpacket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\mqttpacket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTPacket.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTConnect.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTPublish.h
@@ -8,4 +8,4 @@ stm32f407_template\mqttpacket.o: ..\MQTT\MQTTSubscribe.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTUnsubscribe.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTFormat.h
 stm32f407_template\mqttpacket.o: ..\MQTT\MQTTPacket.h
-stm32f407_template\mqttpacket.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\mqttpacket.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

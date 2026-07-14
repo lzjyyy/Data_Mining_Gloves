@@ -1,9 +1,9 @@
 .\pdo.o: ..\CANOpen\src\pdo.c
 .\pdo.o: ..\CANOpen\inc\pdo.h
 .\pdo.o: ..\CANOpen\inc\stm32\applicfg.h
-.\pdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\pdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\pdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\pdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\pdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\pdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\pdo.o: ..\CANOpen\inc\def.h
 .\pdo.o: ..\CANOpen\hardware\config.h
 .\pdo.o: ..\CANOpen\inc\can.h

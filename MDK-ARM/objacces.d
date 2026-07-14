@@ -1,9 +1,9 @@
 .\objacces.o: ..\CANOpen\src\objacces.c
 .\objacces.o: ..\CANOpen\inc\data.h
 .\objacces.o: ..\CANOpen\inc\stm32\applicfg.h
-.\objacces.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\objacces.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\objacces.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\objacces.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objacces.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objacces.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objacces.o: ..\CANOpen\inc\def.h
 .\objacces.o: ..\CANOpen\hardware\config.h
 .\objacces.o: ..\CANOpen\inc\can.h

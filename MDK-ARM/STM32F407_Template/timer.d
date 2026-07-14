@@ -1,8 +1,8 @@
 stm32f407_template\timer.o: ..\CANOpen\src\timer.c
 stm32f407_template\timer.o: ..\CANOpen\inc\stm32\applicfg.h
-stm32f407_template\timer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-stm32f407_template\timer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-stm32f407_template\timer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f407_template\timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+stm32f407_template\timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 stm32f407_template\timer.o: ..\CANOpen\inc\timer.h
 stm32f407_template\timer.o: ..\CANOpen\inc\stm32\timerscfg.h
 stm32f407_template\timer.o: ..\CANOpen\inc\data.h

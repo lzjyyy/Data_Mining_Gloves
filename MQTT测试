@@ -1,0 +1,87 @@
+ubuntu如何使用mqtt
+在 Ubuntu 上使用 MQTT，通常有两种方式：
+(1)安装 MQTT 客户端，如 mosquitto_pub 和 mosquitto_sub；
+(2)编写程序，使用 MQTT 客户端库（如 paho-mqtt）来连接 MQTT broker。
+
+一、使用 mosquitto_pub 和 mosquitto_sub 客户端工具
+mosquitto_pub 和 mosquitto_sub 是 Mosquitto MQTT broker 提供的命令行工具，分别用于发布和订阅 MQTT 消息。
+
+1️⃣ 安装 Mosquitto 客户端工具
+sudo apt update
+sudo apt install mosquitto mosquitto-clients
+这会安装 Mosquitto MQTT broker 和 客户端工具，使你能够使用 mosquitto_pub 和 mosquitto_sub。
+
+2️⃣ 使用 mosquitto_pub 发布消息
+mosquitto_pub -h <broker_ip> -t <topic> -m "<message>"
+-h <broker_ip>：MQTT Broker 的 IP 地址，若是本机，则写 localhost 或 127.0.0.1
+-t <topic>：主题
+-m <message>：消息内容
+
+示例：
+发布 JSON 消息到主题 robot/gripper/cmd：
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"mode":0,"left":{"position":9000,"speed":1000,"torque":1000},"right":{"position":9000,"speed":1000,"torque":1000}}'
+
+发布 JSON 消息到主题 robot/servo/cmd：
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"kinco":{"is_enable":1,"position":655360,"velocity":200},"zeroerr":{"is_enable":1,"position":120,"velocity":10}}'
+
+发布 JSON 消息到主题 robot/gpio/cmd：
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"type":0,"state":0}' //顶升机构hold on
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"type":0,"state":1}' //顶升机构turn up
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"type":0,"state":2}' //顶升机构turn down
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"type":1,"state":1}' //告警灯打开
+mosquitto_pub -h localhost -t robot/gpio/cmd -m '{"type":1,"state":0}' //告警灯关闭
+
+3️⃣ 使用 mosquitto_sub 订阅消息
+mosquitto_sub -h <broker_ip> -t <topic> -v
+-v 参数表示显示主题和消息内容。
+
+示例：
+mosquitto_sub -h localhost -v   -t "robot/status"
+二、配置和启动 MQTT Broker（如果没有现成的 Broker）
+1️⃣ 安装 Mosquitto MQTT Broker
+sudo apt install mosquitto
+sudo apt install mosquitto-clients
+
+2️⃣ 启动 Mosquitto Broker
+Mosquitto 在 Ubuntu 上会自动启动服务。你可以使用以下命令查看服务状态：
+sudo systemctl status mosquitto
+
+如果服务没有启动，你可以手动启动它：
+sudo systemctl start mosquitto
+
+3️⃣ 配置 Mosquitto（可选）
+
+配置文件通常位于 /etc/mosquitto/mosquitto.conf。你可以编辑该文件来配置用户名、密码、监听端口等设置。
+/etc/mosquitto/mosquitto.conf设置为：
+# Place your local configuration in /etc/mosquitto/conf.d/
+#
+# A full description of the configuration file is at
+# /usr/share/doc/mosquitto/examples/mosquitto.conf.example
+
+pid_file /run/mosquitto/mosquitto.pid
+
+persistence true
+persistence_location /var/lib/mosquitto/
+
+log_dest file /var/log/mosquitto/mosquitto.log
+
+include_dir /etc/mosquitto/conf.d
+
+bind_address 0.0.0.0
+
+# 禁用认证
+allow_anonymous true
+
+你可以通过几种方式查看 Mosquitto（MQTT Broker）向外发布的消息。下面给出从最简单到最专业的几种方法👇
+
+使用 mosquitto_sub 订阅查看发出的消息（最常用）
+命令行方式实时查看 broker 上发布的消息：
+mosquitto_sub -h localhost -t "robot/servo/cmd" -t "robot/gripper/cmd" -v
+
+
+
+
+
+
+
+

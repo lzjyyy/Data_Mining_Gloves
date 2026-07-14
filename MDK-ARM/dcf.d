@@ -1,9 +1,9 @@
 .\dcf.o: ..\CANOpen\src\dcf.c
 .\dcf.o: ..\CANOpen\inc\data.h
 .\dcf.o: ..\CANOpen\inc\stm32\applicfg.h
-.\dcf.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\dcf.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\dcf.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\dcf.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\dcf.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\dcf.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\dcf.o: ..\CANOpen\inc\def.h
 .\dcf.o: ..\CANOpen\hardware\config.h
 .\dcf.o: ..\CANOpen\inc\can.h

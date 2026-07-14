@@ -54,7 +54,7 @@
 /* Private variables ---------------------------------------------------------*/
 
 /* USER CODE BEGIN PV */
-static const char version_str[] = "DW_20260106";
+static const char version_str[] = "DW_202600601_gripper_chg";
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -68,7 +68,6 @@ static void IWDG_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 // extern void Start_USART3_DMA(void);
-extern void MX_Modbus_Init(void);
 IWDG_HandleTypeDef hiwdg;
 /* USER CODE END 0 */
 
@@ -161,8 +160,6 @@ int main(void)
   {
     printf("W5500 init successfully.\r\n");
   }
-
-  MX_Modbus_Init(); // grippers modbus ctrl init
 
   IWDG_Init();
   /* USER CODE END 2 */

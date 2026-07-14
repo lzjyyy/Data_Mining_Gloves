@@ -19,6 +19,7 @@
 SemaphoreHandle_t spiMutex;
 
 uint8_t W5500_Init_Status = 0;
+extern IWDG_HandleTypeDef hiwdg;
 
 /* ========== 片选/复位辅助 ========== */
 static inline void W5500_Select(void)
@@ -153,9 +154,8 @@ int W5500_DriverInit(void)
     /* ====== PHY 配置 ====== */
     wiz_PhyConf phyconf;
     phyconf.by = PHY_CONFBY_SW;   // 软件配置
-    phyconf.mode = PHY_MODE_MANUAL; // 手动
-    // phyconf.mode = PHY_MODE_AUTONEGO; // 自动协商
-    phyconf.speed = PHY_SPEED_10;   // 10M
+    phyconf.mode = PHY_MODE_AUTONEGO; // 自动协商
+    phyconf.speed = PHY_SPEED_100;
     phyconf.duplex = PHY_DUPLEX_FULL; // 全双工
     int8_t result = 0;
     result = ctlwizchip(CW_SET_PHYCONF, (void*)&phyconf);
@@ -173,19 +173,11 @@ int W5500_DriverInit(void)
 
 
     /* 检测物理层,等待 PHY 链路 */
-    uint8_t link;
-    uint32_t link_chk_cnt = 0;
-    do {
-        result = 0;
-        result = ctlwizchip(CW_GET_PHYLINK, (void*)&link);
-        link_chk_cnt++;
-        printf("Link: %d,chk_cnt:%d,result:%d\r\n", link, link_chk_cnt, result);
-        HAL_Delay(100); //修改每次PHY链路连接等待时间
-    } while (link == PHY_LINK_OFF && (link_chk_cnt < MAX_LINK_CHK_CNT));
-
-    if (result != 0 || (link == 0))
-    {
-        printf("Link on failed!\r\n");
+    uint8_t link = PHY_LINK_OFF;
+    result = ctlwizchip(CW_GET_PHYLINK, (void*)&link);
+    printf("PHY link initial: %d,result:%d\r\n", link, result);
+    W5500_PrintPhyStatus("init");
+    if (result != 0) {
         return -3;
     }
     return 0;
@@ -196,9 +188,9 @@ void W5500_NetInfo_SetStatic(void)
 {
     wiz_NetInfo netinfo = {
         .mac = {0x00,0x08,0xDC,0x11,0x22,0x33},
-        .ip = {192,168,3,123},  // 修改IP地址
+        .ip = {192,168,137,123},  // 修改IP地址
         .sn = {255,255,255,0},
-        .gw = {192,168,1,1},
+        .gw = {192,168,137,1},
         .dns = {8,8,8,8},
         .dhcp = NETINFO_STATIC
     };
@@ -322,22 +314,20 @@ int W5500_TCP_Connect_Debug(uint8_t sock, uint8_t* ip, uint16_t port, uint32_t t
 
 uint8_t W5500_Get_PHYCFGR(void)
 {
-    uint8_t val = 0;
-    uint16_t addr = W5500_PHYCFGR;
-    uint8_t ctrl[3];
+    return getPHYCFGR();
+}
 
-    ctrl[0] = (addr >> 8) & 0xFF;
-    ctrl[1] = addr & 0xFF;
-    ctrl[2] = 0x00;
-
-    wizchip_select();
-    for (int i = 0; i < 3; i++)
-        W5500_WriteByte(ctrl[i]);
-
-    val = W5500_ReadByte();
-    wizchip_deselect();
-
-    return val;
+void W5500_PrintPhyStatus(const char* tag)
+{
+    uint8_t phy = W5500_Get_PHYCFGR();
+    printf("PHYCFGR[%s]=0x%02X link:%u speed:%s duplex:%s opmd:%s opmdc:0x%02X\r\n",
+        tag ? tag : "-",
+        phy,
+        (phy & PHYCFGR_LNK_ON) ? 1 : 0,
+        (phy & PHYCFGR_SPD_100) ? "100M" : "10M",
+        (phy & PHYCFGR_DPX_FULL) ? "full" : "half",
+        (phy & PHYCFGR_OPMD) ? "SW" : "HW",
+        (uint8_t)(phy & PHYCFGR_OPMDC_ALLA));
 }
 
 void W5500_SoftReset(void)
@@ -351,13 +341,17 @@ void W5500_SoftReset(void)
 int W5500_WaitForLink(void)
 {
     const TickType_t start = xTaskGetTickCount();
-    const TickType_t timeout = pdMS_TO_TICKS(5000);
-    while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
+    const TickType_t timeout = pdMS_TO_TICKS(30000);
+    while ((W5500_Get_PHYCFGR() & PHYCFGR_LNK_ON) == 0) {
         if ((xTaskGetTickCount() - start) > timeout) {
+            W5500_PrintPhyStatus("timeout");
             return -1;
         }
+        W5500_PrintPhyStatus("wait");
+        HAL_IWDG_Refresh(&hiwdg);
         osDelay(200);
     }
+    W5500_PrintPhyStatus("up");
     return 0;
 }
 
@@ -375,7 +369,9 @@ int W5500_Init(void)
         W5500_Init_Status = 1;
         W5500_NetInfo_SetStatic();
         W5500_PrintNetInfo();
-        W5500_RaiseSpiSpeed();
+        W5500_PrintPhyStatus("netinfo");
+        // Keep the CubeMX SPI configuration stable while diagnosing PHY link.
+        // W5500_RaiseSpiSpeed();
     }
     return result;
 }

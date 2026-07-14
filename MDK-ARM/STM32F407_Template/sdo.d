@@ -1,12 +1,12 @@
 stm32f407_template\sdo.o: ..\CANOpen\src\sdo.c
-stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
+stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\sysdep.h
 stm32f407_template\sdo.o: ..\CANOpen\hardware\config.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\stm32\canfestival.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\stm32\applicfg.h
-stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+stm32f407_template\sdo.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\data.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\def.h
 stm32f407_template\sdo.o: ..\CANOpen\inc\can.h

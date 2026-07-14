@@ -1,6 +1,6 @@
 .\mqttdeserializepublish.o: ..\MQTT\MQTTDeserializePublish.c
 .\mqttdeserializepublish.o: ..\MQTT\StackTrace.h
-.\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 .\mqttdeserializepublish.o: ..\MQTT\MQTTPacket.h
 .\mqttdeserializepublish.o: ..\MQTT\MQTTConnect.h
 .\mqttdeserializepublish.o: ..\MQTT\MQTTPublish.h
@@ -8,4 +8,4 @@
 .\mqttdeserializepublish.o: ..\MQTT\MQTTUnsubscribe.h
 .\mqttdeserializepublish.o: ..\MQTT\MQTTFormat.h
 .\mqttdeserializepublish.o: ..\MQTT\MQTTPacket.h
-.\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\mqttdeserializepublish.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

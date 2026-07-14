@@ -1,6 +1,6 @@
 .\mqtt_network.o: ..\MQTT\mqtt_network.c
 .\mqtt_network.o: ..\MQTT\mqtt_network.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\mqtt_network.o: ..\Ethernet\w5500_port.h
 .\mqtt_network.o: ../Core/Inc/main.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
@@ -17,7 +17,7 @@
 .\mqtt_network.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h
@@ -39,7 +39,7 @@
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\mqtt_network.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\mqtt_network.o: ..\Ethernet\wizchip_conf.h
 .\mqtt_network.o: ..\Ethernet\w5500.h
 .\mqtt_network.o: ..\Ethernet\wizchip_conf.h
@@ -53,6 +53,6 @@
 .\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/mpu_wrappers.h
 .\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 .\mqtt_network.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdlib.h
-.\mqtt_network.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdlib.h
+.\mqtt_network.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

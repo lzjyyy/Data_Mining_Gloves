@@ -1,9 +1,9 @@
 .\emcy.o: ..\CANOpen\src\emcy.c
 .\emcy.o: ..\CANOpen\inc\data.h
 .\emcy.o: ..\CANOpen\inc\stm32\applicfg.h
-.\emcy.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\emcy.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\emcy.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\emcy.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\emcy.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\emcy.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\emcy.o: ..\CANOpen\inc\def.h
 .\emcy.o: ..\CANOpen\hardware\config.h
 .\emcy.o: ..\CANOpen\inc\can.h

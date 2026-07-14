@@ -6,6 +6,6 @@ stm32f407_template\mqttconnectclient.o: ..\MQTT\MQTTSubscribe.h
 stm32f407_template\mqttconnectclient.o: ..\MQTT\MQTTUnsubscribe.h
 stm32f407_template\mqttconnectclient.o: ..\MQTT\MQTTFormat.h
 stm32f407_template\mqttconnectclient.o: ..\MQTT\StackTrace.h
-stm32f407_template\mqttconnectclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+stm32f407_template\mqttconnectclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
 stm32f407_template\mqttconnectclient.o: ..\MQTT\MQTTPacket.h
-stm32f407_template\mqttconnectclient.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+stm32f407_template\mqttconnectclient.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

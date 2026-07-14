@@ -130,10 +130,19 @@ typedef struct {
 #define MODBUS_FUN_READ_REGISTER  3
 #define MODBUS_FUN_WRITE_REGISTER 6
 #define MODBUS_FUN_WRITE_REGISTERS 16
+#define GRIPPER_LEFT_ENABLE 1
+#define GRIPPER_RIGHT_ENABLE 1
+#define GRIPPER_LEFT_ADDR GRIPPER_DEFAULT_ADDR
+#define GRIPPER_RIGHT_ADDR GRIPPER_DEFAULT_ADDR
+#define GRIPPER_CMD_DEFAULT_SPEED_RPM 200.0f
+#define GRIPPER_CMD_MIN_SPEED_RPM 10.0f
+#define GRIPPER_CMD_MAX_SPEED_RPM 500.0f
+#define GRIPPER_CMD_DEFAULT_CURRENT_A 2.0f
+#define GRIPPER_CMD_MAX_CURRENT_A 3.0f
 #define STATUS_QUERY_PERIOD_MS 100     // 查询状�?�周�??
 #define STATUS_BLOCK_AFTER_CMD 200     // 写命令后屏蔽状�?�查询时�??
 #define USE_TEST_TASKS
-#define W5500_RETRY_TIME     30000    // 3s (30000 × 100us)
+#define W5500_RETRY_TIME     30000    // 3s (30000 x 100us)
 #define W5500_RETRY_COUNT    3
 /* USER CODE END PD */
 
@@ -217,6 +226,8 @@ static uint16_t gripper_err_cnt = 0;
 static uint16_t mqtt_err_cnt = 0;
 static uint16_t servo_error_cnt = 0;
 static SysStatus_t sys_status;
+static GripperHandle_t leftGripper;
+static GripperHandle_t rightGripper;
 static uint16_t kinco_error_code = 0;
 static uint16_t zeroerr_error_code = 0;
 static const char* sys_status_topic = "robot/status";
@@ -313,11 +324,14 @@ void GpioTask(void* argument);
 void cjson_memory_hook(void);
 static void messageArrived(MessageData* data);
 static void gripper_execute(modbusHandler_t* h, int position, int speed, int torque, uint8_t select_gripper);
+static GripperHandle_t* gripper_get_handle(uint8_t side);
+static float gripper_cmd_speed_rpm(int speed);
+static float gripper_cmd_current_a(int torque);
 static bool mqtt_publish_gripper_status(GripperStatus_t* status, uint8_t side);
 static void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t side);
-static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side);
-static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side);
-static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side);
+__attribute__((unused)) static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side);
+__attribute__((unused)) static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side);
+__attribute__((unused)) static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side);
 static bool mqtt_publish_gpio_status(void);
 static bool mqtt_publish_servos_status(uint8_t type);
 static void system_reset(void);
@@ -412,6 +426,15 @@ void MX_FREERTOS_Init(void) {
   /* add threads, ... */
   // osThreadDef(MQTTTestTask, StartMQTTTestTask, osPriorityNormal, 0, 512);
   // mqttTestTaskHandle = osThreadCreate(osThread(MQTTTestTask), NULL);
+
+  if (GRIPPER_LEFT_ENABLE) {
+    Gripper_Init(&leftGripper, RS485A_CH, GRIPPER_LEFT_ADDR, 1000);
+    Gripper_SetPositionProfile(&leftGripper, 0, GRIPPER_DEFAULT_CLOSE_COUNT);
+  }
+  if (GRIPPER_RIGHT_ENABLE) {
+    Gripper_Init(&rightGripper, RS485B_CH, GRIPPER_RIGHT_ADDR, 1000);
+    Gripper_SetPositionProfile(&rightGripper, 0, GRIPPER_DEFAULT_CLOSE_COUNT);
+  }
 
   kincoCtrlTaskHandle = osThreadNew(StartKincoCtrlTask, NULL, &kincoCtrlTask_attributes);
 
@@ -543,7 +566,7 @@ __attribute__((unused)) void StartMQTTTestTask(void* argument)
 
   NetworkInit(&n);
   int conn_result = 0;
-  conn_result = NetworkConnect(&n, "192.168.2.10", 1883);
+  conn_result = NetworkConnect(&n, "192.168.137.1", 1883);
   if (conn_result != 0) {
     printf("MQTT Network Connect failed,result:%d\r\n", conn_result);
     vTaskDelete(NULL);
@@ -993,19 +1016,12 @@ void StartMqttTask(void* argument) {
 
 reconnect:
   // 初次进入或重连前，确保 socket 被彻底关闭
-  ForceCloseSocket(mqttNet.sock);
 
   // 等待 PHY link
-  while ((W5500_Get_PHYCFGR() & 0x01) == 0) {
-    printf("Waiting for PHY Link...\r\n");
-    mqtt_err_cnt++;
-    osDelay(500);
-  }
 
   //初始化 W5500 超时机制
-  W5500_ConfigTimeout();
 
-  if(w5500_reset_flag == true)
+  if (w5500_reset_flag == true || get_w5500_init_status() != 1)
   {
     int result = W5500_Init();
     if (result != 0) {
@@ -1021,7 +1037,19 @@ reconnect:
   }
 
   // 网络连接，建立TCP连接socket
-  if (NetworkConnect(&mqttNet, "192.168.3.10", 1883) != 0) { // 修改IP地址，192.168.2.10 -> 192.168.3.10
+  ForceCloseSocket(mqttNet.sock);
+
+  if (W5500_WaitForLink() != 0) {
+    printf("PHY Link wait timeout, keep W5500 initialized and wait again\r\n");
+    mqtt_err_cnt++;
+    HAL_IWDG_Refresh(&hiwdg);
+    osDelay(1000);
+    goto reconnect;
+  }
+
+  W5500_ConfigTimeout();
+
+  if (NetworkConnect(&mqttNet, "192.168.137.1", 1883) != 0) {
     printf("MQTT Network connect failed, retry W5500 init\r\n");
     mqtt_err_cnt += 10;
     // int result = W5500_Init();
@@ -1034,6 +1062,7 @@ reconnect:
     //   w5500_reset_flag = false; 
     // }
     w5500_reset_flag = true; 
+    HAL_IWDG_Refresh(&hiwdg);
     osDelay(1000);
     goto reconnect;
   }
@@ -1094,7 +1123,8 @@ reconnect:
 
   for (;;) {
     // 1. 检测 PHY link
-    if ((W5500_Get_PHYCFGR() & 0x01) == 0) {
+    if ((W5500_Get_PHYCFGR() & PHYCFGR_LNK) == 0) {
+      W5500_PrintPhyStatus("down");
       printf("PHY Link Down, reconnecting...\r\n");
       MQTTDisconnect(&mqttClient);
       NetworkDisconnect(&mqttNet);
@@ -1376,97 +1406,82 @@ void MX_Modbus_Init(void)
   }
 }
 
+static GripperHandle_t* gripper_get_handle(uint8_t side)
+{
+  if ((side == LEFT_GRIPPER) && GRIPPER_LEFT_ENABLE) {
+    return &leftGripper;
+  }
+  if ((side == RIGHT_GRIPPER) && GRIPPER_RIGHT_ENABLE) {
+    return &rightGripper;
+  }
+  return NULL;
+}
+
+static float gripper_cmd_speed_rpm(int speed)
+{
+  float rpm = (speed <= 0) ? GRIPPER_CMD_DEFAULT_SPEED_RPM : (float)speed;
+  if (rpm < GRIPPER_CMD_MIN_SPEED_RPM) {
+    return GRIPPER_CMD_MIN_SPEED_RPM;
+  }
+  if (rpm > GRIPPER_CMD_MAX_SPEED_RPM) {
+    return GRIPPER_CMD_MAX_SPEED_RPM;
+  }
+  return rpm;
+}
+
+static float gripper_cmd_current_a(int torque)
+{
+  float current = (torque <= 0) ? GRIPPER_CMD_DEFAULT_CURRENT_A : ((float)torque * 0.01f);
+  if (current > GRIPPER_CMD_MAX_CURRENT_A) {
+    return GRIPPER_CMD_MAX_CURRENT_A;
+  }
+  if (current < 0.0f) {
+    return 0.0f;
+  }
+  return current;
+}
+
 static void gripper_execute(modbusHandler_t* h, int position, int speed, int torque, uint8_t select_gripper)
 {
-  int32_t notifyVal;
-  if (select_gripper == LEFT_GRIPPER) {
-    LeftGripperCmdData[0] = (uint16_t)((position >> 16) & 0xFFFF);
-    LeftGripperCmdData[1] = (uint16_t)(position & 0xFFFF);
-    LeftGripperCmdData[2] = speed;
-    LeftGripperCmdData[3] = torque;
+  (void)h;
+  GripperHandle_t* gripper = gripper_get_handle(select_gripper);
+  GripperRealtime_t realtime;
+  GripperResult_t ret;
+  float percent = (float)position;
 
-    LeftGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTERS;
-    LeftGripperTelegram.u16RegAdd = REG_POS_HIGH;
-    LeftGripperTelegram.u16CoilsNo = 4;
-    LeftGripperTelegram.u16reg = LeftGripperCmdData;
-
-    ModbusQuery(h, LeftGripperTelegram);
-    notifyVal = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(500));
-    if (notifyVal != ERR_OK_QUERY) {
-      // timeout, no response
-      printf("Left gripper modbus query timeout!\r\n");
-      gripper_err_cnt++;
-      // h->i8lastError = ERR_TIME_OUT;
-    }
-
-    LeftGripperCmdData[0] = 1;
-    LeftGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTER;
-    LeftGripperTelegram.u16RegAdd = REG_TRIGGER;
-    LeftGripperTelegram.u16CoilsNo = 1;
-    LeftGripperTelegram.u16reg = LeftGripperCmdData;
-    ModbusQuery(h, LeftGripperTelegram);
-    notifyVal = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(500));
-    if (notifyVal == 0) {
-      // timeout, no response
-      printf("Left gripper modbus query timeout!\r\n");
-      gripper_err_cnt++;
-      // h->i8lastError = ERR_TIME_OUT;
-    }
-    // else
-    // {
-    //   printf("Left gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
-    // }
+  if (gripper == NULL) {
+    printf("Gripper side %u is disabled\r\n", select_gripper);
+    return;
   }
-  else if (select_gripper == RIGHT_GRIPPER) {
-    RightGripperCmdData[0] = (uint16_t)((position >> 16) & 0xFFFF);
-    RightGripperCmdData[1] = (uint16_t)(position & 0xFFFF);
-    RightGripperCmdData[2] = speed;
-    RightGripperCmdData[3] = torque;
 
-    RightGripperTelegram.u8id = GRIPPER_SLAVE_ID;
-    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTERS;
-    RightGripperTelegram.u16RegAdd = REG_POS_HIGH;
-    RightGripperTelegram.u16CoilsNo = 4;
-    RightGripperTelegram.u16reg = RightGripperCmdData;
-
-    ModbusQuery(h, RightGripperTelegram);
-    notifyVal = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(500));
-    if (notifyVal == 0) {
-      // timeout, no response
-      printf("Right gripper modbus query timeout!\r\n");
-      gripper_err_cnt++;
-      // h->i8lastError = ERR_TIME_OUT;
-    }
-
-    RightGripperCmdData[0] = 1;
-    RightGripperTelegram.u8fct = (mb_functioncode_t)MODBUS_FUN_WRITE_REGISTER;
-    RightGripperTelegram.u16RegAdd = REG_TRIGGER;
-    RightGripperTelegram.u16CoilsNo = 1;
-    RightGripperTelegram.u16reg = RightGripperCmdData;
-    ModbusQuery(h, RightGripperTelegram);
-    notifyVal = ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(500));
-    if (notifyVal != ERR_OK_QUERY) {
-      // timeout, no response
-      printf("Right gripper modbus query timeout!\r\n");
-      gripper_err_cnt++;
-      // h->i8lastError = ERR_TIME_OUT;
-    }
-    // else
-    // {
-    //   printf("Right gripper executed: pos=%d speed=%d torque=%d\r\n", position, speed, torque);
-    // }
+  if (percent < 0.0f) {
+    percent = 0.0f;
+  } else if (percent > 100.0f) {
+    percent = 100.0f;
   }
+
+  ret = Gripper_MoveToPercentWithLimits(gripper,
+                                        percent,
+                                        gripper_cmd_speed_rpm(speed),
+                                        gripper_cmd_current_a(torque),
+                                        &realtime);
+  if (ret != GRIPPER_OK) {
+    printf("%s gripper move failed ret=%d\r\n",
+           select_gripper == LEFT_GRIPPER ? "Left" : "Right",
+           ret);
+    gripper_err_cnt++;
+    return;
+  }
+
+  printf("%s gripper move percent=%d count=%ld\r\n",
+         select_gripper == LEFT_GRIPPER ? "Left" : "Right",
+         (int)percent,
+         (long)realtime.multi_turn_count);
 }
 
 bool is_left_get_status = false;
 void LeftGripperTask(void* argument)
 {
-  if (is_leftRecvRawDataPtr_ok == false)
-  {
-    printf("Acquire leftRecvRawDataPtr failed!\r\n");
-    vTaskDelete(NULL);
-  }
   GripperCmd_t cmd;
   // GripperStatus_t status;
   uint32_t lastStatusTick = 0;   // 上次写命令时间
@@ -1514,11 +1529,6 @@ void LeftGripperTask(void* argument)
 
 void RightGripperTask(void* argument)
 {
-  if (is_rightRecvRawDataPtr_ok == false)
-  {
-    printf("Acquire rightRecvRawDataPtr failed!\r\n");
-    vTaskDelete(NULL);
-  }
   GripperCmd_t cmd;
   // GripperStatus_t status;
   uint32_t lastStatusTick = 0;
@@ -1592,92 +1602,41 @@ __attribute__((unused)) static bool mqtt_publish_gripper_status(GripperStatus_t*
 
 void gripper_get_status(modbusHandler_t* h, GripperStatus_t* status, uint8_t side)
 {
-  bool result = false;
-  uint32_t pos = 0;
-  uint16_t reached = 0;
-  uint16_t warning = 0;
-  if (side == LEFT_GRIPPER) {
-    status->side = 0;
-    // printf("L read POS\r\n");
-    result = get_real_pos(h, &pos, LEFT_GRIPPER);
-    if (result != true) {
-      printf("Read left REG_REALTIME_POS failed!\r\n");
-      status->position = 0xFFFFFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("Read left REG_REALTIME_POS:0x%x\r\n", pos);
-      status->position = pos;
-    }
+  (void)h;
+  GripperHandle_t* gripper = gripper_get_handle(side);
+  GripperRealtime_t realtime;
+  GripperResult_t ret;
+  float percent;
 
-    // printf("L read REACHED\r\n");
-    result = get_reached(h, &reached, LEFT_GRIPPER);
-    if (result != true) {
-      printf("L read left REG_POS_REACHED failed!\r\n");
-      status->reached = 0xFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("L read left REG_POS_REACHED:0x%x\r\n", reached);
-      status->reached = reached;
-    }
-
-    // printf("L read WARNING\r\n");
-    result = get_warning_info(h, &warning, LEFT_GRIPPER);
-    if (result != true) {
-      printf("L read left REG_WARNING_INFO failed!\r\n");
-      status->warning = 0xFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("L read left REG_WARNING_INFO:0x%x\r\n", warning);
-      status->warning = warning;
-    }
+  if ((status == NULL) || (gripper == NULL)) {
+    return;
   }
-  else {
-    status->side = 1;
-    // printf("R read POS\r\n");
-    result = get_real_pos(h, &pos, RIGHT_GRIPPER);
-    if (result != true) {
-      printf("R read right REG_REALTIME_POS failed!\r\n");
-      status->position = 0xFFFFFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("R read right REG_REALTIME_POS:0x%x\r\n", pos);
-      status->position = pos;
-    }
 
-    // printf("R read REACHED\r\n");
-    result = get_reached(h, &reached, RIGHT_GRIPPER);
-    if (result != true) {
-      printf("R read right REG_POS_REACHED failed!\r\n");
-      status->reached = 0xFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("R read right REG_POS_REACHED:0x%x\r\n", reached);
-      status->reached = reached;
-    }
-
-    // printf("R read WARNING\r\n");
-    result = get_warning_info(h, &warning, RIGHT_GRIPPER);
-    if (result != true) {
-      printf("R read right REG_WARNING_INFO failed!\r\n");
-      status->warning = 0xFFFF;
-      gripper_err_cnt++;
-    }
-    else
-    {
-      // printf("R read right REG_WARNING_INFO:0x%x\r\n", warning);
-      status->warning = warning;
-    }
+  status->side = side;
+  ret = Gripper_ReadRealtime(gripper, &realtime);
+  if (ret != GRIPPER_OK) {
+    printf("%s gripper read realtime failed ret=%d\r\n",
+           side == LEFT_GRIPPER ? "Left" : "Right",
+           ret);
+    status->position = 0xFFFFFFFF;
+    status->reached = 0U;
+    status->warning = 0xFFFF;
+    gripper_err_cnt++;
+    return;
   }
+
+  percent = Gripper_CountToPercent(gripper, realtime.multi_turn_count);
+  if (percent < 0.0f) {
+    percent = 0.0f;
+  } else if (percent > 100.0f) {
+    percent = 100.0f;
+  }
+
+  status->position = (uint32_t)(percent + 0.5f);
+  status->reached = Gripper_IsPercentInDeadband(gripper,
+                                                (float)status->exp_pos,
+                                                realtime.multi_turn_count);
+  status->warning = realtime.fault_code;
 }
 
 // left gripper timers callback
@@ -1702,7 +1661,7 @@ static void Timer200msRight_Callback(void* argument)
   osSemaphoreRelease(semStatusRightHandle);
 }
 
-static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
+__attribute__((unused)) static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
 {
   int32_t notifyVal = 0;
   if (side == LEFT_GRIPPER) {
@@ -1778,7 +1737,7 @@ static bool get_real_pos(modbusHandler_t* h, uint32_t* p_pos, uint8_t side)
   }
 }
 
-static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
+__attribute__((unused)) static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
 {
   int32_t notifyVal;
   if (side == LEFT_GRIPPER)
@@ -1853,7 +1812,7 @@ static bool get_reached(modbusHandler_t* h, uint16_t* p_reached, uint8_t side)
   }
 }
 
-static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side)
+__attribute__((unused)) static bool get_warning_info(modbusHandler_t* h, uint16_t* p_warning, uint8_t side)
 {
   int32_t notifyVal;
   if (side == LEFT_GRIPPER)

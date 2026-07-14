@@ -1,9 +1,9 @@
 .\sync.o: ..\CANOpen\src\sync.c
 .\sync.o: ..\CANOpen\inc\data.h
 .\sync.o: ..\CANOpen\inc\stm32\applicfg.h
-.\sync.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
-.\sync.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\sync.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\sync.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\sync.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\sync.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\sync.o: ..\CANOpen\inc\def.h
 .\sync.o: ..\CANOpen\hardware\config.h
 .\sync.o: ..\CANOpen\inc\can.h

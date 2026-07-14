@@ -1,8 +1,8 @@
 .\stream_buffer.o: ../Middlewares/Third_Party/FreeRTOS/Source/stream_buffer.c
-.\stream_buffer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
-.\stream_buffer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
+.\stream_buffer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\stream_buffer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\stream_buffer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\stream_buffer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\stream_buffer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\stream_buffer.o: ../Core/Inc/FreeRTOSConfig.h
 .\stream_buffer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\stream_buffer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

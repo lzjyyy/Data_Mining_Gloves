@@ -1,8 +1,8 @@
 .\mqtt_timer.o: ..\MQTT\mqtt_timer.c
 .\mqtt_timer.o: ..\MQTT\mqtt_timer.h
-.\mqtt_timer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\mqtt_timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\mqtt_timer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\mqtt_timer.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\mqtt_timer.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\mqtt_timer.o: ../Core/Inc/FreeRTOSConfig.h
 .\mqtt_timer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\mqtt_timer.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h

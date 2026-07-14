@@ -8,7 +8,7 @@
 .\w5500_port.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f4xx.h
 .\w5500_port.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/stm32f407xx.h
 .\w5500_port.o: ../Drivers/CMSIS/Include/core_cm4.h
-.\w5500_port.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\w5500_port.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\w5500_port.o: ../Drivers/CMSIS/Include/cmsis_version.h
 .\w5500_port.o: ../Drivers/CMSIS/Include/cmsis_compiler.h
 .\w5500_port.o: ../Drivers/CMSIS/Include/cmsis_armcc.h
@@ -16,7 +16,7 @@
 .\w5500_port.o: ../Drivers/CMSIS/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy/stm32_hal_legacy.h
-.\w5500_port.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
+.\w5500_port.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_rcc_ex.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_gpio_ex.h
@@ -38,7 +38,7 @@
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\w5500_port.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\w5500_port.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\w5500_port.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\w5500_port.o: ..\Ethernet\wizchip_conf.h
 .\w5500_port.o: ..\Ethernet\w5500.h
 .\w5500_port.o: ..\Ethernet\wizchip_conf.h
@@ -54,5 +54,5 @@
 .\w5500_port.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 .\w5500_port.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/task.h
 .\w5500_port.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/list.h
-.\w5500_port.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\string.h
-.\w5500_port.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdio.h
+.\w5500_port.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
+.\w5500_port.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

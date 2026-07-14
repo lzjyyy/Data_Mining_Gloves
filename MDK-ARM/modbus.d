@@ -1,7 +1,7 @@
 .\modbus.o: ..\MODBUS-LIB\Src\Modbus.c
 .\modbus.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-.\modbus.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
-.\modbus.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+.\modbus.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+.\modbus.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 .\modbus.o: ../Core/Inc/FreeRTOSConfig.h
 .\modbus.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 .\modbus.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -49,9 +49,9 @@
 .\modbus.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 .\modbus.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 .\modbus.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-.\modbus.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+.\modbus.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 .\modbus.o: ..\MODBUS-LIB\Inc\Modbus.h
 .\modbus.o: ..\MODBUS-LIB\Config\ModbusConfig.h
-.\modbus.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\inttypes.h
+.\modbus.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 .\modbus.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
 .\modbus.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/semphr.h

@@ -1,7 +1,7 @@
 stm32f407_template\uartcallback.o: ..\MODBUS-LIB\Src\UARTCallback.c
 stm32f407_template\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/FreeRTOS.h
-stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stddef.h
-stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdint.h
+stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
 stm32f407_template\uartcallback.o: ../Core/Inc/FreeRTOSConfig.h
 stm32f407_template\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/projdefs.h
 stm32f407_template\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/portable.h
@@ -48,9 +48,12 @@ stm32f407_template\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx
 stm32f407_template\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim.h
 stm32f407_template\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_tim_ex.h
 stm32f407_template\uartcallback.o: ../Drivers/STM32F4xx_HAL_Driver/Inc/stm32f4xx_hal_uart.h
-stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\stdbool.h
+stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdbool.h
 stm32f407_template\uartcallback.o: ..\MODBUS-LIB\Inc\Modbus.h
 stm32f407_template\uartcallback.o: ..\MODBUS-LIB\Config\ModbusConfig.h
-stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARM_Compiler_5.06u7\Bin\..\include\inttypes.h
+stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\inttypes.h
 stm32f407_template\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/queue.h
 stm32f407_template\uartcallback.o: ../Middlewares/Third_Party/FreeRTOS/Source/include/timers.h
+stm32f407_template\uartcallback.o: ../Core/Inc/gripper.h
+stm32f407_template\uartcallback.o: ../Core/Inc/rs485.h
+stm32f407_template\uartcallback.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
