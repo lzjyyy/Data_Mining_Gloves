@@ -6,9 +6,17 @@
 /MDK-ARM/DebugConfig/
 
 # Keil MDK build outputs for this project
-/MDK-ARM/H723_BootLoader/
-/MDK-ARM/bin_file/
-*.axf
+/MDK-ARM/H723_BootLoader/*
+/MDK-ARM/bin_file/*
+!/MDK-ARM/H723_BootLoader/*.axf
+!/MDK-ARM/H723_BootLoader/*.elf
+!/MDK-ARM/H723_BootLoader/*.hex
+!/MDK-ARM/H723_BootLoader/*.bin
+!/MDK-ARM/bin_file/*.axf
+!/MDK-ARM/bin_file/*.elf
+!/MDK-ARM/bin_file/*.hex
+!/MDK-ARM/bin_file/*.bin
+#*.axf
 #*.elf
 #*.hex
 #*.bin
