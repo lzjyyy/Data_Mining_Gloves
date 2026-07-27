@@ -1,0 +1,225 @@
+DexterousHandsV2.0.5 修改记录
+
+1. Core/Src/main.c
+
+增加代码：
+
+StoreTask_Read485ConfigFromEEPROM();
+
+位置：
+
+MX_I2C1_Init();
+MX_I2C3_Init();
+StoreTask_Read485ConfigFromEEPROM();
+MX_USART1_UART_Init();
+MX_USART3_UART_Init();
+
+作用：
+上电后先从 EEPROM 读取 485 地址和波特率，再初始化串口和 RS485 任务。
+
+删除代码：
+无。
+
+
+2. UserCode/Tasks/StoreTask.c
+
+删除原来的 485 地址直接写入：
+
+AT24Cxx_Write_Amount_Byte(64, (uint8_t *)&(g_rs485_cfg.slave_addr), 1);
+
+增加代码：
+
+HAL_StatusTypeDef result;
+result = AT24Cxx_Write_Amount_Byte(64, (uint8_t *)&(g_rs485_cfg.slave_addr), 1);
+while(result != HAL_OK){
+    osDelay(200);
+    result = AT24Cxx_Write_Amount_Byte(64, (uint8_t *)&(g_rs485_cfg.slave_addr), 1);
+}
+
+删除原来的 485 波特率直接写入：
+
+AT24Cxx_Write_Amount_Byte(65, (uint8_t*)&(g_rs485_cfg.baudrate), 4);
+
+增加代码：
+
+HAL_StatusTypeDef result;
+result = AT24Cxx_Write_Amount_Byte(65, (uint8_t*)&(g_rs485_cfg.baudrate), 4);
+while(result != HAL_OK){
+    osDelay(200);
+    result = AT24Cxx_Write_Amount_Byte(65, (uint8_t*)&(g_rs485_cfg.baudrate), 4);
+}
+
+作用：
+按照 OTA 保存逻辑，EEPROM 写成功后才清事件，避免 EEPROM 忙或写失败时误认为固化成功。
+
+
+3. UserCode/Lib/rs485_handlers.c
+
+删除原来的 0x06 解析方式：
+
+if (frm->raw_len != 11) { 
+    rs485_reply_exception(rpl, frm->addr, frm->func, MODBUS_EX_BAD_LENGTH); 
+    return true; 
+}
+
+const uint8_t *p = &frm->raw[2];
+uint16_t reg = be_get_u16(p);     p += 5;
+uint16_t val = be_get_u16(p);
+
+增加代码：
+
+uint16_t reg = 0;
+uint16_t val = 0;
+
+if (frm->raw_len == 11 && frm->raw[4] == 0x00 && frm->raw[5] == 0x01 && frm->raw[6] == 0x02) {
+    reg = be_get_u16(&frm->raw[2]);
+    val = be_get_u16(&frm->raw[7]);
+}
+else {
+    rs485_reply_exception(rpl, frm->addr, frm->func, MODBUS_EX_BAD_LENGTH); 
+    return true; 
+}
+
+作用：
+保持私有 11 字节协议，并正确从 raw[7] raw[8] 取写入值。例如：
+C8 06 00 00 00 01 02 00 C9 ...
+会解析为：
+reg = 0x0000
+val = 0x00C9
+
+
+4. UserCode/Tasks/Rs485RecvTask.c
+
+增加函数：
+
+static void RS485_Proto_SyncConfig(void)
+{
+    if (g_rs485_ctx.slave_addr != g_rs485_cfg.slave_addr) {
+        g_rs485_ctx.slave_addr = g_rs485_cfg.slave_addr;
+    }
+}
+
+增加调用：
+
+RS485_Proto_SyncConfig();
+bool parsed = rs485_proto_dispatch(...);
+RS485_Proto_SyncConfig();
+
+作用：
+地址从 0xC8 改成 0xC9 后，让协议上下文也同步到新地址，避免单播 C9 仍然报地址不匹配。
+
+删除代码：
+无。
+
+
+5. Core/Src/usart.c
+
+删除原来的 USART3 固定波特率：
+
+huart3.Init.BaudRate = 115200;
+
+增加代码：
+
+huart3.Init.BaudRate = GetUart3Baudrate();
+
+作用：
+上电启动时，USART3 使用 StoreTask_Read485ConfigFromEEPROM() 从 EEPROM 读出的波特率。
+否则即使 EEPROM 中保存了新的波特率，串口硬件初始化时仍然会固定为 115200。
+
+注意：
+当前协议处理逻辑中，修改波特率后只是更新 g_rs485_cfg.baudrate 并写入 EEPROM。
+新的波特率需要重启后生效。
+
+
+6. UserCode/Lib/rs485_protocol.h
+
+增加 rs485_reply_t 字段：
+
+bool     is_baud_change_reply;
+uint32_t new_baudrate;
+
+作用：
+让协议处理函数可以通知 RS485 接收任务：当前回复帧发送完成后，需要立即切换 USART3 波特率。
+
+删除代码：
+无。
+
+
+7. UserCode/Lib/rs485_handlers.c
+
+在写波特率寄存器 REG_SYS_BAUD_CODE 成功解析后增加：
+
+rpl->is_baud_change_reply = true;
+rpl->new_baudrate = baud_rate;
+
+作用：
+写入新的 g_rs485_cfg.baudrate 后，标记本次回复完成后立即切换串口波特率。
+
+删除代码：
+无。
+
+
+8. UserCode/Tasks/Rs485RecvTask.c
+
+增加 USART3 波特率重初始化函数，当前实现为直接重配 USART3 硬件波特率：
+
+static void RS485_ReinitUart3Baudrate(uint32_t baudrate)
+{
+    g_rs485_cfg.baudrate = baudrate;
+    HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_RESET);
+    HAL_UART_DMAStop(&huart3);
+    __HAL_UART_DISABLE_IT(&huart3, UART_IT_IDLE);
+    HAL_UART_DeInit(&huart3);
+
+    huart3.Instance = USART3;
+    huart3.Init.BaudRate = baudrate;
+    huart3.Init.WordLength = UART_WORDLENGTH_8B;
+    huart3.Init.StopBits = UART_STOPBITS_1;
+    huart3.Init.Parity = UART_PARITY_NONE;
+    huart3.Init.Mode = UART_MODE_TX_RX;
+    huart3.Init.HwFlowCtl = UART_HWCONTROL_NONE;
+    huart3.Init.OverSampling = UART_OVERSAMPLING_16;
+    huart3.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
+    huart3.Init.ClockPrescaler = UART_PRESCALER_DIV1;
+    huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+
+    if (HAL_UART_Init(&huart3) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_UARTEx_SetTxFifoThreshold(&huart3, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_UARTEx_SetRxFifoThreshold(&huart3, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_UARTEx_DisableFifoMode(&huart3) != HAL_OK) {
+        Error_Handler();
+    }
+
+    HAL_UART_Receive_DMA(&huart3, uart3_rx_data_t[uart3_buff_ctrl].buffer, UART3_BUFFER_SIZE);
+    __HAL_UART_CLEAR_IDLEFLAG(&huart3);
+    __HAL_UART_ENABLE_IT(&huart3, UART_IT_IDLE);
+}
+
+增加 reply 初始化：
+
+reply.is_baud_change_reply = false;
+reply.new_baudrate = g_rs485_cfg.baudrate;
+
+在 HAL_UART_Transmit_DMA() 发送回复完成后增加：
+
+while (__HAL_UART_GET_FLAG(&huart3, UART_FLAG_TC) == RESET) {
+    osDelay(1);
+}
+
+if(reply.is_baud_change_reply == true)
+{
+    RS485_ReinitUart3Baudrate(reply.new_baudrate);
+}
+
+作用：
+修改波特率命令收到后，先用旧波特率发送 ACK，等待 UART TC 标志确认最后一个字节真正发完后，再重新初始化 USART3 到新波特率。
+上位机应在收到 ACK 后切换到新的波特率。
+
+删除代码：
+无。

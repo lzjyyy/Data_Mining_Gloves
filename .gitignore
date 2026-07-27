@@ -1,0 +1,39 @@
+# Build outputs
+**/Debug/
+**/Release/
+MDK-ARM/H723VGT6_V1.0/
+MDK-ARM/bin_file/
+output/
+tmp/
+
+# Keil MDK generated files
+#*.axf
+#*.bin
+*.crf
+*.d
+*.dep
+#*.elf
+#*.hex
+*.htm
+*.iex
+*.lnp
+*.lst
+*.map
+*.o
+*.sct
+*.tra
+*.uvguix.*
+*.uvgui.*
+*.uvoptx
+
+# STM32CubeIDE / Eclipse local files
+.metadata/
+.settings/
+
+# Editor and OS noise
+.vscode/
+*.swp
+*.tmp
+*.bak
+Thumbs.db
+desktop.ini

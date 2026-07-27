@@ -1,0 +1,540 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\PassOptionsToPackage{dvipsnames,svgnames,x11names}{xcolor}
+\PassOptionsToPackage{space}{xeCJK}
+\documentclass[
+  chinese,
+]{ctexart}
+\usepackage{xcolor}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{5}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+  \ifXeTeX
+    \usepackage{xeCJK}
+    \setCJKmainfont[]{Microsoft YaHei}
+  \fi
+  \ifLuaTeX
+    \usepackage[]{luatexja-fontspec}
+    \setmainjfont[]{Microsoft YaHei}
+  \fi
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\ifLuaTeX
+\usepackage[bidi=basic,shorthands=off,provide=*]{babel}
+\else
+\usepackage[bidi=default,shorthands=off,provide=*]{babel}
+\fi
+\ifLuaTeX
+  \usepackage{selnolig} % disable illegal ligatures
+\fi
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\PassOptionsToPackage{pdfpagemode=UseOutlines,bookmarksopen=true,bookmarksopenlevel=2,bookmarksnumbered=true}{hyperref}
+\AtBeginDocument{\bookmark[page=1,level=0]{灵巧手 RS485 / Modbus RTU 通信协议}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+% fallback for those not using the hyperref driver hyperxmp:
+\makeatletter
+\@ifundefined{xmpquote}{\newcommand{\xmpquote}[1]{#1}}{}
+\makeatother
+\hypersetup{
+  pdftitle={灵巧手 RS485 / Modbus RTU 通信协议},
+  pdflang={zh-CN},
+  colorlinks=true,
+  linkcolor={black},
+  filecolor={Maroon},
+  citecolor={Blue},
+  urlcolor={blue},
+  pdfcreator={LaTeX via pandoc}}
+
+\title{灵巧手 RS485 / Modbus RTU 通信协议}
+\usepackage{etoolbox}
+\makeatletter
+\providecommand{\subtitle}[1]{% add subtitle to \maketitle
+  \apptocmd{\@title}{\par {\large #1 \par}}{}{}
+}
+\makeatother
+\subtitle{双手共用 USB-RS485 转换器}
+\author{}
+\date{2026-07-22}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{3}
+\tableofcontents
+}
+\section{文档说明}\label{ux6587ux6863ux8bf4ux660e}
+
+本文档描述当前固件的 RS485
+通信行为、寄存器映射及双手共线时的配置方法。协议以 Modbus RTU
+为基础，所有数值均以十六进制表示，除非另有说明。
+
+实现依据：\texttt{UserCode/Lib/rs485\_protocol.c}、\texttt{UserCode/Lib/rs485\_handlers.c}、\texttt{UserCode/Tasks/Rs485RecvTask.c}
+和 \texttt{UserCode/Tasks/StoreTask.c}。
+
+\begin{quote}
+注意：本文以当前固件实现为准。读取保持寄存器（功能码
+\texttt{0x03}）的正常响应含有设备扩展字段，见第 5
+章；上位机必须按本协议解析，不能假设它是纯标准 Modbus \texttt{0x03}
+响应。
+\end{quote}
+
+\section{物理层与总线规则}\label{ux7269ux7406ux5c42ux4e0eux603bux7ebfux89c4ux5219}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+项目 & 规定 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+物理接口 & RS485，半双工 \\
+串口格式 & 8 数据位、无校验、1 停止位（8N1） \\
+默认从站地址 & \texttt{0xC8}（十进制 200） \\
+默认波特率 & 115200 bit/s \\
+通信模式 & 主站请求、从站响应；主站必须逐帧等待响应或超时 \\
+CRC & Modbus CRC-16，初值 \texttt{0xFFFF}，多项式
+\texttt{0xA001}，帧尾低字节在前 \\
+\end{longtable}
+}
+
+两只手接到同一 USB-RS485
+转换器时，必须使用不同的从站地址。主站一次只能轮询一个从站，不能向同一地址连接两只手。
+
+\subsection{地址与静默规则}\label{ux5730ux5740ux4e0eux9759ux9ed8ux89c4ux5219}
+
+从站合法地址范围为 \texttt{0x01} 到 \texttt{0xF7}（十进制 1 到
+247）。地址 \texttt{0x00} 是广播地址。
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+收到的帧 & 从站行为 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+地址不是本机地址 & 静默，不回复 \\
+广播地址 \texttt{0x00} & 静默，不回复 \\
+帧长度不足、噪声帧 & 静默，不回复 \\
+CRC 错误 & 静默，不回复 \\
+本机地址且 CRC 正确 & 执行功能码处理，正常响应或异常响应 \\
+\end{longtable}
+}
+
+广播帧不用于读取、地址发现或配置确认。若不知道设备地址，必须先只连接一只手，再使用默认地址或已知地址读取和配置；不能通过广播查询地址。
+
+\section{通用帧格式}\label{ux901aux7528ux5e27ux683cux5f0f}
+
+\subsection{请求帧}\label{ux8bf7ux6c42ux5e27}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 地址    | 功能码  | 功能码相关数据       | CRC Lo  | CRC Hi  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 1 byte  | 1 byte  | N bytes              | 1 byte  | 1 byte  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\end{Highlighting}
+\end{Shaded}
+
+寄存器地址、寄存器数量和 16 位整型数据均为大端序（高字节在前）。CRC
+附加顺序为低字节、再高字节。
+
+\subsection{标准异常响应}\label{ux6807ux51c6ux5f02ux5e38ux54cdux5e94}
+
+仅当请求满足``本机地址 + CRC 正确''时，设备才可能回复异常帧：
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 地址    | 功能码 | 0x80 | 异常码  | CRC Lo  | CRC Hi  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 1 byte  | 1 byte         | 1 byte  | 1 byte  | 1 byte  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\end{Highlighting}
+\end{Shaded}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+异常码 & 含义 & 典型触发条件 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{0x01} & 非法功能码 & 本机地址、CRC 正确，但功能码未注册 \\
+\texttt{0x02} & 非法数据地址 & 寄存器起始地址不支持 \\
+\texttt{0x03} & 非法数据值 & 数量、字节数、地址值或波特率编码不合法 \\
+\texttt{0x04} & 从站设备故障 & 内部处理失败 \\
+\end{longtable}
+}
+
+\section{寄存器表}\label{ux5bc4ux5b58ux5668ux8868}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+地址
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+名称
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+访问
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+数据类型 / 数量
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+说明
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{0x0000} & 从站地址 & 读 / 写 & \texttt{uint16}，低 8 位有效 &
+合法值 \texttt{0x0001} 到 \texttt{0x00F7} \\
+\texttt{0x0001} & 波特率编码 & 读 / 写 & \texttt{uint16} & 编码见表 2 \\
+\texttt{0x0002} - \texttt{0x0007} & 目标位置 & 写 & 6 个 IEEE 754
+binary16 & 通过 \texttt{0x10} 与目标速度一起写入 \\
+\texttt{0x0008} - \texttt{0x000D} & 目标速度 & 写 & 6 个 IEEE 754
+binary16 & 通过 \texttt{0x10} 与目标位置一起写入 \\
+\texttt{0x000E} - \texttt{0x0013} & 位置反馈 & 读 & 最多 6 个 IEEE 754
+binary16 & 用户侧角度 \\
+\texttt{0x0014} - \texttt{0x0019} & 速度反馈 & 读 & 最多 6 个 IEEE 754
+binary16 & 角速度 \\
+\texttt{0x001A} - \texttt{0x001F} & 电流反馈 & 读 & 最多 6 个 IEEE 754
+binary16 & 已换算的实际电流 \\
+\texttt{0x0100} & OTA 标志 & 写 & 2 个寄存器 & 进入 OTA / Boot 流程 \\
+\texttt{0x0A00} & 复位命令 & 写 & \texttt{uint16} & 通过 \texttt{0x06}
+触发复位流程 \\
+\texttt{0x0B00} - \texttt{0x0B04} & 固件版本 & 读 & 5 个 \texttt{uint16}
+& 主版本、次版本、修订号、发布日期高 16 位、低 16 位 \\
+\end{longtable}
+}
+
+表 2：波特率编码。
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lr@{}}
+\toprule\noalign{}
+编码 & 波特率（bit/s） \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\texttt{0x0001} & 9600 \\
+\texttt{0x0002} & 19200 \\
+\texttt{0x0003} & 38400 \\
+\texttt{0x0004} & 57600 \\
+\texttt{0x0005} & 115200 \\
+\texttt{0x0006} & 230400 \\
+\texttt{0x0007} & 460800 \\
+\texttt{0x0008} & 921600 \\
+\end{longtable}
+}
+
+binary16 数据为 IEEE 754 半精度浮点数，每个寄存器占 2 字节，高字节在前。
+
+\section{\texorpdfstring{功能码
+\texttt{0x03}：读取保持寄存器}{功能码 0x03：读取保持寄存器}}\label{ux529fux80fdux7801-0x03ux8bfbux53d6ux4fddux6301ux5bc4ux5b58ux5668}
+
+\subsection{请求格式}\label{ux8bf7ux6c42ux683cux5f0f}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 地址    | 0x03    | 起始 Hi  | 起始 Lo  | 数量 Hi| 数量 Lo| CRC Lo  | CRC Hi  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\end{Highlighting}
+\end{Shaded}
+
+请求总长度必须为 8 字节。对 \texttt{0x0000}（系统配置）必须读取 2
+个寄存器；对 \texttt{0x0B00}（版本）必须读取 5
+个寄存器；对每段反馈寄存器可读取 1 到 6 个寄存器。
+
+\subsection{当前固件响应格式}\label{ux5f53ux524dux56faux4ef6ux54cdux5e94ux683cux5f0f}
+
+当前固件的 \texttt{0x03} 正常响应为下列设备扩展格式：
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+字节位置 & 字段 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 - 2 & 地址，\texttt{0x03} \\
+3 - 4 & 请求的起始地址，高字节在前 \\
+5 - 6 & 请求的寄存器数量，高字节在前 \\
+7 & 数据字节数 \\
+8 - (7 + 数据字节数) & 数据 \\
+最后 2 字节 & CRC Lo，CRC Hi \\
+\end{longtable}
+}
+
+其中 \texttt{字节数\ =\ 数量\ x\ 2}。该响应比标准 Modbus RTU
+\texttt{0x03} 响应多了``起始地址''和``数量''4 个字节。标准 Modbus
+客户端如不支持这一扩展，必须在上位机侧按本表自定义解析。
+
+\subsection{读取地址和波特率}\label{ux8bfbux53d6ux5730ux5740ux548cux6ce2ux7279ux7387}
+
+读取系统配置必须使用设备当前的单播地址，不能使用广播地址。
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{请求（默认地址 0xC8）：C8 03 00 00 00 02 D5 92}
+\NormalTok{响应（地址 0xC8、115200）：C8 03 00 00 00 02 04 00 C8 00 05 91 57}
+\end{Highlighting}
+\end{Shaded}
+
+响应数据的第一个寄存器为当前从站地址，第二个寄存器为波特率编码。上例中的
+\texttt{00\ C8} 表示地址 \texttt{0xC8}，\texttt{00\ 05} 表示 115200
+bit/s。
+
+\section{\texorpdfstring{功能码
+\texttt{0x06}：写单个寄存器}{功能码 0x06：写单个寄存器}}\label{ux529fux80fdux7801-0x06ux5199ux5355ux4e2aux5bc4ux5b58ux5668}
+
+\subsection{请求与响应格式}\label{ux8bf7ux6c42ux4e0eux54cdux5e94ux683cux5f0f}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 地址    | 0x06    | 寄存器 Hi| 寄存器 Lo| 数值 Hi  | 数值 Lo  | CRC Lo  | CRC Hi  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\end{Highlighting}
+\end{Shaded}
+
+正常响应与请求中 CRC 之前的 6 个字节相同。当前固件支持写入
+\texttt{0x0000}、\texttt{0x0001} 和 \texttt{0x0A00}；其他地址回复异常码
+\texttt{0x02}。
+
+\subsection{修改从站地址}\label{ux4feeux6539ux4eceux7ad9ux5730ux5740}
+
+地址值只使用低 8 位，合法范围为 1 到
+247。修改地址的响应仍使用旧地址发送；响应完成后，设备立即按新地址接收后续请求，并通过存储任务写入
+EEPROM。
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{将默认地址 0xC8 改为 0xC9：}
+\NormalTok{请求：C8 06 00 00 00 C9 58 05}
+\NormalTok{响应：C8 06 00 00 00 C9 58 05}
+
+\NormalTok{随后读取新地址：}
+\NormalTok{请求：C9 03 00 00 00 02 D4 43}
+\NormalTok{响应：C9 03 00 00 00 02 04 00 C9 00 05 C4 6B}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{修改波特率}\label{ux4feeux6539ux6ce2ux7279ux7387}
+
+向 \texttt{0x0001} 写入表 2 中的波特率编码。设备先以旧波特率发送
+\texttt{0x06}
+正常响应，确认发送完成后才重初始化串口至新波特率。因此主站应先接收完整响应，再切换本机波特率。
+
+地址和波特率的 EEPROM
+保存由后台存储任务执行，协议没有单独的``保存完成''响应。完成配置后不要立刻断电。
+
+\section{\texorpdfstring{功能码
+\texttt{0x10}：写多个寄存器}{功能码 0x10：写多个寄存器}}\label{ux529fux80fdux7801-0x10ux5199ux591aux4e2aux5bc4ux5b58ux5668}
+
+\subsection{请求格式}\label{ux8bf7ux6c42ux683cux5f0f-1}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+字节位置 & 字段 \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 - 2 & 地址，\texttt{0x10} \\
+3 - 4 & 起始地址，高字节在前 \\
+5 - 6 & 寄存器数量，高字节在前 \\
+7 & 数据字节数 \\
+8 - (7 + 数据字节数) & 写入数据 \\
+最后 2 字节 & CRC Lo，CRC Hi \\
+\end{longtable}
+}
+
+请求总长度必须严格等于 \texttt{9\ +\ 字节数}，且
+\texttt{字节数\ =\ 数量\ x\ 2}。
+
+\subsection{位置与速度命令}\label{ux4f4dux7f6eux4e0eux901fux5ea6ux547dux4ee4}
+
+控制命令的起始地址必须为 \texttt{0x0002}，数量必须为 12，字节数必须为
+24：前 6 个 binary16 为目标位置，后 6 个 binary16 为目标速度。
+
+正常响应采用标准 \texttt{0x10} 响应：
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\NormalTok{| 地址    | 0x10    | 起始 Hi  | 起始 Lo  | 数量 Hi| 数量 Lo| CRC Lo  | CRC Hi  |}
+\NormalTok{+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+{-}{-}{-}{-}{-}{-}{-}{-}{-}+}
+\end{Highlighting}
+\end{Shaded}
+
+\subsection{OTA 标志}\label{ota-ux6807ux5fd7}
+
+向 \texttt{0x0100} 写入 2 个寄存器（4 字节）触发 OTA / Boot
+流程。当前固件的该正常响应为设备扩展格式：地址、功能码、起始地址、数量、字节数
+\texttt{0x04}、固定数据 \texttt{12\ 34\ 56\ 78} 和 CRC。上位机应将其视为
+OTA 专用响应。
+
+\section{双手共线配置步骤}\label{ux53ccux624bux5171ux7ebfux914dux7f6eux6b65ux9aa4}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  只连接第一只手，主站设置为默认波特率 115200，使用默认地址
+  \texttt{0xC8} 读取系统配置。
+\item
+  使用 \texttt{0x06} 将第一只手改为唯一地址，例如
+  \texttt{0xC9}；确认响应后，用新地址读取 \texttt{0x0000} 和
+  \texttt{0x0001}。
+\item
+  断开第一只手，只连接第二只手。若第二只手仍为默认地址
+  \texttt{0xC8}，重复读取与改址流程，例如改为 \texttt{0xCA}。
+\item
+  两只手都配置完成后再并联到同一 RS485 总线。主站依次轮询
+  \texttt{0xC9}、\texttt{0xCA}，每次只等待被寻址设备的响应。
+\item
+  修改波特率时，必须在总线上所有设备使用同一波特率。建议逐台单独连接并修改，再将主站和所有设备切换到目标波特率。
+\end{enumerate}
+
+若两只手保持相同地址并同时接入总线，它们会同时响应同一请求，导致 RS485
+数据冲突；此状态无法通过广播查询解决。
+
+\section{上位机处理建议}\label{ux4e0aux4f4dux673aux5904ux7406ux5efaux8bae}
+
+\begin{itemize}
+\tightlist
+\item
+  仅对单播、CRC 正确的请求等待响应；超时应按``无响应''处理，不能期待 CRC
+  错或地址错误会返回错误码。
+\item
+  收到功能码最高位为 1 的响应时，读取第 3 字节作为异常码。
+\item
+  收到 \texttt{0x03}
+  正常响应时，先读取返回的起始地址、数量和字节数，再解析数据。
+\item
+  修改从站地址后，下一帧立即使用新地址；修改波特率后，先等旧波特率下的响应完整发送，再切换主站波特率。
+\item
+  配置两只新设备时始终一次只接入一只，避免默认地址 \texttt{0xC8} 冲突。
+\end{itemize}
+
+\section{版本记录}\label{ux7248ux672cux8bb0ux5f55}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+版本
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+日期
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+说明
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1.0 & 2026-07-22 & 首次整理当前固件 RS485 / Modbus RTU
+实现；包含多从站静默规则与地址、波特率读取功能。 \\
+\end{longtable}
+}
+
+\end{document}
