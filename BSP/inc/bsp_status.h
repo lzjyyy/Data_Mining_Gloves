@@ -58,6 +58,7 @@ typedef enum {
 		FRAME_ERR_DISCONTINUOUS,	// 0x09: 文件的内容帧编号不连续
 		FRAME_ERR_DUPLICATE,      // 0x0A: 文件的内容帧编号重复
 		FRAME_ERR_OUT_OF_RANGE,   // 0x0B: 文件的内容帧编号超出范围
+		FRAME_MODBUS_NEED_RESPONSE = 0x0C, // Valid Modbus request, response required
     // ===== Flash 错误 (0x10 段) =====
     FLASH_OK = 0x10,          // 成功
     FLASH_ERR_ADDR_RANGE,     // 0x11: 地址超出范围

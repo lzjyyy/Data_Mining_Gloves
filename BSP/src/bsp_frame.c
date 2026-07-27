@@ -8,6 +8,13 @@ uint32_t file_crc_accumulated = 0;
 uint32_t file_length = 0;
 uint32_t received_length = 0;
 uint8_t frame_status=0;
+#define MODBUS_FC_READ_HOLDING_REGISTERS  0x03U
+#define MODBUS_REG_SLAVE_ADDR              0x0000U
+#define MODBUS_REG_BAUD_CODE               0x0001U
+
+#define MODBUS_EX_ILLEGAL_DATA_ADDRESS     0x02U
+#define MODBUS_EX_ILLEGAL_DATA_VALUE       0x03U
+#define MODBUS_EX_SLAVE_DEVICE_FAILURE     0x04U
 // ======================= 公共变量 =======================
 uint8_t error_data_ack[4]={0xA5,0xA5,0x00,0x00};
 uint8_t error_frameID_ack[4]={0x00,0x00,0x00,0x00};
@@ -101,6 +108,137 @@ CRC16校验  	| CRC16 校验码，低字节在前，高字节在后（2 字节）
 */
 
 //回应帧数据包
+static uint8_t Is_Modbus_Read_Comm_Config_Frame(const uint8_t *frame_buf,
+                                                  uint16_t frame_len,
+                                                  Frame_t *out_frame)
+{
+    uint16_t crc_calc;
+    uint16_t crc_recv;
+
+    if (frame_len != 8U || frame_buf[0] != bsp_uart_get_slave_addr() ||
+        frame_buf[1] != MODBUS_FC_READ_HOLDING_REGISTERS) {
+        return 0;
+    }
+
+    crc_calc = Modbus_CRC16(frame_buf, 6);
+    crc_recv = (uint16_t)frame_buf[6] | ((uint16_t)frame_buf[7] << 8);
+    if (crc_calc != crc_recv) {
+        return 0;
+    }
+
+    out_frame->cmd = frame_buf[1];
+    out_frame->len = 4;
+    memcpy(out_frame->data, &frame_buf[2], out_frame->len);
+    return 1;
+}
+
+static uint8_t Modbus_BaudrateToCode(uint32_t baudrate, uint16_t *baud_code)
+{
+    switch (baudrate) {
+        case 9600U:   *baud_code = 0; return 1;
+        case 19200U:  *baud_code = 1; return 1;
+        case 38400U:  *baud_code = 2; return 1;
+        case 57600U:  *baud_code = 3; return 1;
+        case 115200U: *baud_code = 4; return 1;
+        case 230400U: *baud_code = 5; return 1;
+        case 460800U: *baud_code = 6; return 1;
+        case 921600U: *baud_code = 7; return 1;
+        default: return 0;
+    }
+}
+
+static uint8_t Modbus_ReadCommRegister(uint16_t reg_addr, uint16_t *value)
+{
+    uint8_t slave_addr;
+    uint8_t legacy_baud_code;
+    uint32_t baudrate = 0;
+
+    if (reg_addr == MODBUS_REG_SLAVE_ADDR) {
+        if (EEPROM_ReadByte(EEPROM_SLAVE_ADDR, &slave_addr) != HAL_OK ||
+            slave_addr == 0x00U || slave_addr == 0xFFU) {
+            return 0;
+        }
+        *value = slave_addr;
+        return 1;
+    }
+
+    if (reg_addr == MODBUS_REG_BAUD_CODE) {
+        if (EEPROM_ReadBytes(EEPROM_SLAVE_BAUD, (uint8_t *)&baudrate,
+                             sizeof(baudrate)) != HAL_OK) {
+            return 0;
+        }
+        if (Modbus_BaudrateToCode(baudrate, value)) {
+            return 1;
+        }
+        if (EEPROM_ReadByte(EEPROM_SLAVE_BAUD, &legacy_baud_code) == HAL_OK &&
+            legacy_baud_code <= 7U) {
+            *value = legacy_baud_code;
+            return 1;
+        }
+    }
+
+    return 0;
+}
+
+static void Modbus_SendException(uint8_t exception_code)
+{
+    uint8_t response[5];
+    uint16_t crc;
+
+    response[0] = bsp_uart_get_slave_addr();
+    response[1] = MODBUS_FC_READ_HOLDING_REGISTERS | 0x80U;
+    response[2] = exception_code;
+    crc = Modbus_CRC16(response, 3);
+    response[3] = (uint8_t)(crc & 0xFFU);
+    response[4] = (uint8_t)(crc >> 8);
+    rs485_uart3_tx(response, sizeof(response));
+}
+
+void Modbus_ProcessReadCommConfig(const Frame_t *frame)
+{
+    uint16_t start_addr;
+    uint16_t quantity;
+    uint16_t value;
+    uint16_t crc;
+    uint16_t i;
+    uint8_t response[9];
+    uint8_t response_len;
+
+    if (frame == NULL || frame->cmd != MODBUS_FC_READ_HOLDING_REGISTERS ||
+        frame->len != 4U) {
+        return;
+    }
+
+    start_addr = ((uint16_t)frame->data[0] << 8) | frame->data[1];
+    quantity = ((uint16_t)frame->data[2] << 8) | frame->data[3];
+    if (quantity == 0U || quantity > 2U) {
+        Modbus_SendException(MODBUS_EX_ILLEGAL_DATA_VALUE);
+        return;
+    }
+    if (start_addr > MODBUS_REG_BAUD_CODE ||
+        (uint32_t)start_addr + quantity > 2U) {
+        Modbus_SendException(MODBUS_EX_ILLEGAL_DATA_ADDRESS);
+        return;
+    }
+
+    response[0] = bsp_uart_get_slave_addr();
+    response[1] = MODBUS_FC_READ_HOLDING_REGISTERS;
+    response[2] = (uint8_t)(quantity * 2U);
+    for (i = 0; i < quantity; i++) {
+        if (!Modbus_ReadCommRegister(start_addr + i, &value)) {
+            Modbus_SendException(MODBUS_EX_SLAVE_DEVICE_FAILURE);
+            return;
+        }
+        response[3U + i * 2U] = (uint8_t)(value >> 8);
+        response[4U + i * 2U] = (uint8_t)value;
+    }
+
+    response_len = (uint8_t)(3U + quantity * 2U);
+    crc = Modbus_CRC16(response, response_len);
+    response[response_len++] = (uint8_t)(crc & 0xFFU);
+    response[response_len++] = (uint8_t)(crc >> 8);
+    rs485_uart3_tx(response, response_len);
+}
 uint8_t FILE_ACK_FRAME[10]  ={0x0FC,0x0E1,0x00,0x04,0xA5,0xA5,0x00,0x00,0x0a5,0x059};
 uint8_t FRAME_ACK_DATA[4]   ={0x00,0x00,0x00,0x00};
 Frame_t ft;
@@ -157,6 +295,9 @@ ProtocolStatus_t ParseFrame(const uint8_t* frame_buf,
 	uint8_t boot_boot_payload[] = {0x87, 0x65, 0x43, 0x21};
 	uint8_t boot_app_ck[13];
 	uint8_t boot_boot_ck[13];
+	if (Is_Modbus_Read_Comm_Config_Frame(frame_buf, frame_len, out_frame)) {
+		return FRAME_MODBUS_NEED_RESPONSE;
+	}
 	Build_Modbus_Upgrade_Frame(boot_app_ck, boot_app_payload);
 	Build_Modbus_Upgrade_Frame(boot_boot_ck, boot_boot_payload);
 	if(Is_Modbus_Upgrade_Frame(frame_buf, frame_len, boot_app_payload)){

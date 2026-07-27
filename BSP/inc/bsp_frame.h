@@ -18,6 +18,7 @@ extern Frame_t ft;
 void bsp_frame_init(void);
 uint16_t Modbus_CRC16(const uint8_t *data, uint16_t length);
 ProtocolStatus_t ParseFrame(const uint8_t* frame_buf, uint16_t frame_len, Frame_t* out_frame);
+void Modbus_ProcessReadCommConfig(const Frame_t *frame);
 uint16_t PackFrame(uint8_t* out_frame, uint8_t cmd, const uint8_t* data, uint8_t len);
 void frame_process(Frame_t *frame);
 void Append_CRC16_To_Frame(uint8_t *frame);

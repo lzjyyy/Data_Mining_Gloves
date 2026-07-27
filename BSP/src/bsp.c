@@ -34,6 +34,12 @@ void frame_message_process(uint8_t flag) {
 		else if(flag==3){
 			 ft_status = ParseFrame(uart3_buffer_data, uart3_data_lenth, &ft);
 		}
+		if (ft_status == FRAME_MODBUS_NEED_RESPONSE) {
+			if (flag == 3) {
+				Modbus_ProcessReadCommConfig(&ft);
+			}
+			return;
+		}
 		if(ft_status==(ProtocolStatus_t)0xFE){
 			 ctx.state = UPG_WAIT_FILE_INFO;
 			return ;

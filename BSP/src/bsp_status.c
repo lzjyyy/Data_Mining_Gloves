@@ -20,6 +20,7 @@ const char* ProtocolStatusToStr(ProtocolStatus_t status) {
         case FRAME_ERR_DISCONTINUOUS:return "Frame ID Not Continuous";
         case FRAME_ERR_DUPLICATE:    return "Frame ID Duplicate";
         case FRAME_ERR_OUT_OF_RANGE: return "Frame ID Out of Range";
+        case FRAME_MODBUS_NEED_RESPONSE: return "Modbus Response Required";
 
         // ===== Flash ¥ÌŒÛ√Ë ˆ =====
         case FLASH_OK:               return "Flash OK";
