@@ -1,0 +1,31 @@
+# Keil MDK user-specific workspace and debug settings
+*.uvopt
+*.uvoptx
+*.uvgui.*
+*.uvguix.*
+/MDK-ARM/DebugConfig/
+
+# Keil MDK build outputs for this project
+/MDK-ARM/H723_BootLoader/
+/MDK-ARM/bin_file/
+*.axf
+#*.elf
+#*.hex
+#*.bin
+*.map
+*.o
+*.d
+*.crf
+*.lst
+*.build_log.htm
+
+# Local editor, backup, and debug files
+*.bak
+*.tmp
+*.swp
+*~
+*.log
+JLinkLog.txt
+JLinkSettings.ini
+.DS_Store
+Thumbs.db
