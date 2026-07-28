@@ -118,7 +118,7 @@ void bsp_boot_init(){
  *         - 1：APP 已准备好，可以跳转到 APP
  */
 uint8_t APP_REAY(void){
-	EEPROM_WriteByte(EEPROM_APP_READY, APP_NOT_READY_VALUE);
+	//EEPROM_WriteByte(EEPROM_APP_READY, APP_NOT_READY_VALUE);
 	uint8_t boot_flag = 0;
 	uint8_t app_flag = 0;
 	

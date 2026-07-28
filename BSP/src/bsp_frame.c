@@ -135,18 +135,33 @@ static uint8_t Is_Modbus_Read_Comm_Config_Frame(const uint8_t *frame_buf,
 static uint8_t Modbus_BaudrateToCode(uint32_t baudrate, uint16_t *baud_code)
 {
     switch (baudrate) {
-        case 9600U:   *baud_code = 0; return 1;
-        case 19200U:  *baud_code = 1; return 1;
-        case 38400U:  *baud_code = 2; return 1;
-        case 57600U:  *baud_code = 3; return 1;
-        case 115200U: *baud_code = 4; return 1;
-        case 230400U: *baud_code = 5; return 1;
-        case 460800U: *baud_code = 6; return 1;
-        case 921600U: *baud_code = 7; return 1;
+        case 9600U:   *baud_code = BAUD_CODE_9600; return 1;
+        case 19200U:  *baud_code = BAUD_CODE_19200; return 1;
+        case 38400U:  *baud_code = BAUD_CODE_38400; return 1;
+        case 57600U:  *baud_code = BAUD_CODE_57600; return 1;
+        case 115200U: *baud_code = BAUD_CODE_115200; return 1;
+        case 230400U: *baud_code = BAUD_CODE_230400; return 1;
+        case 460800U: *baud_code = BAUD_CODE_460800; return 1;
+        case 921600U: *baud_code = BAUD_CODE_921600; return 1;
         default: return 0;
     }
 }
 
+static uint8_t Modbus_LegacyBaudCodeToCurrentCode(uint8_t legacy_baud_code,
+                                                   uint16_t *baud_code)
+{
+    switch (legacy_baud_code) {
+        case 0: *baud_code = BAUD_CODE_9600; return 1;
+        case 1: *baud_code = BAUD_CODE_19200; return 1;
+        case 2: *baud_code = BAUD_CODE_38400; return 1;
+        case 3: *baud_code = BAUD_CODE_57600; return 1;
+        case 4: *baud_code = BAUD_CODE_115200; return 1;
+        case 5: *baud_code = BAUD_CODE_230400; return 1;
+        case 6: *baud_code = BAUD_CODE_460800; return 1;
+        case 7: *baud_code = BAUD_CODE_921600; return 1;
+        default: return 0;
+    }
+}
 static uint8_t Modbus_ReadCommRegister(uint16_t reg_addr, uint16_t *value)
 {
     uint8_t slave_addr;
@@ -170,10 +185,8 @@ static uint8_t Modbus_ReadCommRegister(uint16_t reg_addr, uint16_t *value)
         if (Modbus_BaudrateToCode(baudrate, value)) {
             return 1;
         }
-        if (EEPROM_ReadByte(EEPROM_SLAVE_BAUD, &legacy_baud_code) == HAL_OK &&
-            legacy_baud_code <= 7U) {
-            *value = legacy_baud_code;
-            return 1;
+        if (EEPROM_ReadByte(EEPROM_SLAVE_BAUD, &legacy_baud_code) == HAL_OK) {
+            return Modbus_LegacyBaudCodeToCurrentCode(legacy_baud_code, value);
         }
     }
 

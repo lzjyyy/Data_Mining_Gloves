@@ -24,22 +24,22 @@ uint8_t uart3_buffer_data[UART1_BUFFER_SIZE];
 #define UART3_DEFAULT_BAUDRATE    115200U
 
 static uint8_t uart3_slave_addr = UART3_DEFAULT_SLAVE_ADDR;
-static uint8_t uart3_baud_code = 4;
+static uint8_t uart3_baud_code = BAUD_CODE_115200;
 static uint32_t uart3_baudrate = UART3_DEFAULT_BAUDRATE;
 static uint8_t uart3_write_data_rx_debug_count = 0;
 
 static uint8_t uart3_baud_code_from_baudrate(uint32_t baudrate)
 {
 	switch (baudrate) {
-		case 9600U: return 0;
-		case 19200U: return 1;
-		case 38400U: return 2;
-		case 57600U: return 3;
-		case 115200U: return 4;
-		case 230400U: return 5;
-		case 460800U: return 6;
-		case 921600U: return 7;
-		default: return 4;
+		case 9600U: return BAUD_CODE_9600;
+		case 19200U: return BAUD_CODE_19200;
+		case 38400U: return BAUD_CODE_38400;
+		case 57600U: return BAUD_CODE_57600;
+		case 115200U: return BAUD_CODE_115200;
+		case 230400U: return BAUD_CODE_230400;
+		case 460800U: return BAUD_CODE_460800;
+		case 921600U: return BAUD_CODE_921600;
+		default: return BAUD_CODE_115200;
 	}
 }
 

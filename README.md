@@ -11,14 +11,14 @@
 
 | Code | Baud rate |
 | --- | --- |
-| `0` | 9600 |
-| `1` | 19200 |
-| `2` | 38400 |
-| `3` | 57600 |
-| `4` | 115200 |
-| `5` | 230400 |
-| `6` | 460800 |
-| `7` | 921600 |
+| `1` | 9600 |
+| `2` | 19200 |
+| `3` | 38400 |
+| `4` | 57600 |
+| `5` | 115200 |
+| `6` | 230400 |
+| `7` | 460800 |
+| `8` | 921600 |
 
 ## Read communication parameters
 
@@ -39,11 +39,11 @@ Success response
 [Slave][03][ByteCount][Data_H][Data_L]...[CRC_L][CRC_H]
 ```
 
-Example: the device address is `0xC8`, and EEPROM stores baud-rate code `4` (`115200`).
+Example: the device address is `0xC8`, and EEPROM stores `115200`, whose baud-rate code is `5`.
 
 ```text
 Request : C8 03 00 00 00 02 D5 92
-Response: C8 03 04 00 C8 00 04 23 02
+Response: C8 03 04 00 C8 00 05 E2 C2
 ```
 
 Modbus exception responses use `[Slave][83][Exception][CRC_L][CRC_H]`.

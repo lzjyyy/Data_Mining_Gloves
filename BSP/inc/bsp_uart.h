@@ -12,6 +12,17 @@ extern uint8_t uart3_buffer[UART1_BUFFER_SIZE];
 extern  uint8_t uart3_buffer_data[UART1_BUFFER_SIZE];
 extern uint8_t uart3_data_lenth;
 
+typedef enum {
+    BAUD_CODE_9600   = 0x0001,
+    BAUD_CODE_19200  = 0x0002,
+    BAUD_CODE_38400  = 0x0003,
+    BAUD_CODE_57600  = 0x0004,
+    BAUD_CODE_115200 = 0x0005,
+    BAUD_CODE_230400 = 0x0006,
+    BAUD_CODE_460800 = 0x0007,
+    BAUD_CODE_921600 = 0x0008,
+} BaudCode_t;
+
 uint8_t get_uartReceiveFlag(void);
 void set_uartReceiveFlag(uint8_t flag);
 uint8_t get_uart3ReceiveFlag(void);
